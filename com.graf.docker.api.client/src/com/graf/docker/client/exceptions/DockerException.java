@@ -6,6 +6,10 @@ public class DockerException extends Exception {
 	
 	private int statusCode;
 	
+	public DockerException(String message) {
+		super(message);
+	}
+	
 	public DockerException(String message, int code) {
 		super(message);
 		this.statusCode = code;

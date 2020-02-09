@@ -2,11 +2,11 @@ package com.graf.docker.client.params;
 
 import java.util.Objects;
 
-public abstract class Param {
+public class Param {
 	private final String name;
 	private final String value;
 
-	Param(String name, String value) {
+	public Param(String name, String value) {
 		this.name = name;
 		this.value = value;
 	}
