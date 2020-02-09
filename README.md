@@ -5,6 +5,8 @@ A Docker Engine API implementation written in Java as a OSGi Component.
 
 This Docker Client helps to interact with the Docker Engine API in Java and is inspired by the [Spotify Docker Client](https://github.com/spotify/docker-client), but it isn't forked from it.
 
+Currently this client only works over Http. The unix-socket is not yet supported.
+
 ## Usage
 
 See the [Wiki](https://github.com/graf-markus/java-docker-api-client/wiki)
