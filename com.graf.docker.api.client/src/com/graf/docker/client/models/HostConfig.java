@@ -2,6 +2,9 @@ package com.graf.docker.client.models;
 
 import java.util.Map;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 public class HostConfig {
 
 	private String[] binds;
@@ -253,6 +256,10 @@ public class HostConfig {
 
 	public Map<String, String> getStorageOpt() {
 		return storageOpt;
+	}
+
+	public static Builder builder() {
+		return new Builder();
 	}
 
 	public static class Builder {
@@ -684,37 +691,9 @@ public class HostConfig {
 		this.storageOpt = builder.storageOpt;
 	}
 
-	public class RestartPolicy {
-		private String name;
-		private int maxRetryCount;
-	}
-
-	public class Bind {
-		private String to;
-		private String from;
-		private boolean readOnly;
-		private boolean noCopy;
-		private boolean selinuxLabeling;
-	}
-
-	public class Ulimit {
-		private String name;
-		private long soft;
-		private long hard;
-	}
-
-	public class BlkioWeightDevice {
-		private String path;
-		private int weight;
-	}
-
-	public class BlkioDeviceRate {
-		private String path;
-		private int rate;
-	}
-
-	public class LxcConfParameter {
-		private String key;
-		private String value;
+	@Override
+	public String toString() {
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		return gson.toJson(this);
 	}
 }

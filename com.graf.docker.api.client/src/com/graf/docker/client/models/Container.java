@@ -2,12 +2,15 @@ package com.graf.docker.client.models;
 
 import java.util.Map;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 public class Container {
 
 	private String id;
 	private String[] names;
 	private String image;
-	private String imageId;
+	private String imageID;
 	private String command;
 	private long created;
 	private String state;
@@ -32,7 +35,7 @@ public class Container {
 	}
 
 	public String getImageId() {
-		return imageId;
+		return imageID;
 	}
 
 	public String getCommand() {
@@ -75,6 +78,12 @@ public class Container {
 		return mounts;
 	}
 
+	@Override
+	public String toString() {
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		return gson.toJson(this);
+	}
+	
 	public class PortMapping {
 
 		private int privatePort;
@@ -96,6 +105,12 @@ public class Container {
 
 		public String getIp() {
 			return ip;
+		}
+		
+		@Override
+		public String toString() {
+			Gson gson = new GsonBuilder().setPrettyPrinting().create();
+			return gson.toJson(this);
 		}
 	}
 }

@@ -2,6 +2,9 @@ package com.graf.docker.client.models;
 
 import java.util.Date;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 public class ContainerState {
 
 	private String status;
@@ -58,5 +61,11 @@ public class ContainerState {
 
 	public boolean isDead() {
 		return dead;
+	}
+
+	@Override
+	public String toString() {
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		return gson.toJson(this);
 	}
 }

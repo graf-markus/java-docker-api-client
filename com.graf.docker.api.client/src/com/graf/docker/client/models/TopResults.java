@@ -1,5 +1,8 @@
 package com.graf.docker.client.models;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 public class TopResults {
 
 	private String[] titles;
@@ -11,5 +14,11 @@ public class TopResults {
 
 	public String[] getProcesses() {
 		return processes;
+	}
+
+	@Override
+	public String toString() {
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		return gson.toJson(this);
 	}
 }

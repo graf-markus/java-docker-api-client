@@ -3,6 +3,9 @@ package com.graf.docker.client.models;
 import java.util.Date;
 import java.util.Map;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 public class ContainerInfo {
 
 	private String id;
@@ -121,6 +124,12 @@ public class ContainerInfo {
 		return node;
 	}
 
+	@Override
+	public String toString() {
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		return gson.toJson(this);
+	}
+
 	public class Node {
 
 		private String id;
@@ -142,6 +151,12 @@ public class ContainerInfo {
 
 		public String getName() {
 			return name;
+		}
+
+		@Override
+		public String toString() {
+			Gson gson = new GsonBuilder().setPrettyPrinting().create();
+			return gson.toJson(this);
 		}
 	}
 }

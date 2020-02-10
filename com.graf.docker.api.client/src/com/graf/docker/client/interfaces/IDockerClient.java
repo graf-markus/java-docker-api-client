@@ -34,6 +34,13 @@ public interface IDockerClient {
 	 */
 	ContainerCreation createContainer(ContainerConfig config) throws DockerException;
 	/**
+	 * List running Processes inside a Container. Only working on running ones. DEfault ps args are -ef.
+	 * @param containerId
+	 * @return TopResult
+	 * @throws DockerException
+	 */
+	TopResults topContainer(String containerId) throws DockerException;
+	/**
 	 * List running Processes inside a Container. Only working on running ones.
 	 * @param containerId
 	 * @param psargs - e.g aux
@@ -41,6 +48,12 @@ public interface IDockerClient {
 	 * @throws DockerException
 	 */
 	TopResults topContainer(String containerId, String psargs) throws DockerException;
+	/**
+	 * List resource usage of a Container
+	 * @param containerId
+	 * @throws DockerException
+	 */
+	void statContainer(String containerId) throws DockerException;
 	/**
 	 * Starts a Container with the given id or name.
 	 * @param containerId

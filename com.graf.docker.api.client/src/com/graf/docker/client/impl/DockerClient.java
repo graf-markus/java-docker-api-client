@@ -1,7 +1,10 @@
 package com.graf.docker.client.impl;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -47,20 +50,17 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public List<Container> listContainers(final ListContainersParam... params) throws DockerException {
-		System.out.println(new RequestBuilder().setUrl(url).addPath("containers").addPath("json").addParameters(params).build());
 		HttpGet request = new HttpGet(
-				new RequestBuilder().setUrl(url).addPath("containers").addPath("json").addParameters(params).build());
+				RequestBuilder.builder().setUrl(url).addPath("containers").addPath("json").addParameters(params).build());
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
 			int statusCode = response.getStatusLine().getStatusCode();
+			String jsonEntity = EntityUtils.toString(response.getEntity());
 			if (statusCode == 200) {
-				String jsonEntity = EntityUtils.toString(response.getEntity());
 				Container[] containers = gson.fromJson(jsonEntity, Container[].class);
 				return new ArrayList<Container>(Arrays.asList(containers));
 			}
-			throw new DockerException("", statusCode);
+			throw new DockerException(gson.fromJson(jsonEntity, ExceptionMessage.class).getMessage(), statusCode);
 		} catch (IOException e) {
-			e.printStackTrace();
-			System.out.println(e);
 			throw new DockerException(e.getMessage());
 		}
 	}
@@ -68,7 +68,7 @@ public class DockerClient implements IDockerClient {
 	@Override
 	public ContainerInfo inspectContainer(String containerId) throws DockerException {
 		HttpGet request = new HttpGet(
-				new RequestBuilder().setUrl(url).addPath("Containers").addPath(containerId).addPath("json").build());
+				RequestBuilder.builder().setUrl(url).addPath("Containers").addPath(containerId).addPath("json").build());
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
 			int statusCode = response.getStatusLine().getStatusCode();
 			String jsonEntity = EntityUtils.toString(response.getEntity());
@@ -85,7 +85,7 @@ public class DockerClient implements IDockerClient {
 	@Override
 	public ContainerCreation createContainer(ContainerConfig config) throws DockerException {
 		HttpPost request = new HttpPost(
-				new RequestBuilder().setUrl(url).addPath("containers").addPath("create").build());
+				RequestBuilder.builder().setUrl(url).addPath("containers").addPath("create").build());
 		try {
 			request.setHeader("Content-Type", "application/json");
 			request.setEntity(new StringEntity(gson.toJson(config)));
@@ -106,8 +106,13 @@ public class DockerClient implements IDockerClient {
 	}
 
 	@Override
+	public TopResults topContainer(String containerId) throws DockerException {
+		return topContainer(containerId, null);
+	}
+	
+	@Override
 	public TopResults topContainer(String containerId, String psargs) throws DockerException {
-		RequestBuilder builder = new RequestBuilder();
+		RequestBuilder builder = RequestBuilder.builder();
 		if (!isNullOrEmpty(psargs)) {
 			builder.addParameter("ps_args", psargs);
 		}
@@ -126,10 +131,26 @@ public class DockerClient implements IDockerClient {
 		}
 	}
 
+
+	@Override
+	public void statContainer(String containerId) throws DockerException {
+		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId).addPath("stats").build());
+		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
+			InputStreamReader reader = new InputStreamReader(response.getEntity().getContent());
+			CharBuffer buffer = CharBuffer.allocate(1);
+			while((reader.read(buffer)) > 0) {
+				System.out.print(buffer.array());
+				buffer.clear();
+			}
+		}catch(IOException e) {
+			throw new DockerException(e.getMessage());
+		}
+	}
+	
 	public void startContainer(String containerId) throws DockerException {
 
 		HttpPost request = new HttpPost(
-				new RequestBuilder().setUrl(url).addPath("containers").addPath(containerId).addPath("start").build());
+				RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId).addPath("start").build());
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
 			int statusCode = response.getStatusLine().getStatusCode();
 			if (statusCode == 204) {
@@ -158,7 +179,7 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public void stopContainer(String containerId, int time, TimeUnit unit) throws DockerException {
-		HttpPost request = new HttpPost(new RequestBuilder().setUrl(url).addPath("containers").addPath(containerId)
+		HttpPost request = new HttpPost(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
 				.addPath("stop").addParameter("t", String.valueOf(((int) unit.toSeconds(time)))).build());
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
 			int statusCode = response.getStatusLine().getStatusCode();
@@ -188,7 +209,7 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public void restartContainer(String containerId, int time, TimeUnit unit) throws DockerException {
-		HttpPost request = new HttpPost(new RequestBuilder().setUrl(url).addPath("containers").addPath(containerId)
+		HttpPost request = new HttpPost(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
 				.addPath("restart").addParameter("t", String.valueOf(((int) unit.toSeconds(time)))).build());
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
 			int statusCode = response.getStatusLine().getStatusCode();
@@ -204,7 +225,7 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public void killContainer(String containerId, KillSignal signal) throws DockerException {
-		HttpPost request = new HttpPost(new RequestBuilder().setUrl(url).addPath("containers").addPath(containerId)
+		HttpPost request = new HttpPost(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
 				.addPath("kill").addParameter("signal", signal.toString()).build());
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
 			int statusCode = response.getStatusLine().getStatusCode();
@@ -221,7 +242,7 @@ public class DockerClient implements IDockerClient {
 	@Override
 	public void pauseContainer(String containerId) throws DockerException {
 		HttpPost request = new HttpPost(
-				new RequestBuilder().setUrl(url).addPath("containers").addPath(containerId).addPath("pause").build());
+				RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId).addPath("pause").build());
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
 			int statusCode = response.getStatusLine().getStatusCode();
 			if (statusCode == 204) {
@@ -237,7 +258,7 @@ public class DockerClient implements IDockerClient {
 	@Override
 	public void unpauseContainer(String containerId) throws DockerException {
 		HttpPost request = new HttpPost(
-				new RequestBuilder().setUrl(url).addPath("containers").addPath(containerId).addPath("unpause").build());
+				RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId).addPath("unpause").build());
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
 			int statusCode = response.getStatusLine().getStatusCode();
 			if (statusCode == 204) {
@@ -252,7 +273,7 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public void removeContainer(String containerId, RemoveContainersParam... params) throws DockerException {
-		HttpDelete request = new HttpDelete(new RequestBuilder().setUrl(url).addPath("containers").addPath(containerId)
+		HttpDelete request = new HttpDelete(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
 				.addParameters(params).build());
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
 			int statusCode = response.getStatusLine().getStatusCode();
@@ -270,7 +291,7 @@ public class DockerClient implements IDockerClient {
 	public ContainersDeletedInfo deleteContainers() throws DockerException {
 
 		HttpPost request = new HttpPost(
-				new RequestBuilder().setUrl(url).addPath("containers").addPath("prune").build());
+				RequestBuilder.builder().setUrl(url).addPath("containers").addPath("prune").build());
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
 			int statusCode = response.getStatusLine().getStatusCode();
 			String jsonEntity = EntityUtils.toString(response.getEntity());
@@ -283,7 +304,7 @@ public class DockerClient implements IDockerClient {
 		}
 	}
 
-	class RequestBuilder {
+	static class RequestBuilder {
 
 		private StringBuilder pathBuilder;
 		private List<Param> params;
@@ -334,6 +355,10 @@ public class DockerClient implements IDockerClient {
 				}
 			}
 			return pathBuilder.toString();
+		}
+		
+		public static RequestBuilder builder() {
+			return new RequestBuilder();
 		}
 	}
 

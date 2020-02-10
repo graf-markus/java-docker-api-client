@@ -3,6 +3,9 @@ package com.graf.docker.client.models;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 public class NetworkSettings {
 
 	private String ipAddress;
@@ -84,5 +87,11 @@ public class NetworkSettings {
 
 	public String getIpv6Gateway() {
 		return ipv6Gateway;
+	}
+
+	@Override
+	public String toString() {
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		return gson.toJson(this);
 	}
 }

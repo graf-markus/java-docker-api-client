@@ -1,5 +1,8 @@
 package com.graf.docker.client.models;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 public class AttachedNetwork {
 
 	private String aliases;
@@ -51,5 +54,11 @@ public class AttachedNetwork {
 
 	public String getMacAddress() {
 		return macAddress;
+	}
+	
+	@Override
+	public String toString() {
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		return gson.toJson(this);
 	}
 }
