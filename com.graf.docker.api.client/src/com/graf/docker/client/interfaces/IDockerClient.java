@@ -8,6 +8,7 @@ import com.graf.docker.client.models.Container;
 import com.graf.docker.client.models.ContainerConfig;
 import com.graf.docker.client.models.ContainerCreation;
 import com.graf.docker.client.models.ContainerInfo;
+import com.graf.docker.client.models.ContainerStats;
 import com.graf.docker.client.models.ContainersDeletedInfo;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.TopResults;
@@ -49,17 +50,29 @@ public interface IDockerClient {
 	 */
 	TopResults topContainer(String containerId, String psargs) throws DockerException;
 	/**
-	 * List resource usage of a Container
+	 * Lists resource usage of a Container
 	 * @param containerId
 	 * @throws DockerException
 	 */
-	void statContainer(String containerId) throws DockerException;
+	ContainerStats statContainer(String containerId) throws DockerException;
+	/**
+	 * Lists resource usage of a Container
+	 * @param containerId
+	 * @param listener
+	 * @throws DockerException
+	 */
+	void statContainerStream(String containerId, IContainerStatsListener listener) throws DockerException;
 	/**
 	 * Starts a Container with the given id or name.
 	 * @param containerId
 	 * @throws DockerException
 	 */
 	void startContainer(String containerId) throws DockerException;
+	/**
+	 * Stops listening on stats of a Container
+	 * @param containerId
+	 */
+	void stopStatContainerStream(String containerId) ;
 	/**
 	 * Stops a Container with the given id or name.
 	 * @param containerId

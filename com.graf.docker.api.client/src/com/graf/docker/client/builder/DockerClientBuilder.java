@@ -11,7 +11,7 @@ public class DockerClientBuilder {
 		
 	}
 
-	public static DockerClientBuilder create() {
+	public static DockerClientBuilder builder() {
 		return new DockerClientBuilder();
 	}
 
