@@ -35,6 +35,14 @@ public interface IDockerClient {
 	 */
 	ContainerCreation createContainer(ContainerConfig config) throws DockerException;
 	/**
+	 * Creates a new Container with the given config and name.
+	 * @param config
+	 * @param containerName
+	 * @return ContainerCreation
+	 * @throws DockerException
+	 */
+	ContainerCreation createContainer(ContainerConfig config, String containerName) throws DockerException;
+	/**
 	 * List running Processes inside a Container. Only working on running ones. DEfault ps args are -ef.
 	 * @param containerId
 	 * @return TopResult
@@ -68,6 +76,23 @@ public interface IDockerClient {
 	 * @throws DockerException
 	 */
 	void startContainer(String containerId) throws DockerException;
+	/**
+	 * Creates a new Container and then starts the new created Container.<br>
+	 * <b>Attention!</b> if the Container already exists this Method throws an error.<br>
+	 * Use the autoRemove option in ContainerConfig to delete the Container after termination.
+	 * @param config
+	 * @throws DockerException
+	 */
+	void runContainer(ContainerConfig config) throws DockerException;
+	/**
+	 * Creates a new Container and then starts the new created Container.<br>
+	 * <b>Attention!</b> if the Container already exists this Method throws an error.<br>
+	 * Use the autoRemove option in ContainerConfig to delete the Container after termination.
+	 * @param config
+	 * @param containerName
+	 * @throws DockerException
+	 */
+	void runContainer(ContainerConfig config, String containerName) throws DockerException;
 	/**
 	 * Stops listening on stats of a Container
 	 * @param containerId

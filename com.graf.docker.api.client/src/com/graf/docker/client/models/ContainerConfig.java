@@ -1,5 +1,9 @@
 package com.graf.docker.client.models;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,19 +18,19 @@ public class ContainerConfig {
 	private boolean attachStdin;
 	private boolean attachStdout;
 	private boolean attachStderr;
-	private String[] portSpecs;
+	private List<String> portSpecs;
 	private Set<String> exposedPorts;
 	private boolean tty;
 	private boolean openStdin;
 	private boolean stdinOnce;
-	private String[] env;
-	private String[] cmd;
+	private List<String> env;
+	private List<String> cmd;
 	private String image;
-	private Set<String> volumes;
+	private Map<String, Object> volumes;
 	private String workingDir;
-	private String[] entrypoint;
+	private List<String> entrypoint;
 	private boolean networkDisabled;
-	private String[] onBuild;
+	private List<String> onBuild;
 	private Map<String, String> labels;
 	private String macAddress;
 	private HostConfig hostConfig;
@@ -34,9 +38,39 @@ public class ContainerConfig {
 	private Healthcheck healthcheck;
 	private NetworkingConfig networkingConfig;
 
-	private ContainerConfig(ContainerConfig config) {
-		this.hostname = config.hostname;
-		this.image = config.image;
+	private ContainerConfig(Builder builder) {
+		this.hostname = builder.hostname;
+		this.domainname = builder.domainname;
+		this.user = builder.user;
+		this.attachStdin = builder.attachStdin;
+		this.attachStdout = builder.attachStdout;
+		this.attachStderr = builder.attachStderr;
+		this.portSpecs = builder.portSpecs;
+		this.exposedPorts = builder.exposedPorts;
+		this.tty = builder.tty;
+		this.openStdin = builder.openStdin;
+		this.stdinOnce = builder.stdinOnce;
+		this.env = builder.env;
+		this.cmd = builder.cmd;
+		this.image = builder.image;
+		if (builder.volumes != null) {
+			if (this.volumes == null) {
+				this.volumes = new HashMap<>();
+			}
+			for (String s : builder.volumes) {
+				this.volumes.put(s, new Object());
+			}
+		}
+		this.workingDir = builder.workingDir;
+		this.entrypoint = builder.entrypoint;
+		this.networkDisabled = builder.networkDisabled;
+		this.onBuild = builder.onBuild;
+		this.labels = builder.labels;
+		this.macAddress = builder.macAddress;
+		this.hostConfig = builder.hostConfig;
+		this.stopSignal = builder.stopSignal;
+		this.healthcheck = builder.healthcheck;
+		this.networkingConfig = builder.networkingConfig;
 	}
 
 	public String getHostname() {
@@ -63,7 +97,7 @@ public class ContainerConfig {
 		return attachStderr;
 	}
 
-	public String[] getPortSpecs() {
+	public List<String> getPortSpecs() {
 		return portSpecs;
 	}
 
@@ -83,11 +117,11 @@ public class ContainerConfig {
 		return stdinOnce;
 	}
 
-	public String[] getEnv() {
+	public List<String> getEnv() {
 		return env;
 	}
 
-	public String[] getCmd() {
+	public List<String> getCmd() {
 		return cmd;
 	}
 
@@ -95,7 +129,7 @@ public class ContainerConfig {
 		return image;
 	}
 
-	public Set<String> getVolumes() {
+	public Map<String, Object> getVolumes() {
 		return volumes;
 	}
 
@@ -103,7 +137,7 @@ public class ContainerConfig {
 		return workingDir;
 	}
 
-	public String[] getEntryPoint() {
+	public List<String> getEntryPoint() {
 		return entrypoint;
 	}
 
@@ -111,7 +145,7 @@ public class ContainerConfig {
 		return networkDisabled;
 	}
 
-	public String[] getOnBuild() {
+	public List<String> getOnBuild() {
 		return onBuild;
 	}
 
@@ -148,22 +182,22 @@ public class ContainerConfig {
 		private String hostname;
 		private String domainname;
 		private String user;
-		private boolean attachStdin;
-		private boolean attachStdout;
-		private boolean attachStderr;
-		private String[] portSpecs;
+		private boolean attachStdin = false;
+		private boolean attachStdout = true;
+		private boolean attachStderr = true;
+		private List<String> portSpecs;
 		private Set<String> exposedPorts;
 		private boolean tty;
 		private boolean openStdin;
 		private boolean stdinOnce;
-		private String[] env;
-		private String[] cmd;
+		private List<String> env;
+		private List<String> cmd;
 		private String image;
 		private Set<String> volumes;
 		private String workingDir;
-		private String[] entrypoint;
+		private List<String> entrypoint;
 		private boolean networkDisabled;
-		private String[] onBuild;
+		private List<String> onBuild;
 		private Map<String, String> labels;
 		private String macAddress;
 		private HostConfig hostConfig;
@@ -172,39 +206,6 @@ public class ContainerConfig {
 		private NetworkingConfig networkingConfig;
 
 		public Builder() {
-		}
-
-		Builder(String hostname, String domainname, String user, boolean attachStdin, boolean attachStdout,
-				boolean attachStderr, String[] portSpecs, Set<String> exposedPorts, boolean tty, boolean openStdin,
-				boolean stdinOnce, String[] env, String[] cmd, String image, Set<String> volumes, String workingDir,
-				String[] entrypoint, boolean networkDisabled, String[] onBuild, Map<String, String> labels,
-				String macAddress, HostConfig hostConfig, String stopSignal, Healthcheck healthcheck,
-				NetworkingConfig networkingConfig) {
-			this.hostname = hostname;
-			this.domainname = domainname;
-			this.user = user;
-			this.attachStdin = attachStdin;
-			this.attachStdout = attachStdout;
-			this.attachStderr = attachStderr;
-			this.portSpecs = portSpecs;
-			this.exposedPorts = exposedPorts;
-			this.tty = tty;
-			this.openStdin = openStdin;
-			this.stdinOnce = stdinOnce;
-			this.env = env;
-			this.cmd = cmd;
-			this.image = image;
-			this.volumes = volumes;
-			this.workingDir = workingDir;
-			this.entrypoint = entrypoint;
-			this.networkDisabled = networkDisabled;
-			this.onBuild = onBuild;
-			this.labels = labels;
-			this.macAddress = macAddress;
-			this.hostConfig = hostConfig;
-			this.stopSignal = stopSignal;
-			this.healthcheck = healthcheck;
-			this.networkingConfig = networkingConfig;
 		}
 
 		public Builder hostname(String hostname) {
@@ -227,6 +228,10 @@ public class ContainerConfig {
 			return Builder.this;
 		}
 
+		public Builder interactive() {
+			return this.openStdin(true).attachStdin(true);
+		}
+
 		public Builder attachStdout(boolean attachStdout) {
 			this.attachStdout = attachStdout;
 			return Builder.this;
@@ -237,7 +242,7 @@ public class ContainerConfig {
 			return Builder.this;
 		}
 
-		public Builder portSpecs(String[] portSpecs) {
+		public Builder portSpecs(List<String> portSpecs) {
 			this.portSpecs = portSpecs;
 			return Builder.this;
 		}
@@ -262,13 +267,29 @@ public class ContainerConfig {
 			return Builder.this;
 		}
 
-		public Builder env(String[] env) {
+		public Builder env(List<String> env) {
 			this.env = env;
 			return Builder.this;
 		}
 
-		public Builder cmd(String[] cmd) {
+		public Builder addEnv(String env) {
+			if (this.env == null) {
+				this.env = new ArrayList<>();
+			}
+			this.env.add(env);
+			return Builder.this;
+		}
+
+		public Builder cmd(List<String> cmd) {
 			this.cmd = cmd;
+			return Builder.this;
+		}
+
+		public Builder addCmd(String cmd) {
+			if (this.cmd == null) {
+				this.cmd = new ArrayList<>();
+			}
+			this.cmd.add(cmd);
 			return Builder.this;
 		}
 
@@ -282,13 +303,29 @@ public class ContainerConfig {
 			return Builder.this;
 		}
 
+		public Builder addVolumes(String volume) {
+			if (this.volumes == null) {
+				this.volumes = new HashSet<>();
+			}
+			this.volumes.add(volume);
+			return Builder.this;
+		}
+
 		public Builder workingDir(String workingDir) {
 			this.workingDir = workingDir;
 			return Builder.this;
 		}
 
-		public Builder entrypoint(String[] entrypoint) {
+		public Builder entrypoint(List<String> entrypoint) {
 			this.entrypoint = entrypoint;
+			return Builder.this;
+		}
+
+		public Builder addEntrypoint(String entrypoint) {
+			if (this.entrypoint == null) {
+				this.entrypoint = new ArrayList<>();
+			}
+			this.entrypoint.add(entrypoint);
 			return Builder.this;
 		}
 
@@ -297,8 +334,16 @@ public class ContainerConfig {
 			return Builder.this;
 		}
 
-		public Builder onBuild(String[] onBuild) {
+		public Builder onBuild(List<String> onBuild) {
 			this.onBuild = onBuild;
+			return Builder.this;
+		}
+
+		public Builder addOnBuild(String onBuild) {
+			if (this.onBuild == null) {
+				this.onBuild = new ArrayList<>();
+			}
+			this.onBuild.add(onBuild);
 			return Builder.this;
 		}
 
@@ -333,39 +378,10 @@ public class ContainerConfig {
 		}
 
 		public ContainerConfig build() {
-
 			return new ContainerConfig(this);
 		}
 	}
 
-	private ContainerConfig(Builder builder) {
-		this.hostname = builder.hostname;
-		this.domainname = builder.domainname;
-		this.user = builder.user;
-		this.attachStdin = builder.attachStdin;
-		this.attachStdout = builder.attachStdout;
-		this.attachStderr = builder.attachStderr;
-		this.portSpecs = builder.portSpecs;
-		this.exposedPorts = builder.exposedPorts;
-		this.tty = builder.tty;
-		this.openStdin = builder.openStdin;
-		this.stdinOnce = builder.stdinOnce;
-		this.env = builder.env;
-		this.cmd = builder.cmd;
-		this.image = builder.image;
-		this.volumes = builder.volumes;
-		this.workingDir = builder.workingDir;
-		this.entrypoint = builder.entrypoint;
-		this.networkDisabled = builder.networkDisabled;
-		this.onBuild = builder.onBuild;
-		this.labels = builder.labels;
-		this.macAddress = builder.macAddress;
-		this.hostConfig = builder.hostConfig;
-		this.stopSignal = builder.stopSignal;
-		this.healthcheck = builder.healthcheck;
-		this.networkingConfig = builder.networkingConfig;
-	}
-	
 	@Override
 	public String toString() {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();

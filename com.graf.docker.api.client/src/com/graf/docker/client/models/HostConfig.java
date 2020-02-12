@@ -58,6 +58,59 @@ public class HostConfig {
 	private String runtime;
 	private Map<String, String> storageOpt;
 
+	private HostConfig(Builder builder) {
+		this.binds = builder.binds;
+		this.blkioWeight = builder.blkioWeight;
+		this.blkioWeightDevice = builder.blkioWeightDevice;
+		this.blkioDeviceReadBps = builder.blkioDeviceReadBps;
+		this.blkioDeviceWriteBps = builder.blkioDeviceWriteBps;
+		this.blkioDeviceReadIOps = builder.blkioDeviceReadIOps;
+		this.blkioDeviceWriteIOps = builder.blkioDeviceWriteIOps;
+		this.containerIdFile = builder.containerIdFile;
+		this.lxcConf = builder.lxcConf;
+		this.privileged = builder.privileged;
+		this.portBindings = builder.portBindings;
+		this.links = builder.links;
+		this.publishAllPorts = builder.publishAllPorts;
+		this.dns = builder.dns;
+		this.dnsOptions = builder.dnsOptions;
+		this.dnsSearch = builder.dnsSearch;
+		this.extraHosts = builder.extraHosts;
+		this.groupAdd = builder.groupAdd;
+		this.volumesFrom = builder.volumesFrom;
+		this.capAdd = builder.capAdd;
+		this.capDrop = builder.capDrop;
+		this.networkMode = builder.networkMode;
+		this.securityOpt = builder.securityOpt;
+		this.devices = builder.devices;
+		this.memory = builder.memory;
+		this.memorySwap = builder.memorySwap;
+		this.memorySwappiness = builder.memorySwappiness;
+		this.memoryReservation = builder.memoryReservation;
+		this.kernelMemory = builder.kernelMemory;
+		this.nanoCpus = builder.nanoCpus;
+		this.cpuPeriod = builder.cpuPeriod;
+		this.cpuShares = builder.cpuShares;
+		this.cpusetCpus = builder.cpusetCpus;
+		this.cpusetMems = builder.cpusetMems;
+		this.cpuQuota = builder.cpuQuota;
+		this.cgroupParent = builder.cgroupParent;
+		this.restartPolicy = builder.restartPolicy;
+		this.logConfig = builder.logConfig;
+		this.ipcMode = builder.ipcMode;
+		this.ulimits = builder.ulimits;
+		this.pidMode = builder.pidMode;
+		this.shmSize = builder.shmSize;
+		this.oomKillDisable = builder.oomKillDisable;
+		this.oomScoreAdj = builder.oomScoreAdj;
+		this.autoRemove = builder.autoRemove;
+		this.pidsLimit = builder.pidsLimit;
+		this.tmpfs = builder.tmpfs;
+		this.readonlyRootfs = builder.readonlyRootfs;
+		this.runtime = builder.runtime;
+		this.storageOpt = builder.storageOpt;
+	}
+
 	public String[] getBinds() {
 		return binds;
 	}
@@ -176,6 +229,10 @@ public class HostConfig {
 
 	public long getNanoCpus() {
 		return nanoCpus;
+	}
+
+	public long cpus(long cpus) {
+		return (long) (nanoCpus / 10E9);
 	}
 
 	public long getCpuPeriod() {
@@ -316,70 +373,6 @@ public class HostConfig {
 		private Map<String, String> storageOpt;
 
 		public Builder() {
-		}
-
-		Builder(String[] binds, int blkioWeight, BlkioWeightDevice[] blkioWeightDevice,
-				BlkioDeviceRate[] blkioDeviceReadBps, BlkioDeviceRate[] blkioDeviceWriteBps,
-				BlkioDeviceRate[] blkioDeviceReadIOps, BlkioDeviceRate[] blkioDeviceWriteIOps, String containerIdFile,
-				LxcConfParameter[] lxcConf, boolean privileged, Map<String, PortBinding[]> portBindings, String[] links,
-				boolean publishAllPorts, String[] dns, String[] dnsOptions, String[] dnsSearch, String[] extraHosts,
-				String[] groupAdd, String[] volumesFrom, String[] capAdd, String[] capDrop, String networkMode,
-				String[] securityOpt, Device[] devices, long memory, long memorySwap, int memorySwappiness,
-				long memoryReservation, long kernelMemory, long nanoCpus, long cpuPeriod, long cpuShares,
-				String cpusetCpus, String cpusetMems, long cpuQuota, String cgroupParent, RestartPolicy restartPolicy,
-				LogConfig logConfig, String ipcMode, Ulimit[] ulimits, String pidMode, long shmSize,
-				boolean oomKillDisable, int oomScoreAdj, boolean autoRemove, int pidsLimit, Map<String, String> tmpfs,
-				boolean readonlyRootfs, String runtime, Map<String, String> storageOpt) {
-			this.binds = binds;
-			this.blkioWeight = blkioWeight;
-			this.blkioWeightDevice = blkioWeightDevice;
-			this.blkioDeviceReadBps = blkioDeviceReadBps;
-			this.blkioDeviceWriteBps = blkioDeviceWriteBps;
-			this.blkioDeviceReadIOps = blkioDeviceReadIOps;
-			this.blkioDeviceWriteIOps = blkioDeviceWriteIOps;
-			this.containerIdFile = containerIdFile;
-			this.lxcConf = lxcConf;
-			this.privileged = privileged;
-			this.portBindings = portBindings;
-			this.links = links;
-			this.publishAllPorts = publishAllPorts;
-			this.dns = dns;
-			this.dnsOptions = dnsOptions;
-			this.dnsSearch = dnsSearch;
-			this.extraHosts = extraHosts;
-			this.groupAdd = groupAdd;
-			this.volumesFrom = volumesFrom;
-			this.capAdd = capAdd;
-			this.capDrop = capDrop;
-			this.networkMode = networkMode;
-			this.securityOpt = securityOpt;
-			this.devices = devices;
-			this.memory = memory;
-			this.memorySwap = memorySwap;
-			this.memorySwappiness = memorySwappiness;
-			this.memoryReservation = memoryReservation;
-			this.kernelMemory = kernelMemory;
-			this.nanoCpus = nanoCpus;
-			this.cpuPeriod = cpuPeriod;
-			this.cpuShares = cpuShares;
-			this.cpusetCpus = cpusetCpus;
-			this.cpusetMems = cpusetMems;
-			this.cpuQuota = cpuQuota;
-			this.cgroupParent = cgroupParent;
-			this.restartPolicy = restartPolicy;
-			this.logConfig = logConfig;
-			this.ipcMode = ipcMode;
-			this.ulimits = ulimits;
-			this.pidMode = pidMode;
-			this.shmSize = shmSize;
-			this.oomKillDisable = oomKillDisable;
-			this.oomScoreAdj = oomScoreAdj;
-			this.autoRemove = autoRemove;
-			this.pidsLimit = pidsLimit;
-			this.tmpfs = tmpfs;
-			this.readonlyRootfs = readonlyRootfs;
-			this.runtime = runtime;
-			this.storageOpt = storageOpt;
 		}
 
 		public Builder binds(String[] binds) {
@@ -532,6 +525,11 @@ public class HostConfig {
 			return Builder.this;
 		}
 
+		public Builder cpus(long cpus) {
+			this.nanoCpus = (long) (cpus * 10E9);
+			return Builder.this;
+		}
+		
 		public Builder cpuPeriod(long cpuPeriod) {
 			this.cpuPeriod = cpuPeriod;
 			return Builder.this;
@@ -636,59 +634,6 @@ public class HostConfig {
 
 			return new HostConfig(this);
 		}
-	}
-
-	private HostConfig(Builder builder) {
-		this.binds = builder.binds;
-		this.blkioWeight = builder.blkioWeight;
-		this.blkioWeightDevice = builder.blkioWeightDevice;
-		this.blkioDeviceReadBps = builder.blkioDeviceReadBps;
-		this.blkioDeviceWriteBps = builder.blkioDeviceWriteBps;
-		this.blkioDeviceReadIOps = builder.blkioDeviceReadIOps;
-		this.blkioDeviceWriteIOps = builder.blkioDeviceWriteIOps;
-		this.containerIdFile = builder.containerIdFile;
-		this.lxcConf = builder.lxcConf;
-		this.privileged = builder.privileged;
-		this.portBindings = builder.portBindings;
-		this.links = builder.links;
-		this.publishAllPorts = builder.publishAllPorts;
-		this.dns = builder.dns;
-		this.dnsOptions = builder.dnsOptions;
-		this.dnsSearch = builder.dnsSearch;
-		this.extraHosts = builder.extraHosts;
-		this.groupAdd = builder.groupAdd;
-		this.volumesFrom = builder.volumesFrom;
-		this.capAdd = builder.capAdd;
-		this.capDrop = builder.capDrop;
-		this.networkMode = builder.networkMode;
-		this.securityOpt = builder.securityOpt;
-		this.devices = builder.devices;
-		this.memory = builder.memory;
-		this.memorySwap = builder.memorySwap;
-		this.memorySwappiness = builder.memorySwappiness;
-		this.memoryReservation = builder.memoryReservation;
-		this.kernelMemory = builder.kernelMemory;
-		this.nanoCpus = builder.nanoCpus;
-		this.cpuPeriod = builder.cpuPeriod;
-		this.cpuShares = builder.cpuShares;
-		this.cpusetCpus = builder.cpusetCpus;
-		this.cpusetMems = builder.cpusetMems;
-		this.cpuQuota = builder.cpuQuota;
-		this.cgroupParent = builder.cgroupParent;
-		this.restartPolicy = builder.restartPolicy;
-		this.logConfig = builder.logConfig;
-		this.ipcMode = builder.ipcMode;
-		this.ulimits = builder.ulimits;
-		this.pidMode = builder.pidMode;
-		this.shmSize = builder.shmSize;
-		this.oomKillDisable = builder.oomKillDisable;
-		this.oomScoreAdj = builder.oomScoreAdj;
-		this.autoRemove = builder.autoRemove;
-		this.pidsLimit = builder.pidsLimit;
-		this.tmpfs = builder.tmpfs;
-		this.readonlyRootfs = builder.readonlyRootfs;
-		this.runtime = builder.runtime;
-		this.storageOpt = builder.storageOpt;
 	}
 
 	@Override

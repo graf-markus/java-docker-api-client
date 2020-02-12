@@ -90,8 +90,16 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public ContainerCreation createContainer(ContainerConfig config) throws DockerException {
-		HttpPost request = new HttpPost(
-				RequestBuilder.builder().setUrl(url).addPath("containers").addPath("create").build());
+		return createContainer(config, null);
+	}
+
+	@Override
+	public ContainerCreation createContainer(ContainerConfig config, String containerName) throws DockerException {
+		RequestBuilder builder = RequestBuilder.builder().setUrl(url).addPath("containers").addPath("create");
+		if(containerName != null) {
+			builder.addParameter("name", containerName);
+		}
+		HttpPost request = new HttpPost(builder.build());
 		try {
 			request.setHeader("Content-Type", "application/json");
 			request.setEntity(new StringEntity(gson.toJson(config)));
@@ -111,7 +119,7 @@ public class DockerClient implements IDockerClient {
 			throw new DockerException(e.getMessage(), statusCode);
 		}
 	}
-
+	
 	@Override
 	public TopResults topContainer(String containerId) throws DockerException {
 		return topContainer(containerId, null);
@@ -196,6 +204,17 @@ public class DockerClient implements IDockerClient {
 		}
 	}
 
+	@Override
+	public void runContainer(ContainerConfig config) throws DockerException {
+		this.runContainer(config, null);
+	}
+	
+	@Override
+	public void runContainer(ContainerConfig config, String containerName) throws DockerException {
+		ContainerCreation creation = this.createContainer(config, containerName);
+		this.startContainer(creation.getId());
+	}
+	
 	@Override
 	public void stopContainer(String containerId) throws DockerException {
 		this.stopContainer(containerId, 0);
