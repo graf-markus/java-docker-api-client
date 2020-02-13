@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.graf.docker.client.exceptions.DockerException;
 import com.graf.docker.client.models.Container;
+import com.graf.docker.client.models.ContainerChange;
 import com.graf.docker.client.models.ContainerConfig;
 import com.graf.docker.client.models.ContainerCreation;
 import com.graf.docker.client.models.ContainerInfo;
@@ -78,6 +79,15 @@ public interface IDockerClient {
 	 * @throws DockerException
 	 */
 	void exportContainer(String containerId) throws DockerException;
+
+	/**
+	 * Inespects the changes of the Filesystem of a Container.
+	 * 
+	 * @param containerId
+	 * @return
+	 * @throws DockerException
+	 */
+	List<ContainerChange> inspectContainerChanges(String containerId) throws DockerException;
 
 	/**
 	 * Lists resource usage of a Container

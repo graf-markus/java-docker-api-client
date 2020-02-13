@@ -35,6 +35,7 @@ import com.graf.docker.client.exceptions.ExceptionMessage;
 import com.graf.docker.client.interfaces.IContainerStatsListener;
 import com.graf.docker.client.interfaces.IDockerClient;
 import com.graf.docker.client.models.Container;
+import com.graf.docker.client.models.ContainerChange;
 import com.graf.docker.client.models.ContainerConfig;
 import com.graf.docker.client.models.ContainerCreation;
 import com.graf.docker.client.models.ContainerInfo;
@@ -117,6 +118,13 @@ public class DockerClient implements IDockerClient {
 		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("Containers").addPath(containerId)
 				.addPath("export").build());
 		execute(request, 200);
+	}
+
+	@Override
+	public List<ContainerChange> inspectContainerChanges(String containerId) throws DockerException {
+		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("Containers").addPath(containerId)
+				.addPath("changes").build());
+		return Arrays.asList(execute(request, 200, ContainerChange[].class));
 	}
 
 	@Override
