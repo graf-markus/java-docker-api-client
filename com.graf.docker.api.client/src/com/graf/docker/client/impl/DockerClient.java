@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.CharBuffer;
@@ -39,6 +40,8 @@ import com.graf.docker.client.models.ContainerChange;
 import com.graf.docker.client.models.ContainerConfig;
 import com.graf.docker.client.models.ContainerCreation;
 import com.graf.docker.client.models.ContainerInfo;
+import com.graf.docker.client.models.ContainerLog;
+import com.graf.docker.client.models.ContainerLogStream;
 import com.graf.docker.client.models.ContainerStats;
 import com.graf.docker.client.models.ContainerUpdate;
 import com.graf.docker.client.models.ContainersDeletedInfo;
@@ -46,6 +49,7 @@ import com.graf.docker.client.models.HostConfig;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.TopResults;
 import com.graf.docker.client.params.ListContainersParam;
+import com.graf.docker.client.params.LogsParam;
 import com.graf.docker.client.params.Param;
 import com.graf.docker.client.params.RemoveContainersParam;
 
@@ -70,13 +74,6 @@ public class DockerClient implements IDockerClient {
 	}
 
 	@Override
-	public ContainerInfo inspectContainer(String containerId) throws DockerException {
-		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("Containers").addPath(containerId)
-				.addPath("json").build());
-		return execute(request, 200, ContainerInfo.class);
-	}
-
-	@Override
 	public ContainerCreation createContainer(ContainerConfig config) throws DockerException {
 		return createContainer(config, null);
 	}
@@ -98,6 +95,13 @@ public class DockerClient implements IDockerClient {
 	}
 
 	@Override
+	public ContainerInfo inspectContainer(String containerId) throws DockerException {
+		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("Containers").addPath(containerId)
+				.addPath("json").build());
+		return execute(request, 200, ContainerInfo.class);
+	}
+
+	@Override
 	public TopResults topContainer(String containerId) throws DockerException {
 		return topContainer(containerId, null);
 	}
@@ -114,10 +118,51 @@ public class DockerClient implements IDockerClient {
 	}
 
 	@Override
-	public void exportContainer(String containerId) throws DockerException {
-		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("Containers").addPath(containerId)
-				.addPath("export").build());
-		execute(request, 200);
+	public ContainerLog logContainer(String containerId, LogsParam... param) throws DockerException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ContainerLogStream logContainerAsStream(String containerId, LogsParam... param) throws DockerException {
+		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
+				.addPath("logs").addParameters(param).build());
+		int statusCode = 0;
+		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
+			statusCode = response.getStatusLine().getStatusCode();
+			if (statusCode == 200) {
+				InputStream reader = response.getEntity().getContent();
+				int len = 0;
+				StringBuilder builder = new StringBuilder();
+				byte[] header = new byte[8];
+				reader.read(header);
+				byte[] size = new byte[4];
+				size[0] = header[4];
+				size[1] = header[5];
+				size[2] = header[6];
+				size[3] = header[7];
+				int sizeToRead = byteArrayToInt(size);
+				System.out.println(sizeToRead);
+				byte[] read = new byte[sizeToRead];
+				reader.read(read);
+				for(byte b : read) {
+					System.out.print((char) b);
+				}
+//				while ((len = reader.read(buffer)) != -1 && !Thread.currentThread().isInterrupted()) {
+//					System.out.println(buffer.flip().toString());
+//					builder.append(buffer.flip().toString());
+//					if (len < 1024) {
+//						System.out.println(builder.toString());
+//						builder.setLength(0);
+//					}
+//					buffer.clear();
+//				}
+			}
+			String jsonEntity = EntityUtils.toString(response.getEntity());
+			throw new DockerException(gson.fromJson(jsonEntity, ExceptionMessage.class).getMessage(), statusCode);
+		} catch (IOException e) {
+			throw new DockerException(e.getMessage(), statusCode);
+		}
 	}
 
 	@Override
@@ -125,6 +170,13 @@ public class DockerClient implements IDockerClient {
 		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("Containers").addPath(containerId)
 				.addPath("changes").build());
 		return Arrays.asList(execute(request, 200, ContainerChange[].class));
+	}
+
+	@Override
+	public void exportContainer(String containerId) throws DockerException {
+		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("Containers").addPath(containerId)
+				.addPath("export").build());
+		execute(request, 200);
 	}
 
 	@Override
@@ -155,26 +207,6 @@ public class DockerClient implements IDockerClient {
 		HttpPost request = new HttpPost(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
 				.addPath("start").build());
 		execute(request, 204);
-	}
-
-	@Override
-	public void stopStatContainerStream(String containerId) {
-		Thread t = getStatsThreadsMap().get(containerId);
-		if (t != null) {
-			t.interrupt();
-			getStatsThreadsMap().remove(containerId);
-		}
-	}
-
-	@Override
-	public void runContainer(ContainerConfig config) throws DockerException {
-		this.runContainer(config, null);
-	}
-
-	@Override
-	public void runContainer(ContainerConfig config, String containerName) throws DockerException {
-		ContainerCreation creation = this.createContainer(config, containerName);
-		this.startContainer(creation.getId());
 	}
 
 	@Override
@@ -282,6 +314,31 @@ public class DockerClient implements IDockerClient {
 		return execute(request, 200, ContainersDeletedInfo.class);
 	}
 
+	// ==================================================
+
+	@Override
+	public ContainerCreation runContainer(ContainerConfig config) throws DockerException {
+		return this.runContainer(config, null);
+	}
+
+	@Override
+	public ContainerCreation runContainer(ContainerConfig config, String containerName) throws DockerException {
+		ContainerCreation creation = this.createContainer(config, containerName);
+		this.startContainer(creation.getId());
+		return creation;
+	}
+
+	@Override
+	public void stopStatContainerStream(String containerId) {
+		Thread t = getStatsThreadsMap().get(containerId);
+		if (t != null) {
+			t.interrupt();
+			getStatsThreadsMap().remove(containerId);
+		}
+	}
+
+	// ==================================================
+
 	private void execute(HttpUriRequest request, int successStatusCode) throws DockerException {
 		int statusCode = 0;
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
@@ -319,6 +376,15 @@ public class DockerClient implements IDockerClient {
 			statsThreads = new ConcurrentHashMap<>();
 		}
 		return statsThreads;
+	}
+
+	public static int byteArrayToInt(byte[] b) {
+		if (b.length == 4)
+			return b[0] << 24 | (b[1] & 0xff) << 16 | (b[2] & 0xff) << 8 | (b[3] & 0xff);
+		else if (b.length == 2)
+			return 0x00 << 24 | 0x00 << 16 | (b[0] & 0xff) << 8 | (b[1] & 0xff);
+
+		return 0;
 	}
 
 	static class RequestBuilder {

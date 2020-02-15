@@ -62,4 +62,16 @@ public class LogConfig {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		return gson.toJson(this);
 	}
+	
+	public class LogConfigType { 
+		public static final String JSON_FILE = "json-file";
+		public static final String SYSLOG = "syslog";
+		public static final String JOURNALD = "journald";
+		public static final String GELF = "gelf";
+		public static final String FLUENTD = "fluentd";
+		public static final String AWSLOGS = "awslogs";
+		public static final String SPLUNK = "splunk";
+		public static final String ETWLOGS = "etwlogs";
+		public static final String NONE = "none";
+	}
 }

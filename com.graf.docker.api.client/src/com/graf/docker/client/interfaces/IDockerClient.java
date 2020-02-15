@@ -9,6 +9,8 @@ import com.graf.docker.client.models.ContainerChange;
 import com.graf.docker.client.models.ContainerConfig;
 import com.graf.docker.client.models.ContainerCreation;
 import com.graf.docker.client.models.ContainerInfo;
+import com.graf.docker.client.models.ContainerLog;
+import com.graf.docker.client.models.ContainerLogStream;
 import com.graf.docker.client.models.ContainerStats;
 import com.graf.docker.client.models.ContainerUpdate;
 import com.graf.docker.client.models.ContainersDeletedInfo;
@@ -16,9 +18,14 @@ import com.graf.docker.client.models.HostConfig;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.TopResults;
 import com.graf.docker.client.params.ListContainersParam;
+import com.graf.docker.client.params.LogsParam;
 import com.graf.docker.client.params.RemoveContainersParam;
 
 public interface IDockerClient {
+
+	// Docker API
+	// =========================================================================
+
 	/**
 	 * List all containers. Default only running ones
 	 */
@@ -54,7 +61,7 @@ public interface IDockerClient {
 
 	/**
 	 * List running Processes inside a Container. Only working on running ones.
-	 * DEfault ps args are -ef.
+	 * Default ps args are -ef.
 	 * 
 	 * @param containerId
 	 * @return TopResult
@@ -73,12 +80,24 @@ public interface IDockerClient {
 	TopResults topContainer(String containerId, String psargs) throws DockerException;
 
 	/**
-	 * Export the contents of a Container as a tarball.
+	 * Get stdout and stderr logs from a Container.
 	 * 
 	 * @param containerId
+	 * @param param
+	 * @return
 	 * @throws DockerException
 	 */
-	void exportContainer(String containerId) throws DockerException;
+	ContainerLog logContainer(String containerId, LogsParam... param) throws DockerException;
+	
+	/**
+	 * Get stdout and stderr logs as stream from a Container.
+	 * 
+	 * @param containerId
+	 * @param param
+	 * @return
+	 * @throws DockerException
+	 */
+	ContainerLogStream logContainerAsStream(String containerId, LogsParam... param) throws DockerException;
 
 	/**
 	 * Inespects the changes of the Filesystem of a Container.
@@ -88,6 +107,14 @@ public interface IDockerClient {
 	 * @throws DockerException
 	 */
 	List<ContainerChange> inspectContainerChanges(String containerId) throws DockerException;
+
+	/**
+	 * Export the contents of a Container as a tarball.
+	 * 
+	 * @param containerId
+	 * @throws DockerException
+	 */
+	void exportContainer(String containerId) throws DockerException;
 
 	/**
 	 * Lists resource usage of a Container
@@ -123,38 +150,6 @@ public interface IDockerClient {
 	 * @throws DockerException
 	 */
 	void startContainer(String containerId) throws DockerException;
-
-	/**
-	 * Creates a new Container and then starts the new created Container.<br>
-	 * <b>Attention!</b> if the Container already exists this Method throws an
-	 * error.<br>
-	 * Use the autoRemove option in ContainerConfig to delete the Container after
-	 * termination.
-	 * 
-	 * @param config
-	 * @throws DockerException
-	 */
-	void runContainer(ContainerConfig config) throws DockerException;
-
-	/**
-	 * Creates a new Container and then starts the new created Container.<br>
-	 * <b>Attention!</b> if the Container already exists this Method throws an
-	 * error.<br>
-	 * Use the autoRemove option in ContainerConfig to delete the Container after
-	 * termination.
-	 * 
-	 * @param config
-	 * @param containerName
-	 * @throws DockerException
-	 */
-	void runContainer(ContainerConfig config, String containerName) throws DockerException;
-
-	/**
-	 * Stops listening on stats of a Container
-	 * 
-	 * @param containerId
-	 */
-	void stopStatContainerStream(String containerId);
 
 	/**
 	 * Stops a Container with the given id or name.
@@ -273,10 +268,45 @@ public interface IDockerClient {
 	void extractToContainer(String containerId, String containerPath, String hostPath) throws DockerException;
 
 	/**
-	 * Deletes stopped Containers
+	 * Deletes stopped Containers.
 	 * 
 	 * @return ContainersDeletedInfo
 	 * @throws DockerException
 	 */
 	ContainersDeletedInfo deleteContainers() throws DockerException;
+
+	// Additionally Methods
+	// ===================================================================================
+
+	/**
+	 * Creates a new Container and then starts the new created Container.<br>
+	 * <b>Attention!</b> if the Container already exists this Method throws an
+	 * error.<br>
+	 * Use the autoRemove option in ContainerConfig to delete the Container after
+	 * termination.
+	 * 
+	 * @param config
+	 * @throws DockerException
+	 */
+	ContainerCreation runContainer(ContainerConfig config) throws DockerException;
+
+	/**
+	 * Creates a new Container and then starts the new created Container.<br>
+	 * <b>Attention!</b> if the Container already exists this Method throws an
+	 * error.<br>
+	 * Use the autoRemove option in ContainerConfig to delete the Container after
+	 * termination.
+	 * 
+	 * @param config
+	 * @param containerName
+	 * @throws DockerException
+	 */
+	ContainerCreation runContainer(ContainerConfig config, String containerName) throws DockerException;
+
+	/**
+	 * Stops listening on stats of a Container
+	 * 
+	 * @param containerId
+	 */
+	void stopStatContainerStream(String containerId);
 }
