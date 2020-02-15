@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -119,44 +120,33 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public ContainerLog logContainer(String containerId, LogsParam... param) throws DockerException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ContainerLogStream logContainerAsStream(String containerId, LogsParam... param) throws DockerException {
 		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
 				.addPath("logs").addParameters(param).build());
 		int statusCode = 0;
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
 			statusCode = response.getStatusLine().getStatusCode();
 			if (statusCode == 200) {
-				InputStream reader = response.getEntity().getContent();
+				InputStream stream = response.getEntity().getContent();
 				int len = 0;
-				StringBuilder builder = new StringBuilder();
 				byte[] header = new byte[8];
-				reader.read(header);
-				byte[] size = new byte[4];
-				size[0] = header[4];
-				size[1] = header[5];
-				size[2] = header[6];
-				size[3] = header[7];
-				int sizeToRead = byteArrayToInt(size);
-				System.out.println(sizeToRead);
-				byte[] read = new byte[sizeToRead];
-				reader.read(read);
-				for(byte b : read) {
-					System.out.print((char) b);
+				StringBuilder builder = new StringBuilder();
+				ContainerLog.Builder logBuilder = ContainerLog.builder();
+				while ((len = stream.read(header)) != -1) {
+					int sizeToRead = byteArrayToInt(new byte[] { header[4], header[5], header[6], header[7] });
+					byte[] read = new byte[sizeToRead];
+					stream.read(read);
+					for (byte b : read) {
+						builder.append((char) b);
+					}
+					if (header[0] == 1) {
+						logBuilder.addStdout(builder.toString());
+					} else if (header[0] == 2) {
+						logBuilder.addStderr(builder.toString());
+					}
+					header = new byte[8];
+					builder.setLength(0);
 				}
-//				while ((len = reader.read(buffer)) != -1 && !Thread.currentThread().isInterrupted()) {
-//					System.out.println(buffer.flip().toString());
-//					builder.append(buffer.flip().toString());
-//					if (len < 1024) {
-//						System.out.println(builder.toString());
-//						builder.setLength(0);
-//					}
-//					buffer.clear();
-//				}
+				return logBuilder.build();
 			}
 			String jsonEntity = EntityUtils.toString(response.getEntity());
 			throw new DockerException(gson.fromJson(jsonEntity, ExceptionMessage.class).getMessage(), statusCode);
@@ -289,6 +279,13 @@ public class DockerClient implements IDockerClient {
 		HttpDelete request = new HttpDelete(RequestBuilder.builder().setUrl(url).addPath("containers")
 				.addPath(containerId).addParameters(params).build());
 		execute(request, 204);
+	}
+
+	@Override
+	public void archiveContainer(String containerId, String path) throws DockerException {
+		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
+				.addPath("archive").addParameter("path", path).build());
+		execute(request, 200);
 	}
 
 	@Override

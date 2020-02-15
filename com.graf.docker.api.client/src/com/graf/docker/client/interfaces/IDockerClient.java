@@ -88,16 +88,6 @@ public interface IDockerClient {
 	 * @throws DockerException
 	 */
 	ContainerLog logContainer(String containerId, LogsParam... param) throws DockerException;
-	
-	/**
-	 * Get stdout and stderr logs as stream from a Container.
-	 * 
-	 * @param containerId
-	 * @param param
-	 * @return
-	 * @throws DockerException
-	 */
-	ContainerLogStream logContainerAsStream(String containerId, LogsParam... param) throws DockerException;
 
 	/**
 	 * Inespects the changes of the Filesystem of a Container.
@@ -257,6 +247,15 @@ public interface IDockerClient {
 	 * @throws DockerException
 	 */
 	void removeContainer(String containerId, RemoveContainersParam... params) throws DockerException;
+
+	/**
+	 * Get a tar archive of a resource in the filesystem of a Container.
+	 * 
+	 * @param containerId
+	 * @param path
+	 * @throws DockerException
+	 */
+	void archiveContainer(String containerId, String path) throws DockerException;
 
 	/**
 	 * Extracts an archive to a Container.
