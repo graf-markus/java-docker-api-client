@@ -8,9 +8,9 @@ import com.graf.docker.client.models.Container;
 import com.graf.docker.client.models.ContainerChange;
 import com.graf.docker.client.models.ContainerConfig;
 import com.graf.docker.client.models.ContainerCreation;
+import com.graf.docker.client.models.ContainerFileInfo;
 import com.graf.docker.client.models.ContainerInfo;
 import com.graf.docker.client.models.ContainerLog;
-import com.graf.docker.client.models.ContainerLogStream;
 import com.graf.docker.client.models.ContainerStats;
 import com.graf.docker.client.models.ContainerUpdate;
 import com.graf.docker.client.models.ContainersDeletedInfo;
@@ -247,6 +247,17 @@ public interface IDockerClient {
 	 * @throws DockerException
 	 */
 	void removeContainer(String containerId, RemoveContainersParam... params) throws DockerException;
+
+	/**
+	 * A response header X-Docker-Container-Path-Stat is return containing a base64
+	 * - encoded JSON object with some filesystem header information about the path.
+	 * 
+	 * @param containerId
+	 * @param path
+	 * @return
+	 * @throws DockerException
+	 */
+	ContainerFileInfo fileInfoContainer(String containerId, String path) throws DockerException;
 
 	/**
 	 * Get a tar archive of a resource in the filesystem of a Container.

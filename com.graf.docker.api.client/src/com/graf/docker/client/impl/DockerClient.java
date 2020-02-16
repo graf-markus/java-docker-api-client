@@ -10,15 +10,16 @@ import java.io.UnsupportedEncodingException;
 import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -40,9 +41,9 @@ import com.graf.docker.client.models.Container;
 import com.graf.docker.client.models.ContainerChange;
 import com.graf.docker.client.models.ContainerConfig;
 import com.graf.docker.client.models.ContainerCreation;
+import com.graf.docker.client.models.ContainerFileInfo;
 import com.graf.docker.client.models.ContainerInfo;
 import com.graf.docker.client.models.ContainerLog;
-import com.graf.docker.client.models.ContainerLogStream;
 import com.graf.docker.client.models.ContainerStats;
 import com.graf.docker.client.models.ContainerUpdate;
 import com.graf.docker.client.models.ContainersDeletedInfo;
@@ -135,9 +136,7 @@ public class DockerClient implements IDockerClient {
 					int sizeToRead = byteArrayToInt(new byte[] { header[4], header[5], header[6], header[7] });
 					byte[] read = new byte[sizeToRead];
 					stream.read(read);
-					for (byte b : read) {
-						builder.append((char) b);
-					}
+					builder.append(new String(read));
 					if (header[0] == 1) {
 						logBuilder.addStdout(builder.toString());
 					} else if (header[0] == 2) {
@@ -282,6 +281,26 @@ public class DockerClient implements IDockerClient {
 	}
 
 	@Override
+	public ContainerFileInfo fileInfoContainer(String containerId, String path) throws DockerException {
+		HttpHead request = new HttpHead(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
+				.addPath("archive").addParameter("path", path).build());
+		int statusCode = 0;
+		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
+			statusCode = response.getStatusLine().getStatusCode();
+			String header = response.getHeaders("X-Docker-Container-Path-Stat")[0].getValue();
+			byte[] decodedBytes = Base64.getDecoder().decode(header);
+			String decodedString = new String(decodedBytes);
+			if (statusCode == 200) {
+				return gson.fromJson(decodedString, ContainerFileInfo.class);
+			}
+			String jsonEntity = EntityUtils.toString(response.getEntity());
+			throw new DockerException(gson.fromJson(jsonEntity, ExceptionMessage.class).getMessage(), statusCode);
+		} catch (Exception e) {
+			throw new DockerException(e.getMessage(), statusCode);
+		}
+	}
+
+	@Override
 	public void archiveContainer(String containerId, String path) throws DockerException {
 		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
 				.addPath("archive").addParameter("path", path).build());
@@ -359,7 +378,7 @@ public class DockerClient implements IDockerClient {
 				return gson.fromJson(jsonEntity, returnClazz);
 			}
 			throw new DockerException(gson.fromJson(jsonEntity, ExceptionMessage.class).getMessage(), statusCode);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw new DockerException(e.getMessage(), statusCode);
 		}
 	}
@@ -464,10 +483,10 @@ public class DockerClient implements IDockerClient {
 					InputStreamReader reader = new InputStreamReader(response.getEntity().getContent());
 					int len = 0;
 					StringBuilder builder = new StringBuilder();
-					CharBuffer buffer = CharBuffer.allocate(1024);
-					while ((len = reader.read(buffer)) != -1 && !Thread.currentThread().isInterrupted()) {
+					CharBuffer buffer = CharBuffer.allocate(4096);
+					while (((len = reader.read(buffer)) != -1) && !Thread.currentThread().isInterrupted()) {
 						builder.append(buffer.flip().toString());
-						if (len < 1024) {
+						if (len < 4096) {
 							ContainerStats stats = gson.fromJson(builder.toString(), ContainerStats.class);
 							listener.onContainerStatsReceived(stats);
 							builder.setLength(0);
