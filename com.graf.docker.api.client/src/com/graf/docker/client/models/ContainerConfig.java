@@ -1,6 +1,7 @@
 package com.graf.docker.client.models;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -285,6 +286,11 @@ public class ContainerConfig {
 			return Builder.this;
 		}
 
+		public Builder cmd(String... cmd) {
+			this.cmd = Arrays.asList(cmd);
+			return Builder.this;
+		}
+		
 		public Builder addCmd(String cmd) {
 			if (this.cmd == null) {
 				this.cmd = new ArrayList<>();

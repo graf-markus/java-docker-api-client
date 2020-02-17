@@ -99,7 +99,7 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public ContainerInfo inspectContainer(String containerId) throws DockerException {
-		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("Containers").addPath(containerId)
+		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
 				.addPath("json").build());
 		return execute(request, 200, ContainerInfo.class);
 	}
@@ -367,6 +367,12 @@ public class DockerClient implements IDockerClient {
 		}
 	}
 
+	@Override
+	public void stopAndRemoveContainer(String containerId) throws DockerException {
+		this.stopContainer(containerId);
+		this.removeContainer(containerId);
+	}
+	
 	// ==================================================
 
 	private void execute(HttpUriRequest request, int successStatusCode) throws DockerException {

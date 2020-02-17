@@ -329,4 +329,6 @@ public interface IDockerClient {
 	 * @param containerId
 	 */
 	void stopStatContainerStream(String containerId);
+	
+	void stopAndRemoveContainer(String containerId) throws DockerException;
 }

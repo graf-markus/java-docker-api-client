@@ -231,8 +231,8 @@ public class HostConfig {
 		return nanoCpus;
 	}
 
-	public long cpus(long cpus) {
-		return (long) (nanoCpus / 10E9);
+	public float cpus(float cpus) {
+		return (float) (nanoCpus / 10E8);
 	}
 
 	public long getCpuPeriod() {
@@ -525,8 +525,8 @@ public class HostConfig {
 			return Builder.this;
 		}
 
-		public Builder cpus(long cpus) {
-			this.nanoCpus = (long) (cpus * 10E9);
+		public Builder cpus(float f) {
+			this.nanoCpus = (long) (f * 10E8);
 			return Builder.this;
 		}
 		
