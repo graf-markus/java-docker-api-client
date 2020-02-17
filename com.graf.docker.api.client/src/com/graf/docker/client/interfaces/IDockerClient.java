@@ -8,6 +8,7 @@ import com.graf.docker.client.models.Container;
 import com.graf.docker.client.models.ContainerChange;
 import com.graf.docker.client.models.ContainerConfig;
 import com.graf.docker.client.models.ContainerCreation;
+import com.graf.docker.client.models.ContainerExit;
 import com.graf.docker.client.models.ContainerFileInfo;
 import com.graf.docker.client.models.ContainerInfo;
 import com.graf.docker.client.models.ContainerLog;
@@ -90,7 +91,7 @@ public interface IDockerClient {
 	ContainerLog logContainer(String containerId, LogsParam... param) throws DockerException;
 
 	/**
-	 * Inespects the changes of the Filesystem of a Container.
+	 * Inspects the changes of the Filesystem of a Container.
 	 * 
 	 * @param containerId
 	 * @return
@@ -240,6 +241,16 @@ public interface IDockerClient {
 	void unpauseContainer(String containerId) throws DockerException;
 
 	/**
+	 * Block until a container stops, then returns the exit code.<br>
+	 * <b>Attention</b> Blocking Call
+	 * 
+	 * @param containerId
+	 * @return
+	 * @throws DockerException
+	 */
+	ContainerExit waitForContainer(String containerId) throws DockerException;
+
+	/**
 	 * Removes a Container with the given id or name.
 	 * 
 	 * @param containerId
@@ -249,8 +260,7 @@ public interface IDockerClient {
 	void removeContainer(String containerId, RemoveContainersParam... params) throws DockerException;
 
 	/**
-	 * A response header X-Docker-Container-Path-Stat is return containing a base64
-	 * - encoded JSON object with some filesystem header information about the path.
+	 * Get Metadata of a given file or folder in a Container.
 	 * 
 	 * @param containerId
 	 * @param path

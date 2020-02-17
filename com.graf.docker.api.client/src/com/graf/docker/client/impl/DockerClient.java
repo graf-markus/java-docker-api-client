@@ -41,6 +41,7 @@ import com.graf.docker.client.models.Container;
 import com.graf.docker.client.models.ContainerChange;
 import com.graf.docker.client.models.ContainerConfig;
 import com.graf.docker.client.models.ContainerCreation;
+import com.graf.docker.client.models.ContainerExit;
 import com.graf.docker.client.models.ContainerFileInfo;
 import com.graf.docker.client.models.ContainerInfo;
 import com.graf.docker.client.models.ContainerLog;
@@ -271,6 +272,19 @@ public class DockerClient implements IDockerClient {
 		HttpPost request = new HttpPost(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
 				.addPath("unpause").build());
 		execute(request, 204);
+	}
+
+	@Override
+	public ContainerExit waitForContainer(String containerId) throws DockerException {
+		HttpPost request = new HttpPost(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
+				.addPath("wait").build());
+		int statusCode = 0;
+		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
+			statusCode = response.getStatusLine().getStatusCode();
+			return gson.fromJson(new String(response.getEntity().getContent().readAllBytes()), ContainerExit.class);
+		} catch (Exception e) {
+			throw new DockerException(e.getMessage(), statusCode);
+		}
 	}
 
 	@Override
