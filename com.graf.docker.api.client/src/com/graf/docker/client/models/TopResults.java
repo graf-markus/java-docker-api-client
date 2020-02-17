@@ -1,18 +1,20 @@
 package com.graf.docker.client.models;
 
+import java.util.List;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class TopResults {
 
-	private String[] titles;
-	private String[] processes;
+	private List<String> titles;
+	private List<List<String>> processes;
 
-	public String[] getTitles() {
+	public List<String> getTitles() {
 		return titles;
 	}
 
-	public String[] getProcesses() {
+	public List<List<String>> getProcesses() {
 		return processes;
 	}
 

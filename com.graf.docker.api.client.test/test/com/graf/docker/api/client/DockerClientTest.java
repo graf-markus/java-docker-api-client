@@ -18,10 +18,14 @@ import com.graf.docker.client.models.Container;
 import com.graf.docker.client.models.ContainerConfig;
 import com.graf.docker.client.models.ContainerCreation;
 import com.graf.docker.client.models.ContainerInfo;
+import com.graf.docker.client.models.ContainerLog;
 import com.graf.docker.client.models.ContainerUpdate;
 import com.graf.docker.client.models.HostConfig;
 import com.graf.docker.client.models.KillSignal;
+import com.graf.docker.client.models.TopResults;
 import com.graf.docker.client.params.ListContainersParam;
+import com.graf.docker.client.params.LogsParam;
+import com.graf.docker.client.params.RemoveContainersParam;
 
 public class DockerClientTest {
 
@@ -43,6 +47,10 @@ public class DockerClientTest {
 
 	@After
 	public void tearDown() throws Exception {
+		List<Container> containers = docker.listContainers(ListContainersParam.allContainers());
+		for(Container c : containers) {
+			docker.removeContainer(c.getId(),RemoveContainersParam.force());
+		}
 	}
 
 	@Test
@@ -53,11 +61,6 @@ public class DockerClientTest {
 	@Test
 	public void testListContainers() throws DockerException {
 		List<Container> containers = docker.listContainers(ListContainersParam.allContainers());
-		
-		for(Container c : containers) {
-			System.out.println(c);
-		}
-		
 		assertEquals(true, containers.isEmpty());
 		
 		ContainerCreation creation = docker.createContainer(config);
@@ -70,36 +73,76 @@ public class DockerClientTest {
 	}
 
 	@Test
-	public void testCreateContainerContainerConfig() {
-		fail("Not yet implemented");
+	public void testCreateContainerContainerConfig() throws DockerException {
+		ContainerCreation creation = docker.createContainer(config);
+		List<Container> containers = docker.listContainers(ListContainersParam.allContainers());
+		assertTrue(containers.size() > 0);
+		
+		assertEquals(creation.getId(), containers.get(0).getId());
 	}
 
 	@Test
-	public void testCreateContainerContainerConfigString() {
-		fail("Not yet implemented");
+	public void testCreateContainerContainerConfigString() throws DockerException {
+		ContainerCreation creation = docker.createContainer(config, "test-container-name");
+		List<Container> containers = docker.listContainers(ListContainersParam.allContainers());
+		assertTrue(containers.size() > 0);
+		
+		assertEquals(creation.getId(), containers.get(0).getId());
+		// Docker Engine prepends / before Names
+		assertEquals("/test-container-name", containers.get(0).getNames()[0]);
 	}
 
 	@Test
 	public void testInspectContainer() throws DockerException {
-
-		ContainerInfo info = docker.inspectContainer("f3c43e73d558");
-
-		fail("Not yet implemented");
+		ContainerCreation creation = docker.createContainer(config);
+		ContainerInfo info = docker.inspectContainer(creation.getId());
+		assertNotNull(info);
 	}
 
 	@Test
-	public void testTopContainerString() {
-		fail("Not yet implemented");
+	public void testTopContainerString() throws DockerException {
+		ContainerCreation creation = docker.createContainer(config);
+		String containerId = creation.getId();
+		docker.startContainer(containerId);
+
+		ContainerInfo info = docker.inspectContainer(containerId);
+		assertEquals(true, info.getState().isRunning());
+		
+		TopResults top = docker.topContainer(containerId);
+		assertTrue(top.getProcesses().get(0).contains("sh -c while :; do sleep 1; done"));
+		
+		docker.stopContainer(containerId);
 	}
 
 	@Test
-	public void testTopContainerStringString() {
-		fail("Not yet implemented");
+	public void testTopContainerStringString() throws DockerException {
+		ContainerCreation creation = docker.createContainer(config);
+		String containerId = creation.getId();
+		docker.startContainer(containerId);
+
+		ContainerInfo info = docker.inspectContainer(containerId);
+		assertEquals(true, info.getState().isRunning());
+		
+		TopResults top = docker.topContainer(containerId, "aux");
+		assertTrue(top.getProcesses().get(0).contains("sh -c while :; do sleep 1; done"));
+		
+		docker.stopContainer(containerId);
 	}
 
 	@Test
-	public void testLogContainer() {
-		fail("Not yet implemented");
+	public void testLogContainer() throws DockerException {
+		ContainerCreation creation = docker.createContainer(config);
+		String containerId = creation.getId();
+		docker.startContainer(containerId);
+
+		ContainerInfo info = docker.inspectContainer(containerId);
+		assertEquals(true, info.getState().isRunning());
+		
+		ContainerLog log = docker.logContainer(containerId, LogsParam.stdout(), LogsParam.stderr());
+		assertTrue(log.getStderrLogs().isEmpty());
+		assertTrue(log.getStdoutLogs().isEmpty());
+		
+		docker.stopContainer(containerId);
 	}
 
 	@Test
@@ -139,7 +182,6 @@ public class DockerClientTest {
 		docker.startContainer(containerId);
 
 		ContainerInfo info = docker.inspectContainer(containerId);
-
 		assertEquals(true, info.getState().isRunning());
 
 		docker.stopContainer(containerId);

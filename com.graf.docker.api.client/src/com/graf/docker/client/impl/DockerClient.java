@@ -116,7 +116,7 @@ public class DockerClient implements IDockerClient {
 			builder.addParameter("ps_args", psargs);
 		}
 		HttpGet request = new HttpGet(
-				builder.setUrl(url).addPath("container").addPath(containerId).addPath("top").build());
+				builder.setUrl(url).addPath("containers").addPath(containerId).addPath("top").build());
 		return execute(request, 200, TopResults.class);
 	}
 
