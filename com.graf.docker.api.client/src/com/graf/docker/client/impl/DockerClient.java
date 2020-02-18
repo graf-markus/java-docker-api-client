@@ -157,16 +157,31 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public List<ContainerChange> inspectContainerChanges(String containerId) throws DockerException {
-		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("Containers").addPath(containerId)
+		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
 				.addPath("changes").build());
-		return Arrays.asList(execute(request, 200, ContainerChange[].class));
+		ContainerChange[] changes = execute(request, 200, ContainerChange[].class);
+		if(changes != null) {
+			return Arrays.asList(changes);
+		}
+		return new ArrayList<>();
 	}
 
 	@Override
-	public void exportContainer(String containerId) throws DockerException {
-		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("Containers").addPath(containerId)
+	public String exportContainer(String containerId) throws DockerException {
+		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
 				.addPath("export").build());
-		execute(request, 200);
+		int statusCode = 0;
+		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
+			statusCode = response.getStatusLine().getStatusCode();
+			if (statusCode == 200) {
+				String binaryString = EntityUtils.toString(response.getEntity());
+				return binaryString;
+			}
+			String jsonEntity = EntityUtils.toString(response.getEntity());
+			throw new DockerException(gson.fromJson(jsonEntity, ExceptionMessage.class).getMessage(), statusCode);
+		} catch (IOException e) {
+			throw new DockerException(e.getMessage(), statusCode);
+		}
 	}
 
 	@Override

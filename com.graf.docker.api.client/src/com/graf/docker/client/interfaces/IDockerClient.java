@@ -101,11 +101,11 @@ public interface IDockerClient {
 
 	/**
 	 * Export the contents of a Container as a tarball.
-	 * 
 	 * @param containerId
+	 * @return String with the binary data
 	 * @throws DockerException
 	 */
-	void exportContainer(String containerId) throws DockerException;
+	String exportContainer(String containerId) throws DockerException;
 
 	/**
 	 * Lists resource usage of a Container

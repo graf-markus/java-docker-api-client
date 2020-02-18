@@ -2,6 +2,12 @@ package com.graf.docker.api.client;
 
 import static org.junit.Assert.*;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -15,10 +21,12 @@ import com.graf.docker.client.builder.DockerClientBuilder;
 import com.graf.docker.client.exceptions.DockerException;
 import com.graf.docker.client.interfaces.IDockerClient;
 import com.graf.docker.client.models.Container;
+import com.graf.docker.client.models.ContainerChange;
 import com.graf.docker.client.models.ContainerConfig;
 import com.graf.docker.client.models.ContainerCreation;
 import com.graf.docker.client.models.ContainerInfo;
 import com.graf.docker.client.models.ContainerLog;
+import com.graf.docker.client.models.ContainerStats;
 import com.graf.docker.client.models.ContainerUpdate;
 import com.graf.docker.client.models.HostConfig;
 import com.graf.docker.client.models.KillSignal;
@@ -54,11 +62,6 @@ public class DockerClientTest {
 	}
 
 	@Test
-	public void testDockerClient() {
-		fail("Not yet implemented");
-	}
-
-	@Test
 	public void testListContainers() throws DockerException {
 		List<Container> containers = docker.listContainers(ListContainersParam.allContainers());
 		assertEquals(true, containers.isEmpty());
@@ -88,7 +91,7 @@ public class DockerClientTest {
 		assertTrue(containers.size() > 0);
 		
 		assertEquals(creation.getId(), containers.get(0).getId());
-		// Docker Engine prepends / before Names
+		// Docker Engine adds / before Names
 		assertEquals("/test-container-name", containers.get(0).getNames()[0]);
 	}
 
@@ -131,6 +134,8 @@ public class DockerClientTest {
 
 	@Test
 	public void testLogContainer() throws DockerException {
+		ContainerConfig config = ContainerConfig.builder().image("ubuntu")
+				.cmd("sh", "-c", "while :; do echo test; sleep 1; done").build();
 		ContainerCreation creation = docker.createContainer(config);
 		String containerId = creation.getId();
 		docker.startContainer(containerId);
@@ -140,24 +145,54 @@ public class DockerClientTest {
 		
 		ContainerLog log = docker.logContainer(containerId, LogsParam.stdout(), LogsParam.stderr());
 		assertTrue(log.getStderrLogs().isEmpty());
-		assertTrue(log.getStdoutLogs().isEmpty());
+		assertTrue(!log.getStdoutLogs().isEmpty());
 		
 		docker.stopContainer(containerId);
 	}
 
 	@Test
-	public void testInspectContainerChanges() {
-		fail("Not yet implemented");
+	public void testInspectContainerChanges() throws DockerException {
+		ContainerConfig config = ContainerConfig.builder().image("ubuntu")
+				.cmd("sh", "-c", "touch test.txt").build();
+		ContainerCreation creation = docker.createContainer(config);
+		String containerId = creation.getId();
+		docker.startContainer(containerId);
+
+		ContainerInfo info = docker.inspectContainer(containerId);
+		assertEquals(true, info.getState().isRunning());
+		
+		List<ContainerChange> changes = docker.inspectContainerChanges(containerId);
+		assertTrue(changes.size() > 0);
+		assertTrue(changes.get(0).getKind() == ContainerChange.ADDED);
 	}
 
 	@Test
-	public void testExportContainer() {
-		fail("Not yet implemented");
+	public void testExportContainer() throws DockerException, IOException {
+		ContainerCreation creation = docker.createContainer(config);
+		String containerId = creation.getId();
+		
+		String binary = docker.exportContainer(containerId);
+		
+		BufferedWriter writer = new BufferedWriter(new FileWriter(new File("/home/markus/export.tar.gz")));
+		writer.write(binary);
+		
+		assertTrue(Files.exists(Paths.get("/home/markus/export.tar.gz")));
+		assertTrue(Files.size(Paths.get("/home/markus/export.tar.gz")) > 0);
+		
+		Files.delete(Paths.get("/home/markus/export.tar.gz"));
+		
 	}
 
 	@Test
-	public void testStatContainer() {
-		fail("Not yet implemented");
+	public void testStatContainer() throws DockerException {
+		ContainerCreation creation = docker.createContainer(config);
+		String containerId = creation.getId();
+		docker.startContainer(containerId);
+
+		ContainerInfo info = docker.inspectContainer(containerId);
+		assertEquals(true, info.getState().isRunning());
+		
+		ContainerStats stats = docker.statContainer(containerId);
 	}
 
 	@Test
