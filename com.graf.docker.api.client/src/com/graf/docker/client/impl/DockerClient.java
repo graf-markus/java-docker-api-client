@@ -160,7 +160,7 @@ public class DockerClient implements IDockerClient {
 		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
 				.addPath("changes").build());
 		ContainerChange[] changes = execute(request, 200, ContainerChange[].class);
-		if(changes != null) {
+		if (changes != null) {
 			return Arrays.asList(changes);
 		}
 		return new ArrayList<>();
@@ -202,10 +202,10 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public void resizeTTYContainer(String containerId, int height, int width) throws DockerException {
-		HttpGet request = new HttpGet(
+		HttpPost request = new HttpPost(
 				RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId).addPath("resize")
 						.addParameter("h", String.valueOf(height)).addParameter("w", String.valueOf(width)).build());
-		execute(request, 200);
+		execute(request, 200, String.class);
 	}
 
 	public void startContainer(String containerId) throws DockerException {
@@ -387,7 +387,7 @@ public class DockerClient implements IDockerClient {
 		this.stopContainer(containerId);
 		this.removeContainer(containerId);
 	}
-	
+
 	// ==================================================
 
 	private void execute(HttpUriRequest request, int successStatusCode) throws DockerException {

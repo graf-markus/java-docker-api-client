@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -19,6 +20,7 @@ import org.junit.Test;
 
 import com.graf.docker.client.builder.DockerClientBuilder;
 import com.graf.docker.client.exceptions.DockerException;
+import com.graf.docker.client.interfaces.IContainerStatsListener;
 import com.graf.docker.client.interfaces.IDockerClient;
 import com.graf.docker.client.models.Container;
 import com.graf.docker.client.models.ContainerChange;
@@ -193,21 +195,62 @@ public class DockerClientTest {
 		assertEquals(true, info.getState().isRunning());
 		
 		ContainerStats stats = docker.statContainer(containerId);
+		
+		assertNotEquals(stats, null);
 	}
 
 	@Test
-	public void testStatContainerStream() {
-		fail("Not yet implemented");
+	public void testStatContainerStream() throws DockerException, InterruptedException {
+		
+		ContainerCreation creation = docker.createContainer(config);
+		String containerId = creation.getId();
+		docker.startContainer(containerId);
+
+		ContainerInfo info = docker.inspectContainer(containerId);
+		assertEquals(true, info.getState().isRunning());
+		
+		docker.statContainerStream(containerId, new IContainerStatsListener() {
+			
+			@Override
+			public void onContainerStatsReceived(ContainerStats stats) {
+				assertNotEquals(null, stats);
+			}
+			
+			@Override
+			public void onClosed(int statusCode, String message) {
+				assertEquals(200, statusCode);
+			}
+		});
+		
+		Thread.sleep(5000);
+		
+		docker.stopStatContainerStream(containerId);
 	}
 
 	@Test
-	public void testResizeTTYContainer() {
-		fail("Not yet implemented");
+	public void testResizeTTYContainer() throws DockerException {
+		ContainerCreation creation = docker.createContainer(config);
+		String containerId = creation.getId();
+		docker.startContainer(containerId);
+
+		ContainerInfo info = docker.inspectContainer(containerId);
+		assertEquals(true, info.getState().isRunning());
+		
+		docker.resizeTTYContainer(containerId, 55, 55);
+		
+		docker.stopContainer(containerId);
 	}
 
 	@Test
-	public void testStartContainer() {
-		fail("Not yet implemented");
+	public void testStartContainer() throws DockerException {
+		ContainerCreation creation = docker.createContainer(config);
+		String containerId = creation.getId();
+		docker.startContainer(containerId);
+
+		ContainerInfo info = docker.inspectContainer(containerId);
+		assertEquals(true, info.getState().isRunning());
+		
+		docker.stopContainer(containerId);
 	}
 
 	@Test
