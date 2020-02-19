@@ -1,4 +1,5 @@
 # Java Docker API Client
+[![Build Status](https://travis-ci.org/graf-markus/java-docker-api-client.svg?branch=master)](https://travis-ci.org/graf-markus/java-docker-api-client)
 ## Status: Work in Progress
 
 A Docker Engine API implementation written in Java as a OSGi Component.
