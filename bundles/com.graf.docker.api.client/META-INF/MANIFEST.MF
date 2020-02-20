@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Docker-client
+Bundle-Name: Java Docker API Client
 Bundle-SymbolicName: com.graf.docker.api.client
 Bundle-Version: 1.0.0
 Bundle-Vendor: GRAF
@@ -12,6 +12,6 @@ Export-Package: com.graf.docker.client.builder,
  com.graf.docker.client.interfaces,
  com.graf.docker.client.models,
  com.graf.docker.client.params
-Require-Bundle: com.google.gson,
- org.apache.httpcomponents.httpcore,
- org.apache.httpcomponents.httpclient
+Require-Bundle: org.apache.httpcomponents.httpcore,
+ org.apache.httpcomponents.httpclient,
+ com.google.gson

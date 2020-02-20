@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Test
+Bundle-Name: Java Docker API Client Test
 Bundle-SymbolicName: com.graf.docker.api.client.test
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: GRAF

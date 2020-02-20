@@ -296,7 +296,9 @@ public class DockerClient implements IDockerClient {
 		int statusCode = 0;
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
 			statusCode = response.getStatusLine().getStatusCode();
-			return gson.fromJson(new String(response.getEntity().getContent().readAllBytes()), ContainerExit.class);
+			byte[] bytes = new byte[4096];
+			int read = response.getEntity().getContent().read(bytes);
+			return gson.fromJson(new String(bytes, 0, read - 1), ContainerExit.class);
 		} catch (Exception e) {
 			throw new DockerException(e.getMessage(), statusCode);
 		}
