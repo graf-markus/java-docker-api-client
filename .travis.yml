@@ -2,10 +2,4 @@ language: java
 jdk:
   - openjdk8
 
-sudo: true
-
-before_script:
-  - sudo systemctl stop docker
-  - sudo dockerd -H localhost
-
 script: mvn clean verify
