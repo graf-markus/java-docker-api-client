@@ -2,16 +2,16 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Docker-client
 Bundle-SymbolicName: com.graf.docker.api.client
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.0
 Bundle-Vendor: GRAF
 Automatic-Module-Name: com.graf.docker.api.client
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.apache.httpcomponents.httpclient;bundle-version="4.5.6",
- org.apache.httpcomponents.httpcore;bundle-version="4.4.10",
- com.google.gson;bundle-version="2.8.2"
 Bundle-ActivationPolicy: lazy
 Export-Package: com.graf.docker.client.builder,
  com.graf.docker.client.exceptions,
  com.graf.docker.client.interfaces,
  com.graf.docker.client.models,
  com.graf.docker.client.params
+Require-Bundle: com.google.gson,
+ org.apache.httpcomponents.httpcore,
+ org.apache.httpcomponents.httpclient
