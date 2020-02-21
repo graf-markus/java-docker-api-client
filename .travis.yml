@@ -16,6 +16,7 @@ install: true
 before-script:
   - sudo systemctl stop docker
   - sudo dockerd -H tcp://localhost:2375 -H unix:///var/run/docker.sock &
+  - sudo docker pull ubuntu
 
 script:
   - mvn clean verify -Pjacoco coveralls:report
