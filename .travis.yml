@@ -4,10 +4,9 @@ jdk:
 
 cache:
   directories:
-  - .autoconf
   - $HOME/.m2
 
-script: mvn clean verify
+install: true
 
-after_success:
-  - mvn clean test jacoco:report coveralls:report
+script:
+  - mvn clean verify -Pjacoco coveralls:report

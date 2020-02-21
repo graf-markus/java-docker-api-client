@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Java Docker API Client
 Bundle-SymbolicName: com.graf.docker.api.client
-Bundle-Version: 1.0.0
+Bundle-Version: 0.0.1.qualifier
 Bundle-Vendor: GRAF
 Automatic-Module-Name: com.graf.docker.api.client
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

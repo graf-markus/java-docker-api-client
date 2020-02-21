@@ -48,7 +48,7 @@ public class DockerClientTest {
 		}
 	}
 
-	@Ignore
+	
 	@Test
 	public void testListContainers() throws DockerException {
 		List<Container> containers = docker.listContainers(ListContainersParam.allContainers());
@@ -63,7 +63,7 @@ public class DockerClientTest {
 		docker.removeContainer(containerId);
 	}
 
-	@Ignore
+	
 	@Test
 	public void testCreateContainerContainerConfig() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -73,7 +73,7 @@ public class DockerClientTest {
 		assertEquals(creation.getId(), containers.get(0).getId());
 	}
 
-	@Ignore
+	
 	@Test
 	public void testCreateContainerContainerConfigString() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config, "test-container-name");
@@ -85,7 +85,7 @@ public class DockerClientTest {
 		assertEquals("/test-container-name", containers.get(0).getNames()[0]);
 	}
 
-	@Ignore
+	
 	@Test
 	public void testInspectContainer() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -93,7 +93,7 @@ public class DockerClientTest {
 		assertNotNull(info);
 	}
 
-	@Ignore
+	
 	@Test
 	public void testTopContainerString() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -109,7 +109,7 @@ public class DockerClientTest {
 		docker.stopContainer(containerId);
 	}
 
-	@Ignore
+	
 	@Test
 	public void testTopContainerStringString() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -125,7 +125,7 @@ public class DockerClientTest {
 		docker.stopContainer(containerId);
 	}
 
-	@Ignore
+	
 	@Test
 	public void testLogContainer() throws DockerException {
 		ContainerConfig config = ContainerConfig.builder().image("ubuntu")
@@ -144,7 +144,7 @@ public class DockerClientTest {
 		docker.stopContainer(containerId);
 	}
 
-	@Ignore
+	
 	@Test
 	public void testInspectContainerChanges() throws DockerException {
 		ContainerConfig config = ContainerConfig.builder().image("ubuntu").cmd("sh", "-c", "touch test.txt").build();
@@ -160,7 +160,7 @@ public class DockerClientTest {
 		assertTrue(changes.get(0).getKind() == ContainerChange.ADDED);
 	}
 
-	@Ignore
+	
 	@Test
 	public void testExportContainer() throws DockerException, IOException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -178,7 +178,7 @@ public class DockerClientTest {
 
 	}
 
-	@Ignore
+	
 	@Test
 	public void testStatContainer() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -193,7 +193,7 @@ public class DockerClientTest {
 		assertNotEquals(stats, null);
 	}
 
-	@Ignore
+	
 	@Test
 	public void testStatContainerStream() throws DockerException, InterruptedException {
 
@@ -222,7 +222,7 @@ public class DockerClientTest {
 		docker.stopStatContainerStream(containerId);
 	}
 
-	@Ignore
+	
 	@Test
 	public void testResizeTTYContainer() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -237,7 +237,7 @@ public class DockerClientTest {
 		docker.stopContainer(containerId);
 	}
 
-	@Ignore
+	
 	@Test
 	public void testStartContainer() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -250,7 +250,7 @@ public class DockerClientTest {
 		docker.stopContainer(containerId);
 	}
 
-	@Ignore
+	
 	@Test
 	public void testStopContainerString() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -268,7 +268,7 @@ public class DockerClientTest {
 		docker.removeContainer(containerId);
 	}
 
-	@Ignore
+	
 	@Test
 	public void testStopContainerStringInt() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -287,7 +287,7 @@ public class DockerClientTest {
 		docker.removeContainer(containerId);
 	}
 
-	@Ignore
+	
 	@Test
 	public void testStopContainerStringIntTimeUnit() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -306,7 +306,7 @@ public class DockerClientTest {
 		docker.removeContainer(containerId);
 	}
 
-	@Ignore
+	
 	@Test
 	public void testRestartContainerString() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -324,7 +324,7 @@ public class DockerClientTest {
 		docker.stopAndRemoveContainer(containerId);
 	}
 
-	@Ignore
+	
 	@Test
 	public void testRestartContainerStringInt() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -342,7 +342,7 @@ public class DockerClientTest {
 		docker.stopAndRemoveContainer(containerId);
 	}
 
-	@Ignore
+	
 	@Test
 	public void testRestartContainerStringIntTimeUnit() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -360,7 +360,7 @@ public class DockerClientTest {
 		docker.stopAndRemoveContainer(containerId);
 	}
 
-	@Ignore
+	
 	@Test
 	public void testKillContainer() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -378,7 +378,7 @@ public class DockerClientTest {
 		docker.removeContainer(containerId);
 	}
 
-	@Ignore
+	
 	@Test
 	public void testUpdateContainer() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -397,7 +397,7 @@ public class DockerClientTest {
 		docker.stopAndRemoveContainer(containerId);
 	}
 
-	@Ignore
+	
 	@Test
 	public void testRenameContainer() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -419,7 +419,7 @@ public class DockerClientTest {
 
 	}
 
-	@Ignore
+	
 	@Test
 	public void testPauseContainer() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -437,7 +437,7 @@ public class DockerClientTest {
 		docker.stopAndRemoveContainer(containerId);
 	}
 
-	@Ignore
+	
 	@Test
 	public void testUnpauseContainer() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
