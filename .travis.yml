@@ -15,7 +15,7 @@ install: true
 
 before-script:
   - echo 'DOCKER_OPTS="-D=true -H=unix:///var/run/docker.sock -H=tcp://127.0.0.1:2375"' | sudo tee -a /etc/default/docker
-  - sudo restart docker
+  - sudo systemctl restart docker
 
 script:
   - mvn clean verify -Pjacoco coveralls:report
