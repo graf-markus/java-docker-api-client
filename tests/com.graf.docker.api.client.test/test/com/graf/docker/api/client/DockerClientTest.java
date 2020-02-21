@@ -389,7 +389,7 @@ public class DockerClientTest {
 		HostConfig config = info.getHostConfig();
 		assertEquals(true, info.getState().isRunning());
 
-		ContainerUpdate update = docker.updateContainer(containerId, HostConfig.builder().cpus(5).build());
+		ContainerUpdate update = docker.updateContainer(containerId, HostConfig.builder().cpus(1).build());
 
 		info = docker.inspectContainer(containerId);
 		assertNotEquals(config, info.getHostConfig());
