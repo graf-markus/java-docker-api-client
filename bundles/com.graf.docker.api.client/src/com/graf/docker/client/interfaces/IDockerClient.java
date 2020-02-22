@@ -276,7 +276,7 @@ public interface IDockerClient {
 	 * @param path
 	 * @throws DockerException
 	 */
-	void archiveContainer(String containerId, String path) throws DockerException;
+	String archiveContainer(String containerId, String path) throws DockerException;
 
 	/**
 	 * Extracts an archive to a Container.

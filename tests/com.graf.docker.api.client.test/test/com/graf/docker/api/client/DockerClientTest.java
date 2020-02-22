@@ -23,10 +23,13 @@ import com.graf.docker.client.models.Container;
 import com.graf.docker.client.models.ContainerChange;
 import com.graf.docker.client.models.ContainerConfig;
 import com.graf.docker.client.models.ContainerCreation;
+import com.graf.docker.client.models.ContainerExit;
+import com.graf.docker.client.models.ContainerFileInfo;
 import com.graf.docker.client.models.ContainerInfo;
 import com.graf.docker.client.models.ContainerLog;
 import com.graf.docker.client.models.ContainerStats;
 import com.graf.docker.client.models.ContainerUpdate;
+import com.graf.docker.client.models.ContainersDeletedInfo;
 import com.graf.docker.client.models.HostConfig;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.TopResults;
@@ -48,22 +51,20 @@ public class DockerClientTest {
 		}
 	}
 
-	
 	@Test
 	public void testListContainers() throws DockerException {
 		List<Container> containers = docker.listContainers(ListContainersParam.allContainers());
-		assertEquals(true, containers.isEmpty());
+		assertTrue(containers.isEmpty());
 
 		ContainerCreation creation = docker.createContainer(config);
 		String containerId = creation.getId();
 
 		containers = docker.listContainers(ListContainersParam.allContainers());
-		assertEquals(false, containers.isEmpty());
+		assertFalse(containers.isEmpty());
 
 		docker.removeContainer(containerId);
 	}
 
-	
 	@Test
 	public void testCreateContainerContainerConfig() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -73,7 +74,6 @@ public class DockerClientTest {
 		assertEquals(creation.getId(), containers.get(0).getId());
 	}
 
-	
 	@Test
 	public void testCreateContainerContainerConfigString() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config, "test-container-name");
@@ -85,7 +85,6 @@ public class DockerClientTest {
 		assertEquals("/test-container-name", containers.get(0).getNames()[0]);
 	}
 
-	
 	@Test
 	public void testInspectContainer() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -93,7 +92,6 @@ public class DockerClientTest {
 		assertNotNull(info);
 	}
 
-	
 	@Test
 	public void testTopContainerString() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -101,7 +99,7 @@ public class DockerClientTest {
 		docker.startContainer(containerId);
 
 		ContainerInfo info = docker.inspectContainer(containerId);
-		assertEquals(true, info.getState().isRunning());
+		assertTrue(info.getState().isRunning());
 
 		TopResults top = docker.topContainer(containerId);
 		assertTrue(top.getProcesses().get(0).contains("sh -c while :; do sleep 1; done"));
@@ -109,7 +107,6 @@ public class DockerClientTest {
 		docker.stopContainer(containerId);
 	}
 
-	
 	@Test
 	public void testTopContainerStringString() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -117,7 +114,7 @@ public class DockerClientTest {
 		docker.startContainer(containerId);
 
 		ContainerInfo info = docker.inspectContainer(containerId);
-		assertEquals(true, info.getState().isRunning());
+		assertTrue(info.getState().isRunning());
 
 		TopResults top = docker.topContainer(containerId, "aux");
 		assertTrue(top.getProcesses().get(0).contains("sh -c while :; do sleep 1; done"));
@@ -125,7 +122,6 @@ public class DockerClientTest {
 		docker.stopContainer(containerId);
 	}
 
-	
 	@Test
 	public void testLogContainer() throws DockerException {
 		ContainerConfig config = ContainerConfig.builder().image("ubuntu")
@@ -135,7 +131,7 @@ public class DockerClientTest {
 		docker.startContainer(containerId);
 
 		ContainerInfo info = docker.inspectContainer(containerId);
-		assertEquals(true, info.getState().isRunning());
+		assertTrue(info.getState().isRunning());
 
 		ContainerLog log = docker.logContainer(containerId, LogsParam.stdout(), LogsParam.stderr());
 		assertTrue(log.getStderrLogs().isEmpty());
@@ -144,7 +140,6 @@ public class DockerClientTest {
 		docker.stopContainer(containerId);
 	}
 
-	
 	@Test
 	public void testInspectContainerChanges() throws DockerException {
 		ContainerConfig config = ContainerConfig.builder().image("ubuntu").cmd("sh", "-c", "touch test.txt").build();
@@ -153,14 +148,13 @@ public class DockerClientTest {
 		docker.startContainer(containerId);
 
 		ContainerInfo info = docker.inspectContainer(containerId);
-		assertEquals(true, info.getState().isRunning());
+		assertTrue(info.getState().isRunning());
 
 		List<ContainerChange> changes = docker.inspectContainerChanges(containerId);
 		assertTrue(changes.size() > 0);
 		assertTrue(changes.get(0).getKind() == ContainerChange.ADDED);
 	}
 
-	
 	@Test
 	public void testExportContainer() throws DockerException, IOException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -178,7 +172,6 @@ public class DockerClientTest {
 
 	}
 
-	
 	@Test
 	public void testStatContainer() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -186,14 +179,13 @@ public class DockerClientTest {
 		docker.startContainer(containerId);
 
 		ContainerInfo info = docker.inspectContainer(containerId);
-		assertEquals(true, info.getState().isRunning());
+		assertTrue(info.getState().isRunning());
 
 		ContainerStats stats = docker.statContainer(containerId);
 
-		assertNotEquals(stats, null);
+		assertNotNull(stats);
 	}
 
-	
 	@Test
 	public void testStatContainerStream() throws DockerException, InterruptedException {
 
@@ -208,7 +200,7 @@ public class DockerClientTest {
 
 			@Override
 			public void onContainerStatsReceived(ContainerStats stats) {
-				assertNotEquals(null, stats);
+				assertNotNull(stats);
 			}
 
 			@Override
@@ -222,7 +214,6 @@ public class DockerClientTest {
 		docker.stopStatContainerStream(containerId);
 	}
 
-	
 	@Test
 	public void testResizeTTYContainer() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -230,14 +221,13 @@ public class DockerClientTest {
 		docker.startContainer(containerId);
 
 		ContainerInfo info = docker.inspectContainer(containerId);
-		assertEquals(true, info.getState().isRunning());
+		assertTrue(info.getState().isRunning());
 
 		docker.resizeTTYContainer(containerId, 55, 55);
 
 		docker.stopContainer(containerId);
 	}
 
-	
 	@Test
 	public void testStartContainer() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -245,12 +235,11 @@ public class DockerClientTest {
 		docker.startContainer(containerId);
 
 		ContainerInfo info = docker.inspectContainer(containerId);
-		assertEquals(true, info.getState().isRunning());
+		assertTrue(info.getState().isRunning());
 
 		docker.stopContainer(containerId);
 	}
 
-	
 	@Test
 	public void testStopContainerString() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -258,17 +247,16 @@ public class DockerClientTest {
 		docker.startContainer(containerId);
 
 		ContainerInfo info = docker.inspectContainer(containerId);
-		assertEquals(true, info.getState().isRunning());
+		assertTrue(info.getState().isRunning());
 
 		docker.stopContainer(containerId);
 
 		info = docker.inspectContainer(containerId);
-		assertEquals(false, info.getState().isRunning());
+		assertFalse(info.getState().isRunning());
 
 		docker.removeContainer(containerId);
 	}
 
-	
 	@Test
 	public void testStopContainerStringInt() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -277,17 +265,16 @@ public class DockerClientTest {
 
 		ContainerInfo info = docker.inspectContainer(containerId);
 
-		assertEquals(true, info.getState().isRunning());
+		assertTrue(info.getState().isRunning());
 
 		docker.stopContainer(containerId, 2000);
 
 		info = docker.inspectContainer(containerId);
-		assertEquals(false, info.getState().isRunning());
+		assertFalse(info.getState().isRunning());
 
 		docker.removeContainer(containerId);
 	}
 
-	
 	@Test
 	public void testStopContainerStringIntTimeUnit() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -296,17 +283,16 @@ public class DockerClientTest {
 
 		ContainerInfo info = docker.inspectContainer(containerId);
 
-		assertEquals(true, info.getState().isRunning());
+		assertTrue(info.getState().isRunning());
 
 		docker.stopContainer(containerId, 2, TimeUnit.SECONDS);
 
 		info = docker.inspectContainer(containerId);
-		assertEquals(false, info.getState().isRunning());
+		assertFalse(info.getState().isRunning());
 
 		docker.removeContainer(containerId);
 	}
 
-	
 	@Test
 	public void testRestartContainerString() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -314,17 +300,16 @@ public class DockerClientTest {
 		docker.startContainer(containerId);
 
 		ContainerInfo info = docker.inspectContainer(containerId);
-		assertEquals(true, info.getState().isRunning());
+		assertTrue(info.getState().isRunning());
 
 		docker.restartContainer(containerId);
 
 		info = docker.inspectContainer(containerId);
-		assertEquals(true, info.getState().isRunning());
+		assertTrue(info.getState().isRunning());
 
 		docker.stopAndRemoveContainer(containerId);
 	}
 
-	
 	@Test
 	public void testRestartContainerStringInt() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -332,17 +317,16 @@ public class DockerClientTest {
 		docker.startContainer(containerId);
 
 		ContainerInfo info = docker.inspectContainer(containerId);
-		assertEquals(true, info.getState().isRunning());
+		assertTrue(info.getState().isRunning());
 
 		docker.restartContainer(containerId, 2000);
 
 		info = docker.inspectContainer(containerId);
-		assertEquals(true, info.getState().isRunning());
+		assertTrue(info.getState().isRunning());
 
 		docker.stopAndRemoveContainer(containerId);
 	}
 
-	
 	@Test
 	public void testRestartContainerStringIntTimeUnit() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -350,17 +334,16 @@ public class DockerClientTest {
 		docker.startContainer(containerId);
 
 		ContainerInfo info = docker.inspectContainer(containerId);
-		assertEquals(true, info.getState().isRunning());
+		assertTrue(info.getState().isRunning());
 
 		docker.restartContainer(containerId, 2, TimeUnit.SECONDS);
 
 		info = docker.inspectContainer(containerId);
-		assertEquals(true, info.getState().isRunning());
+		assertTrue(info.getState().isRunning());
 
 		docker.stopAndRemoveContainer(containerId);
 	}
 
-	
 	@Test
 	public void testKillContainer() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -368,17 +351,16 @@ public class DockerClientTest {
 		docker.startContainer(containerId);
 
 		ContainerInfo info = docker.inspectContainer(containerId);
-		assertEquals(true, info.getState().isRunning());
+		assertTrue(info.getState().isRunning());
 
 		docker.killContainer(containerId, KillSignal.SIGKILL);
 
 		info = docker.inspectContainer(containerId);
-		assertEquals(false, info.getState().isRunning());
+		assertFalse(info.getState().isRunning());
 
 		docker.removeContainer(containerId);
 	}
 
-	
 	@Test
 	public void testUpdateContainer() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -387,7 +369,7 @@ public class DockerClientTest {
 
 		ContainerInfo info = docker.inspectContainer(containerId);
 		HostConfig config = info.getHostConfig();
-		assertEquals(true, info.getState().isRunning());
+		assertTrue(info.getState().isRunning());
 
 		ContainerUpdate update = docker.updateContainer(containerId, HostConfig.builder().cpus(1).build());
 
@@ -397,7 +379,6 @@ public class DockerClientTest {
 		docker.stopAndRemoveContainer(containerId);
 	}
 
-	
 	@Test
 	public void testRenameContainer() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -406,7 +387,7 @@ public class DockerClientTest {
 
 		ContainerInfo info = docker.inspectContainer(containerId);
 		String oldContainerName = info.getName();
-		assertEquals(true, info.getState().isRunning());
+		assertTrue(info.getState().isRunning());
 
 		docker.renameContainer(containerId, "test-docker-name");
 
@@ -419,7 +400,6 @@ public class DockerClientTest {
 
 	}
 
-	
 	@Test
 	public void testPauseContainer() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -427,17 +407,16 @@ public class DockerClientTest {
 		docker.startContainer(containerId);
 
 		ContainerInfo info = docker.inspectContainer(containerId);
-		assertEquals(true, info.getState().isRunning());
+		assertTrue(info.getState().isRunning());
 
 		docker.pauseContainer(containerId);
 
 		info = docker.inspectContainer(containerId);
-		assertEquals(true, info.getState().isPaused());
+		assertTrue(info.getState().isPaused());
 
 		docker.stopAndRemoveContainer(containerId);
 	}
 
-	
 	@Test
 	public void testUnpauseContainer() throws DockerException {
 		ContainerCreation creation = docker.createContainer(config);
@@ -445,78 +424,160 @@ public class DockerClientTest {
 		docker.startContainer(containerId);
 
 		ContainerInfo info = docker.inspectContainer(containerId);
-		assertEquals(true, info.getState().isRunning());
+		assertTrue(info.getState().isRunning());
 
 		docker.pauseContainer(containerId);
 
 		info = docker.inspectContainer(containerId);
-		assertEquals(true, info.getState().isPaused());
+		assertTrue(info.getState().isPaused());
 
 		docker.unpauseContainer(containerId);
 
 		info = docker.inspectContainer(containerId);
-		assertEquals(false, info.getState().isPaused());
+		assertFalse(info.getState().isPaused());
 
 		docker.stopAndRemoveContainer(containerId);
 	}
 
-	@Ignore
 	@Test
-	public void testWaitForContainer() {
-		fail("Not yet implemented");
+	public void testWaitForContainer() throws DockerException {
+		ContainerCreation creation = docker.createContainer(config);
+		String containerId = creation.getId();
+		docker.startContainer(containerId);
+
+		ContainerInfo info = docker.inspectContainer(containerId);
+		assertTrue(info.getState().isRunning());
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(5000);
+					docker.stopContainer(containerId);
+				} catch (DockerException | InterruptedException e) {
+
+				}
+			}
+		}).start();
+
+		ContainerExit exit = docker.waitForContainer(containerId);
+		assertNull(exit.getError());
+		assertEquals(137, exit.getStatusCode());
 	}
 
-	@Ignore
 	@Test
-	public void testRemoveContainer() {
-		fail("Not yet implemented");
+	public void testRemoveContainer() throws DockerException {
+		ContainerCreation creation = docker.createContainer(config);
+		String containerId = creation.getId();
+
+		List<Container> containers = docker.listContainers(ListContainersParam.allContainers());
+		assertTrue(containsContainer(containers, containerId));
+
+		docker.removeContainer(containerId);
+		containers = docker.listContainers(ListContainersParam.allContainers());
+
+		assertFalse(containsContainer(containers, containerId));
 	}
 
-	@Ignore
-	@Test
-	public void testFileInfoContainer() {
-		fail("Not yet implemented");
+	private boolean containsContainer(List<Container> containers, String containerId) {
+		for (Container c : containers) {
+			if (c.getId().equals(containerId)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
-	@Ignore
 	@Test
-	public void testArchiveContainer() {
-		fail("Not yet implemented");
+	public void testFileInfoContainer() throws DockerException {
+		ContainerCreation creation = docker.createContainer(config);
+		String containerId = creation.getId();
+		docker.startContainer(containerId);
+
+		ContainerInfo info = docker.inspectContainer(containerId);
+		assertTrue(info.getState().isRunning());
+
+		ContainerFileInfo fileInfo = docker.fileInfoContainer(containerId, "/");
+
+		assertEquals("/", fileInfo.getName());
+		assertEquals(4096, fileInfo.getSize());
 	}
 
-	@Ignore
 	@Test
-	public void testExtractToContainer() {
-		fail("Not yet implemented");
+	public void testArchiveContainer() throws DockerException, IOException {
+		ContainerCreation creation = docker.createContainer(config);
+		String containerId = creation.getId();
+		docker.startContainer(containerId);
+
+		ContainerInfo info = docker.inspectContainer(containerId);
+		assertTrue(info.getState().isRunning());
+		
+		String binary = docker.archiveContainer(containerId, "/");
+
+		BufferedWriter writer = new BufferedWriter(new FileWriter(new File("./archive.tar")));
+		writer.write(binary);
+
+		assertTrue(Files.exists(Paths.get("./archive.tar")));
+		assertTrue(Files.size(Paths.get("./archive.tar")) > 0);
+
+		Files.delete(Paths.get("./archive.tar"));
 	}
 
-	@Ignore
 	@Test
-	public void testDeleteContainers() {
-		fail("Not yet implemented");
+	public void testDeleteContainers() throws DockerException {
+		ContainerCreation creation = docker.createContainer(config);
+		String containerId = creation.getId();
+		docker.startContainer(containerId);
+
+		ContainerInfo info = docker.inspectContainer(containerId);
+		assertTrue(info.getState().isRunning());
+		
+		docker.stopContainer(containerId);
+		
+		info = docker.inspectContainer(containerId);
+		assertFalse(info.getState().isRunning());
+		
+		assertTrue(containsContainer(docker.listContainers(ListContainersParam.allContainers()), containerId));
+		
+		ContainersDeletedInfo deletedInfo = docker.deleteContainers();
+		
+		assertFalse(containsContainer(docker.listContainers(ListContainersParam.allContainers()), containerId));
+		assertTrue(deletedInfo.getContainersDeleted().length > 0);
+		assertTrue(deletedInfo.getContainersDeleted()[0].equals(containerId));
 	}
 
-	@Ignore
 	@Test
-	public void testRunContainerContainerConfig() {
-		fail("Not yet implemented");
+	public void testRunContainerContainerConfig() throws DockerException {
+		ContainerCreation creation = docker.runContainer(config);
+		String containerId = creation.getId();
+		
+		ContainerInfo info = docker.inspectContainer(containerId);
+		assertTrue(info.getState().isRunning());
 	}
 
-	@Ignore
 	@Test
-	public void testRunContainerContainerConfigString() {
-		fail("Not yet implemented");
+	public void testRunContainerContainerConfigString() throws DockerException {
+		ContainerCreation creation = docker.runContainer(config, "test");
+		String containerId = creation.getId();
+		
+		ContainerInfo info = docker.inspectContainer(containerId);
+		assertTrue(info.getState().isRunning());
+		// Docker Engine adds / in front of name
+		assertEquals("/test", info.getName());
 	}
 
-	@Ignore
 	@Test
-	public void testStopStatContainerStream() {
-		fail("Not yet implemented");
-	}
+	public void testStopStatContainerStream() throws DockerException {
+		ContainerCreation creation = docker.createContainer(config);
+		String containerId = creation.getId();
+		docker.startContainer(containerId);
 
-	@Ignore
-	@Test
-	public void testByteArrayToInt() {
-		fail("Not yet implemented");
+		ContainerInfo info = docker.inspectContainer(containerId);
+		assertTrue(info.getState().isRunning());
+		
+		docker.stopContainer(containerId);
+		
+		info = docker.inspectContainer(containerId);
+		assertFalse(info.getState().isRunning());
 	}
 }
