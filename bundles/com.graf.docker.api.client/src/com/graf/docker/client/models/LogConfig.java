@@ -10,6 +10,11 @@ public class LogConfig {
 	private String type;
 	private Map<String, String> logOptions;
 
+	private LogConfig(Builder builder) {
+		this.type = builder.type;
+		this.logOptions = builder.logOptions;
+	}
+
 	public String getType() {
 		return type;
 	}
@@ -52,18 +57,7 @@ public class LogConfig {
 		}
 	}
 
-	private LogConfig(Builder builder) {
-		this.type = builder.type;
-		this.logOptions = builder.logOptions;
-	}
-
-	@Override
-	public String toString() {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		return gson.toJson(this);
-	}
-	
-	public class LogConfigType { 
+	public class LogConfigType {
 		public static final String JSON_FILE = "json-file";
 		public static final String SYSLOG = "syslog";
 		public static final String JOURNALD = "journald";
@@ -73,5 +67,11 @@ public class LogConfig {
 		public static final String SPLUNK = "splunk";
 		public static final String ETWLOGS = "etwlogs";
 		public static final String NONE = "none";
+	}
+
+	@Override
+	public String toString() {
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		return gson.toJson(this);
 	}
 }

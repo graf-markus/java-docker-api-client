@@ -13,6 +13,10 @@ public class NetworkingConfig {
 		return endpointsConfig;
 	}
 
+	private NetworkingConfig(Builder builder) {
+		this.endpointsConfig = builder.endpointsConfig;
+	}
+
 	public static Builder builder() {
 		return new Builder();
 	}
@@ -37,10 +41,6 @@ public class NetworkingConfig {
 
 			return new NetworkingConfig(this);
 		}
-	}
-
-	private NetworkingConfig(Builder builder) {
-		this.endpointsConfig = builder.endpointsConfig;
 	}
 
 	@Override

@@ -25,52 +25,6 @@ public class ThrottlingData {
 		return throttledTime;
 	}
 
-	public static Builder builder() {
-		return new Builder();
-	}
-
-	public static class Builder {
-
-		private long periods;
-		private long throttledPeriods;
-		private long throttledTime;
-
-		public Builder() {
-		}
-
-		Builder(long periods, long throttledPeriods, long throttledTime) {
-			this.periods = periods;
-			this.throttledPeriods = throttledPeriods;
-			this.throttledTime = throttledTime;
-		}
-
-		public Builder periods(long periods) {
-			this.periods = periods;
-			return Builder.this;
-		}
-
-		public Builder throttledPeriods(long throttledPeriods) {
-			this.throttledPeriods = throttledPeriods;
-			return Builder.this;
-		}
-
-		public Builder throttledTime(long throttledTime) {
-			this.throttledTime = throttledTime;
-			return Builder.this;
-		}
-
-		public ThrottlingData build() {
-
-			return new ThrottlingData(this);
-		}
-	}
-
-	private ThrottlingData(Builder builder) {
-		this.periods = builder.periods;
-		this.throttledPeriods = builder.throttledPeriods;
-		this.throttledTime = builder.throttledTime;
-	}
-
 	@Override
 	public String toString() {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
