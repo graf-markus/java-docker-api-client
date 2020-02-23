@@ -8,4 +8,6 @@ Fragment-Host: com.graf.docker.api.client
 Automatic-Module-Name: com.graf.docker.api.client.test
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.junit,
- org.apache.commons.logging
+ org.apache.commons.logging,
+ com.google.gson,
+ com.graf.docker.api.client
