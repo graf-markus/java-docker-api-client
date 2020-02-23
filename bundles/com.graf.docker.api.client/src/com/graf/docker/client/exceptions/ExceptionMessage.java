@@ -10,5 +10,4 @@ public class ExceptionMessage {
 	public String getMessage() {
 		return message;
 	}
-	
 }

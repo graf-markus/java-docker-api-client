@@ -163,8 +163,62 @@ public class ListContainersParam extends Param {
 		return withLabel(label, null);
 	}
 
+	/**
+	 * Show containers with specified image.
+	 * 
+	 * @param imageName
+	 * @return
+	 */
+	public static ListContainersParam withImage(final String imageName) {
+		return filter("ancestor", imageName);
+	}
+
+	/**
+	 * Show containers with specified name.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public static ListContainersParam withName(final String name) {
+		return filter("name", name);
+	}
+
+	/**
+	 * Show containers with specified id.
+	 * 
+	 * @param containerId
+	 * @return
+	 */
+	public static ListContainersParam withId(final String containerId) {
+		return filter("id", containerId);
+	}
+
+	/**
+	 * Show containers which are Tasks.
+	 * 
+	 * @param isTask
+	 * @return
+	 */
+	public static ListContainersParam isContainerTask(final boolean isTask) {
+		return filter("is-task", String.valueOf(isTask));
+	}
+
+	/**
+	 * Show containers with specified HealthStatus.
+	 * 
+	 * @param status
+	 * @return
+	 */
+	public static ListContainersParam withHealth(final HealthStatus status) {
+		return filter("health", status.toString().toLowerCase());
+	}
+
 	private static boolean isNullOrEmpty(String value) {
 		return value == null || value.isEmpty();
+	}
+
+	public enum HealthStatus {
+		STARTING, HEALTHY, UNHEALTHY, NONE
 	}
 }
 
