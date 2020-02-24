@@ -31,6 +31,7 @@ import com.graf.docker.client.models.ContainerStats;
 import com.graf.docker.client.models.ContainerUpdate;
 import com.graf.docker.client.models.ContainersDeletedInfo;
 import com.graf.docker.client.models.HostConfig;
+import com.graf.docker.client.models.Image;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.TopResults;
 import com.graf.docker.client.params.ListContainersParam;
@@ -579,5 +580,14 @@ public class DockerClientTest {
 		
 		info = docker.inspectContainer(containerId);
 		assertFalse(info.getState().isRunning());
+	}
+	
+	@Test
+	public void testListImages() throws DockerException {
+		List<Image> images = docker.listImages();
+		
+		for(Image img: images) {
+			System.out.println(img);
+		}
 	}
 }

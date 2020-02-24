@@ -20,6 +20,7 @@ public class Container {
 	private Map<String, String> labels;
 	private long sizeRw;
 	private long sizeRootFs;
+	private HostConfig hostConfig;
 	private NetworkSettings networkSettings;
 	private ContainerMount[] mounts;
 
@@ -71,6 +72,10 @@ public class Container {
 		return sizeRootFs;
 	}
 
+	public HostConfig getHostConfig() {
+		return hostConfig;
+	}
+
 	public NetworkSettings getNetworkSettings() {
 		return networkSettings;
 	}
@@ -81,8 +86,7 @@ public class Container {
 
 	@Override
 	public String toString() {
-		Gson gson = new GsonBuilder().setPrettyPrinting()
-				.create();
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		return gson.toJson(this);
 	}
 
@@ -112,8 +116,7 @@ public class Container {
 
 		@Override
 		public String toString() {
-			Gson gson = new GsonBuilder().setPrettyPrinting()
-					.create();
+			Gson gson = new GsonBuilder().setPrettyPrinting().create();
 			return gson.toJson(this);
 		}
 	}

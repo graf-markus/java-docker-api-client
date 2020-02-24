@@ -16,6 +16,7 @@ import com.graf.docker.client.models.ContainerStats;
 import com.graf.docker.client.models.ContainerUpdate;
 import com.graf.docker.client.models.ContainersDeletedInfo;
 import com.graf.docker.client.models.HostConfig;
+import com.graf.docker.client.models.Image;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.TopResults;
 import com.graf.docker.client.params.ListContainersParam;
@@ -295,6 +296,11 @@ public interface IDockerClient {
 	 */
 	ContainersDeletedInfo deleteContainers() throws DockerException;
 
+	// Image API
+	// ===================================================================================
+	
+	List<Image> listImages() throws DockerException;
+	
 	// Additionally Methods
 	// ===================================================================================
 

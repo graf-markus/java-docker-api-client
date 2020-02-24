@@ -49,6 +49,7 @@ import com.graf.docker.client.models.ContainerStats;
 import com.graf.docker.client.models.ContainerUpdate;
 import com.graf.docker.client.models.ContainersDeletedInfo;
 import com.graf.docker.client.models.HostConfig;
+import com.graf.docker.client.models.Image;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.TopResults;
 import com.graf.docker.client.params.ListContainersParam;
@@ -370,6 +371,16 @@ public class DockerClient implements IDockerClient {
 		HttpPost request = new HttpPost(
 				RequestBuilder.builder().setUrl(url).addPath("containers").addPath("prune").build());
 		return execute(request, 200, ContainersDeletedInfo.class);
+	}
+
+	// Image API
+	// ==================================================
+
+	@Override
+	public List<Image> listImages() throws DockerException {
+		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("images").addPath("json")
+				.addParameter("all", String.valueOf(true)).build());
+		return Arrays.asList((execute(request, 200, Image[].class)));
 	}
 
 	// ==================================================
