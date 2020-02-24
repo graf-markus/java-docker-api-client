@@ -2,7 +2,6 @@ package com.graf.docker.client.models;
 
 import java.util.Map;
 
-import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
@@ -82,10 +81,11 @@ public class Container {
 
 	@Override
 	public String toString() {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		Gson gson = new GsonBuilder().setPrettyPrinting()
+				.create();
 		return gson.toJson(this);
 	}
-	
+
 	public class PortMapping {
 
 		private int privatePort;
@@ -109,10 +109,11 @@ public class Container {
 		public String getIp() {
 			return ip;
 		}
-		
+
 		@Override
 		public String toString() {
-			Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE).setPrettyPrinting().create();
+			Gson gson = new GsonBuilder().setPrettyPrinting()
+					.create();
 			return gson.toJson(this);
 		}
 	}
