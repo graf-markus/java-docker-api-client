@@ -7,10 +7,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,6 +38,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.graf.docker.client.exceptions.DockerException;
 import com.graf.docker.client.exceptions.ExceptionMessage;
+import com.graf.docker.client.interfaces.FilterParam;
 import com.graf.docker.client.interfaces.IContainerStatsListener;
 import com.graf.docker.client.interfaces.IDockerClient;
 import com.graf.docker.client.models.Container;
@@ -53,6 +57,7 @@ import com.graf.docker.client.models.Image;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.TopResults;
 import com.graf.docker.client.params.ListContainersParam;
+import com.graf.docker.client.params.ListImagesParam;
 import com.graf.docker.client.params.LogsParam;
 import com.graf.docker.client.params.Param;
 import com.graf.docker.client.params.RemoveContainersParam;
@@ -73,8 +78,9 @@ public class DockerClient implements IDockerClient {
 	@Override
 	public List<Container> listContainers(final ListContainersParam... params) throws DockerException {
 		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("containers").addPath("json")
-				.addParameters(params).build());
-		return Arrays.asList(execute(request, 200, Container[].class));
+					.addParameters(params).build());
+		Container[] containers = execute(request, 200, Container[].class);
+		return Arrays.asList(containers);
 	}
 
 	@Override
@@ -377,10 +383,11 @@ public class DockerClient implements IDockerClient {
 	// ==================================================
 
 	@Override
-	public List<Image> listImages() throws DockerException {
+	public List<Image> listImages(ListImagesParam... param) throws DockerException {
 		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("images").addPath("json")
-				.addParameter("all", String.valueOf(true)).build());
-		return Arrays.asList((execute(request, 200, Image[].class)));
+				.addParameters(param).build());
+		Image[] images = execute(request, 200, Image[].class);
+		return Arrays.asList(images);
 	}
 
 	// ==================================================
@@ -438,6 +445,7 @@ public class DockerClient implements IDockerClient {
 			}
 			throw new DockerException(gson.fromJson(jsonEntity, ExceptionMessage.class).getMessage(), statusCode);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new DockerException(e.getMessage(), statusCode);
 		}
 	}
@@ -466,6 +474,7 @@ public class DockerClient implements IDockerClient {
 
 		private StringBuilder pathBuilder;
 		private List<Param> params;
+		private Map<String, List<String>> filterParams;
 		private List<String> paths;
 		private String url;
 
@@ -473,6 +482,7 @@ public class DockerClient implements IDockerClient {
 			pathBuilder = new StringBuilder();
 			params = new ArrayList<>();
 			paths = new ArrayList<>();
+			filterParams = new HashMap<>();
 		}
 
 		public RequestBuilder setUrl(String url) {
@@ -492,7 +502,17 @@ public class DockerClient implements IDockerClient {
 
 		public RequestBuilder addParameters(final Param... params) {
 			for (final Param param : params) {
-				this.params.add(param);
+				if (param instanceof FilterParam) {
+					if (filterParams.containsKey(param.name())) {
+						filterParams.get(param.name()).add(param.value());
+					} else {
+						ArrayList<String> value = new ArrayList<>();
+						value.add(param.value());
+						filterParams.put(param.name(), value);
+					}
+				} else {
+					this.params.add(param);
+				}
 			}
 			return this;
 		}
@@ -511,6 +531,20 @@ public class DockerClient implements IDockerClient {
 				for (int i = 1; i < params.size(); i++) {
 					pathBuilder.append("&").append(params.get(i).name()).append("=").append(params.get(i).value());
 				}
+			}
+			if (filterParams != null && filterParams.size() > 0) {
+				Gson gson = new Gson();
+				if (params.size() > 0) {
+					pathBuilder.append("&");
+				}else {
+					pathBuilder.append("?");
+				}
+				String params = "";
+				try {
+					params = URLEncoder.encode(gson.toJson(filterParams), "UTF-8");
+				} catch (UnsupportedEncodingException e) {
+				}
+				pathBuilder.append("filters=").append(params);
 			}
 			return pathBuilder.toString();
 		}

@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.graf.docker.client.builder.DockerClientBuilder;
@@ -35,6 +34,7 @@ import com.graf.docker.client.models.Image;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.TopResults;
 import com.graf.docker.client.params.ListContainersParam;
+import com.graf.docker.client.params.ListImagesParam;
 import com.graf.docker.client.params.LogsParam;
 import com.graf.docker.client.params.RemoveContainersParam;
 
@@ -53,17 +53,39 @@ public class DockerClientTest {
 	}
 
 	@Test
-	public void testListContainers() throws DockerException {
-		List<Container> containers = docker.listContainers(ListContainersParam.allContainers());
+	public void testListContainers()  {
+		List<Container> containers = null;
+		try {
+			containers = docker.listContainers(ListContainersParam.allContainers());
+		} catch (DockerException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		assertTrue(containers.isEmpty());
 
-		ContainerCreation creation = docker.createContainer(config);
+		ContainerCreation creation = null;
+		try {
+			creation = docker.createContainer(config);
+		} catch (DockerException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		String containerId = creation.getId();
 
-		containers = docker.listContainers(ListContainersParam.allContainers());
+		try {
+			containers = docker.listContainers(ListContainersParam.allContainers());
+		} catch (DockerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		assertFalse(containers.isEmpty());
 
-		docker.removeContainer(containerId);
+		try {
+			docker.removeContainer(containerId);
+		} catch (DockerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Test
@@ -584,10 +606,9 @@ public class DockerClientTest {
 	
 	@Test
 	public void testListImages() throws DockerException {
-		List<Image> images = docker.listImages();
+		List<Image> images = docker.listImages(ListImagesParam.allImages());
 		
-		for(Image img: images) {
-			System.out.println(img);
-		}
+		assertTrue(images.size() > 0);
+		assertEquals("ubuntu:latest", images.get(0).getRepoTags().get(0));
 	}
 }

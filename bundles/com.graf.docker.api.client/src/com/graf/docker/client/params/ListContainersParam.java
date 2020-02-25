@@ -1,5 +1,7 @@
 package com.graf.docker.client.params;
 
+import com.graf.docker.client.interfaces.FilterParam;
+
 public class ListContainersParam extends Param {
 
 	public ListContainersParam(String name, String value) {
@@ -220,11 +222,13 @@ public class ListContainersParam extends Param {
 	public enum HealthStatus {
 		STARTING, HEALTHY, UNHEALTHY, NONE
 	}
+
 }
 
-class ListContainersFilterParam extends ListContainersParam {
-
+class ListContainersFilterParam extends ListContainersParam implements FilterParam {
+	
 	public ListContainersFilterParam(String name, String value) {
 		super(name, value);
 	}
 }
+

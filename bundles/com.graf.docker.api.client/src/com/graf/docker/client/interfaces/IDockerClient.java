@@ -20,6 +20,7 @@ import com.graf.docker.client.models.Image;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.TopResults;
 import com.graf.docker.client.params.ListContainersParam;
+import com.graf.docker.client.params.ListImagesParam;
 import com.graf.docker.client.params.LogsParam;
 import com.graf.docker.client.params.RemoveContainersParam;
 
@@ -299,7 +300,7 @@ public interface IDockerClient {
 	// Image API
 	// ===================================================================================
 	
-	List<Image> listImages() throws DockerException;
+	List<Image> listImages(ListImagesParam... param) throws DockerException;
 	
 	// Additionally Methods
 	// ===================================================================================
