@@ -31,6 +31,7 @@ import com.graf.docker.client.models.ContainerUpdate;
 import com.graf.docker.client.models.ContainersDeletedInfo;
 import com.graf.docker.client.models.HostConfig;
 import com.graf.docker.client.models.Image;
+import com.graf.docker.client.models.ImageClearedCache;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.TopResults;
 import com.graf.docker.client.params.ListContainersParam;
@@ -610,5 +611,12 @@ public class DockerClientTest {
 		
 		assertTrue(images.size() > 0);
 		assertEquals("ubuntu:latest", images.get(0).getRepoTags().get(0));
+	}
+	
+	@Test
+	public void testClearBuildCache() throws DockerException {
+		ImageClearedCache cleared = docker.clearImageBuildCache();
+		
+		assertEquals(0, cleared.getSpaceReclaimed());
 	}
 }

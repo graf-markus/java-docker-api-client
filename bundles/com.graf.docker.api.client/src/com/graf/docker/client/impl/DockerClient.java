@@ -54,8 +54,10 @@ import com.graf.docker.client.models.ContainerUpdate;
 import com.graf.docker.client.models.ContainersDeletedInfo;
 import com.graf.docker.client.models.HostConfig;
 import com.graf.docker.client.models.Image;
+import com.graf.docker.client.models.ImageClearedCache;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.TopResults;
+import com.graf.docker.client.params.ClearCacheParam;
 import com.graf.docker.client.params.ListContainersParam;
 import com.graf.docker.client.params.ListImagesParam;
 import com.graf.docker.client.params.LogsParam;
@@ -78,7 +80,7 @@ public class DockerClient implements IDockerClient {
 	@Override
 	public List<Container> listContainers(final ListContainersParam... params) throws DockerException {
 		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("containers").addPath("json")
-					.addParameters(params).build());
+				.addParameters(params).build());
 		Container[] containers = execute(request, 200, Container[].class);
 		return Arrays.asList(containers);
 	}
@@ -384,10 +386,17 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public List<Image> listImages(ListImagesParam... param) throws DockerException {
-		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("images").addPath("json")
-				.addParameters(param).build());
+		HttpGet request = new HttpGet(
+				RequestBuilder.builder().setUrl(url).addPath("images").addPath("json").addParameters(param).build());
 		Image[] images = execute(request, 200, Image[].class);
 		return Arrays.asList(images);
+	}
+
+	@Override
+	public ImageClearedCache clearImageBuildCache(ClearCacheParam... param) throws DockerException {
+		HttpPost request = new HttpPost(
+				RequestBuilder.builder().setUrl(url).addPath("build").addPath("prune").addParameters(param).build());
+		return execute(request, 200, ImageClearedCache.class);
 	}
 
 	// ==================================================
@@ -536,7 +545,7 @@ public class DockerClient implements IDockerClient {
 				Gson gson = new Gson();
 				if (params.size() > 0) {
 					pathBuilder.append("&");
-				}else {
+				} else {
 					pathBuilder.append("?");
 				}
 				String params = "";
