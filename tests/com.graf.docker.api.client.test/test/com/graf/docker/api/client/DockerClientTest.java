@@ -55,7 +55,7 @@ public class DockerClientTest {
 	}
 
 	@Test
-	public void testListContainers()  {
+	public void testListContainers() {
 		List<Container> containers = null;
 		try {
 			containers = docker.listContainers(ListContainersParam.allContainers());
@@ -536,7 +536,7 @@ public class DockerClientTest {
 
 		ContainerInfo info = docker.inspectContainer(containerId);
 		assertTrue(info.getState().isRunning());
-		
+
 		String binary = docker.archiveContainer(containerId, "/");
 
 		BufferedWriter writer = new BufferedWriter(new FileWriter(new File("./archive.tar")));
@@ -556,16 +556,16 @@ public class DockerClientTest {
 
 		ContainerInfo info = docker.inspectContainer(containerId);
 		assertTrue(info.getState().isRunning());
-		
+
 		docker.stopContainer(containerId);
-		
+
 		info = docker.inspectContainer(containerId);
 		assertFalse(info.getState().isRunning());
-		
+
 		assertTrue(containsContainer(docker.listContainers(ListContainersParam.allContainers()), containerId));
-		
+
 		ContainersDeletedInfo deletedInfo = docker.deleteContainers();
-		
+
 		assertFalse(containsContainer(docker.listContainers(ListContainersParam.allContainers()), containerId));
 		assertTrue(deletedInfo.getContainersDeleted().length > 0);
 		assertTrue(deletedInfo.getContainersDeleted()[0].equals(containerId));
@@ -575,7 +575,7 @@ public class DockerClientTest {
 	public void testRunContainerContainerConfig() throws DockerException {
 		ContainerCreation creation = docker.runContainer(config);
 		String containerId = creation.getId();
-		
+
 		ContainerInfo info = docker.inspectContainer(containerId);
 		assertTrue(info.getState().isRunning());
 	}
@@ -584,7 +584,7 @@ public class DockerClientTest {
 	public void testRunContainerContainerConfigString() throws DockerException {
 		ContainerCreation creation = docker.runContainer(config, "test");
 		String containerId = creation.getId();
-		
+
 		ContainerInfo info = docker.inspectContainer(containerId);
 		assertTrue(info.getState().isRunning());
 		// Docker Engine adds / in front of name
@@ -599,35 +599,43 @@ public class DockerClientTest {
 
 		ContainerInfo info = docker.inspectContainer(containerId);
 		assertTrue(info.getState().isRunning());
-		
+
 		docker.stopContainer(containerId);
-		
+
 		info = docker.inspectContainer(containerId);
 		assertFalse(info.getState().isRunning());
 	}
-	
+
 	@Test
 	public void testListImages() throws DockerException {
 		List<Image> images = docker.listImages(ListImagesParam.allImages());
-		
+
 		assertTrue(images.size() > 0);
-		assertEquals("ubuntu:latest", images.get(0).getRepoTags().get(0));
+		assertTrue(containsImage(images, "ubuntu:latest"));
 	}
-	
+
 	@Test
 	public void testClearBuildCache() throws DockerException {
 		ImageClearedCache cleared = docker.clearImageBuildCache();
-		
+
 		assertEquals(0, cleared.getSpaceReclaimed());
 	}
-	
+
 	@Test
 	public void testCreateImage() throws DockerException {
 		docker.createImage(CreateImageParam.fromImage("debian"), CreateImageParam.withTag("10-slim"));
-		
+
 		List<Image> images = docker.listImages(ListImagesParam.withReference("debian"));
-		
+
 		assertTrue(images.size() > 0);
-		
+	}
+
+	private static boolean containsImage(List<Image> images, String imageRepo) {
+		for (Image image : images) {
+			if (image.getRepoTags().get(0).equals(imageRepo)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
