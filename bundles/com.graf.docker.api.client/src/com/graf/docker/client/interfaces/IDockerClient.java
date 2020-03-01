@@ -21,6 +21,7 @@ import com.graf.docker.client.models.ImageClearedCache;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.TopResults;
 import com.graf.docker.client.params.ClearCacheParam;
+import com.graf.docker.client.params.CreateImageParam;
 import com.graf.docker.client.params.ListContainersParam;
 import com.graf.docker.client.params.ListImagesParam;
 import com.graf.docker.client.params.LogsParam;
@@ -304,6 +305,7 @@ public interface IDockerClient {
 	
 	List<Image> listImages(ListImagesParam... param) throws DockerException;
 	ImageClearedCache clearImageBuildCache(ClearCacheParam... param) throws DockerException;
+	void createImage(CreateImageParam... param) throws DockerException;
 	
 	// Additionally Methods
 	// ===================================================================================

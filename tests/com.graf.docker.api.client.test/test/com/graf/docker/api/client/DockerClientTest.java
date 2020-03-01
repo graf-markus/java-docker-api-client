@@ -34,6 +34,7 @@ import com.graf.docker.client.models.Image;
 import com.graf.docker.client.models.ImageClearedCache;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.TopResults;
+import com.graf.docker.client.params.CreateImageParam;
 import com.graf.docker.client.params.ListContainersParam;
 import com.graf.docker.client.params.ListImagesParam;
 import com.graf.docker.client.params.LogsParam;
@@ -618,5 +619,15 @@ public class DockerClientTest {
 		ImageClearedCache cleared = docker.clearImageBuildCache();
 		
 		assertEquals(0, cleared.getSpaceReclaimed());
+	}
+	
+	@Test
+	public void testCreateImage() throws DockerException {
+		docker.createImage(CreateImageParam.fromImage("debian"), CreateImageParam.withTag("10-slim"));
+		
+		List<Image> images = docker.listImages(ListImagesParam.withReference("debian"));
+		
+		assertTrue(images.size() > 0);
+		
 	}
 }

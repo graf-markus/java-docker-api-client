@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -58,6 +59,7 @@ import com.graf.docker.client.models.ImageClearedCache;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.TopResults;
 import com.graf.docker.client.params.ClearCacheParam;
+import com.graf.docker.client.params.CreateImageParam;
 import com.graf.docker.client.params.ListContainersParam;
 import com.graf.docker.client.params.ListImagesParam;
 import com.graf.docker.client.params.LogsParam;
@@ -399,6 +401,13 @@ public class DockerClient implements IDockerClient {
 		return execute(request, 200, ImageClearedCache.class);
 	}
 
+	@Override
+	public void createImage(CreateImageParam... param) throws DockerException {
+		HttpPost request = new HttpPost(
+				RequestBuilder.builder().setUrl(url).addPath("images").addPath("create").addParameters(param).build());
+		execute(request, 200);
+	}
+
 	// ==================================================
 
 	@Override
@@ -434,10 +443,15 @@ public class DockerClient implements IDockerClient {
 		int statusCode = 0;
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
 			statusCode = response.getStatusLine().getStatusCode();
+			HttpEntity entity = response.getEntity();
+			String jsonEntity = "";
+			if (entity != null) {
+				jsonEntity = EntityUtils.toString(entity);
+			}
 			if (statusCode == successStatusCode) {
 				return;
 			}
-			String jsonEntity = EntityUtils.toString(response.getEntity());
+			jsonEntity = EntityUtils.toString(response.getEntity());
 			throw new DockerException(gson.fromJson(jsonEntity, ExceptionMessage.class).getMessage(), statusCode);
 		} catch (IOException e) {
 			throw new DockerException(e.getMessage(), statusCode);
@@ -449,6 +463,7 @@ public class DockerClient implements IDockerClient {
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
 			statusCode = response.getStatusLine().getStatusCode();
 			String jsonEntity = EntityUtils.toString(response.getEntity());
+			System.out.println(jsonEntity);
 			if (statusCode == successStatusCode) {
 				return gson.fromJson(jsonEntity, returnClazz);
 			}
