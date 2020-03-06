@@ -475,7 +475,6 @@ public class DockerClient implements IDockerClient {
 			if (statusCode == successStatusCode) {
 				return;
 			}
-			System.out.println(jsonEntity);
 			jsonEntity = EntityUtils.toString(response.getEntity());
 			throw new DockerException(gson.fromJson(jsonEntity, ExceptionMessage.class).getMessage(), statusCode);
 		} catch (IOException e) {
@@ -488,7 +487,6 @@ public class DockerClient implements IDockerClient {
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
 			statusCode = response.getStatusLine().getStatusCode();
 			String jsonEntity = EntityUtils.toString(response.getEntity());
-			System.out.println(jsonEntity);
 			if (statusCode == successStatusCode) {
 				return gson.fromJson(jsonEntity, returnClazz);
 			}

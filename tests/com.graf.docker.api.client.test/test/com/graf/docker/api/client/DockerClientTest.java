@@ -10,6 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.junit.After;
 import org.junit.Test;
@@ -45,6 +47,7 @@ import com.graf.docker.client.params.RemoveContainersParam;
 
 public class DockerClientTest {
 
+	private static final Logger LOGGER = Logger.getLogger(DockerClientBuilder.class.getName());
 	private IDockerClient docker = DockerClientBuilder.builder().setUrl("http://localhost:2375").build();
 	private ContainerConfig config = ContainerConfig.builder().image("ubuntu")
 			.cmd("sh", "-c", "while :; do sleep 1; done").build();
@@ -59,6 +62,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testListContainers() {
+		LOGGER.log(Level.INFO, "");
 		List<Container> containers = null;
 		try {
 			containers = docker.listContainers(ListContainersParam.allContainers());
@@ -95,6 +99,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testCreateContainerContainerConfig() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.createContainer(config);
 		List<Container> containers = docker.listContainers(ListContainersParam.allContainers());
 		assertTrue(containers.size() > 0);
@@ -104,6 +109,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testCreateContainerContainerConfigString() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.createContainer(config, "test-container-name");
 		List<Container> containers = docker.listContainers(ListContainersParam.allContainers());
 		assertTrue(containers.size() > 0);
@@ -115,6 +121,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testInspectContainer() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.createContainer(config);
 		ContainerInfo info = docker.inspectContainer(creation.getId());
 		assertNotNull(info);
@@ -122,6 +129,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testTopContainerString() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.createContainer(config);
 		String containerId = creation.getId();
 		docker.startContainer(containerId);
@@ -137,6 +145,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testTopContainerStringString() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.createContainer(config);
 		String containerId = creation.getId();
 		docker.startContainer(containerId);
@@ -152,6 +161,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testLogContainer() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerConfig config = ContainerConfig.builder().image("ubuntu")
 				.cmd("sh", "-c", "while :; do echo test; sleep 1; done").build();
 		ContainerCreation creation = docker.createContainer(config);
@@ -170,6 +180,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testInspectContainerChanges() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerConfig config = ContainerConfig.builder().image("ubuntu").cmd("sh", "-c", "touch test.txt").build();
 		ContainerCreation creation = docker.createContainer(config);
 		String containerId = creation.getId();
@@ -185,6 +196,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testExportContainer() throws DockerException, IOException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.createContainer(config);
 		String containerId = creation.getId();
 
@@ -202,6 +214,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testStatContainer() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.createContainer(config);
 		String containerId = creation.getId();
 		docker.startContainer(containerId);
@@ -216,7 +229,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testStatContainerStream() throws DockerException, InterruptedException {
-
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.createContainer(config);
 		String containerId = creation.getId();
 		docker.startContainer(containerId);
@@ -244,6 +257,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testResizeTTYContainer() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.createContainer(config);
 		String containerId = creation.getId();
 		docker.startContainer(containerId);
@@ -258,6 +272,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testStartContainer() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.createContainer(config);
 		String containerId = creation.getId();
 		docker.startContainer(containerId);
@@ -270,6 +285,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testStopContainerString() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.createContainer(config);
 		String containerId = creation.getId();
 		docker.startContainer(containerId);
@@ -287,6 +303,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testStopContainerStringInt() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.createContainer(config);
 		String containerId = creation.getId();
 		docker.startContainer(containerId);
@@ -305,6 +322,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testStopContainerStringIntTimeUnit() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.createContainer(config);
 		String containerId = creation.getId();
 		docker.startContainer(containerId);
@@ -323,6 +341,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testRestartContainerString() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.createContainer(config);
 		String containerId = creation.getId();
 		docker.startContainer(containerId);
@@ -340,6 +359,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testRestartContainerStringInt() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.createContainer(config);
 		String containerId = creation.getId();
 		docker.startContainer(containerId);
@@ -357,6 +377,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testRestartContainerStringIntTimeUnit() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.createContainer(config);
 		String containerId = creation.getId();
 		docker.startContainer(containerId);
@@ -374,6 +395,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testKillContainer() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.createContainer(config);
 		String containerId = creation.getId();
 		docker.startContainer(containerId);
@@ -391,6 +413,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testUpdateContainer() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.createContainer(config);
 		String containerId = creation.getId();
 		docker.startContainer(containerId);
@@ -409,6 +432,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testRenameContainer() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.createContainer(config);
 		String containerId = creation.getId();
 		docker.startContainer(containerId);
@@ -430,6 +454,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testPauseContainer() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.createContainer(config);
 		String containerId = creation.getId();
 		docker.startContainer(containerId);
@@ -447,6 +472,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testUnpauseContainer() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.createContainer(config);
 		String containerId = creation.getId();
 		docker.startContainer(containerId);
@@ -469,6 +495,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testWaitForContainer() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.createContainer(config);
 		String containerId = creation.getId();
 		docker.startContainer(containerId);
@@ -495,6 +522,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testRemoveContainer() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.createContainer(config);
 		String containerId = creation.getId();
 
@@ -518,6 +546,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testFileInfoContainer() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.createContainer(config);
 		String containerId = creation.getId();
 		docker.startContainer(containerId);
@@ -533,6 +562,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testArchiveContainer() throws DockerException, IOException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.createContainer(config);
 		String containerId = creation.getId();
 		docker.startContainer(containerId);
@@ -553,6 +583,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testDeleteContainers() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.createContainer(config);
 		String containerId = creation.getId();
 		docker.startContainer(containerId);
@@ -576,6 +607,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testRunContainerContainerConfig() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.runContainer(config);
 		String containerId = creation.getId();
 
@@ -585,6 +617,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testRunContainerContainerConfigString() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.runContainer(config, "test");
 		String containerId = creation.getId();
 
@@ -596,6 +629,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testStopStatContainerStream() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ContainerCreation creation = docker.createContainer(config);
 		String containerId = creation.getId();
 		docker.startContainer(containerId);
@@ -611,6 +645,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testListImages() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		List<Image> images = docker.listImages(ListImagesParam.allImages());
 
 		assertTrue(images.size() > 0);
@@ -619,6 +654,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testClearBuildCache() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		ImageClearedCache cleared = docker.clearImageBuildCache();
 
 		assertEquals(0, cleared.getSpaceReclaimed());
@@ -626,6 +662,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testCreateImage() throws DockerException {
+		LOGGER.log(Level.INFO, "");
 		docker.createImage(CreateImageParam.fromImage("debian"), CreateImageParam.withTag("10-slim"));
 
 		List<Image> images = docker.listImages(ListImagesParam.withReference("debian"));
@@ -635,26 +672,29 @@ public class DockerClientTest {
 
 	@Test
 	public void testInspectImage() throws DockerException {
-		ImageInfo info = docker.inspectImage("2f14a0fb67b9");
+		LOGGER.log(Level.INFO, "");
+		ImageInfo info = docker.inspectImage("72300a873c2c");
 
-		assertEquals("debian:10-slim", info.getRepoTags().get(0));
+		assertEquals("ubuntu:latest", info.getRepoTags().get(0));
 	}
 
 	@Test
 	public void testImageHistory() throws DockerException {
-		List<ImageHistory> history = docker.imageHistory("2f14a0fb67b9");
+		LOGGER.log(Level.INFO, "");
+		List<ImageHistory> history = docker.imageHistory("72300a873c2c");
 		
 		assertTrue(history.size() > 0);
 	}
 	
 	@Test
 	public void testTagImage() throws DockerException{
-		docker.tagImage("debian:10-slim", ImageTagParam.repo("debian"), ImageTagParam.newTag("test"));
+		LOGGER.log(Level.INFO, "");
+		docker.tagImage("72300a873c2c", ImageTagParam.repo("ubuntu"), ImageTagParam.newTag("test"));
 		
-		ImageInfo info = docker.inspectImage("2f14a0fb67b9");
+		ImageInfo info = docker.inspectImage("72300a873c2c");
 		
 		assertTrue(info.getRepoTags().size() > 1);
-		assertEquals("debian:test", info.getRepoTags().get(1));
+		assertEquals("ubuntu:test", info.getRepoTags().get(1));
 	}
 	
 	private static boolean containsImage(List<Image> images, String imageRepo) {
