@@ -56,10 +56,13 @@ import com.graf.docker.client.models.ContainersDeletedInfo;
 import com.graf.docker.client.models.HostConfig;
 import com.graf.docker.client.models.Image;
 import com.graf.docker.client.models.ImageClearedCache;
+import com.graf.docker.client.models.ImageHistory;
+import com.graf.docker.client.models.ImageInfo;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.TopResults;
 import com.graf.docker.client.params.ClearCacheParam;
 import com.graf.docker.client.params.CreateImageParam;
+import com.graf.docker.client.params.ImageTagParam;
 import com.graf.docker.client.params.ListContainersParam;
 import com.graf.docker.client.params.ListImagesParam;
 import com.graf.docker.client.params.LogsParam;
@@ -408,6 +411,27 @@ public class DockerClient implements IDockerClient {
 		execute(request, 200);
 	}
 
+	@Override
+	public ImageInfo inspectImage(String imageName) throws DockerException {
+		HttpGet request = new HttpGet(
+				RequestBuilder.builder().setUrl(url).addPath("images").addPath(imageName).addPath("json").build());
+		return execute(request, 200, ImageInfo.class);
+	}
+
+	@Override
+	public List<ImageHistory> imageHistory(String imageName) throws DockerException {
+		HttpGet request = new HttpGet(
+				RequestBuilder.builder().setUrl(url).addPath("images").addPath(imageName).addPath("history").build());
+		ImageHistory[] images = execute(request, 200, ImageHistory[].class);
+		return Arrays.asList(images);
+	}
+
+	@Override
+	public void tagImage(String imageName, ImageTagParam... param) throws DockerException {
+		HttpPost request = new HttpPost(RequestBuilder.builder().setUrl(url).addPath("images").addPath(imageName).addPath("tag").addParameters(param).build());
+		execute(request, 201);
+	}
+
 	// ==================================================
 
 	@Override
@@ -451,6 +475,7 @@ public class DockerClient implements IDockerClient {
 			if (statusCode == successStatusCode) {
 				return;
 			}
+			System.out.println(jsonEntity);
 			jsonEntity = EntityUtils.toString(response.getEntity());
 			throw new DockerException(gson.fromJson(jsonEntity, ExceptionMessage.class).getMessage(), statusCode);
 		} catch (IOException e) {

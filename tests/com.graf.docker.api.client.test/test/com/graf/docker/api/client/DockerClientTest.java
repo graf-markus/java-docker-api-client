@@ -32,9 +32,12 @@ import com.graf.docker.client.models.ContainersDeletedInfo;
 import com.graf.docker.client.models.HostConfig;
 import com.graf.docker.client.models.Image;
 import com.graf.docker.client.models.ImageClearedCache;
+import com.graf.docker.client.models.ImageHistory;
+import com.graf.docker.client.models.ImageInfo;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.TopResults;
 import com.graf.docker.client.params.CreateImageParam;
+import com.graf.docker.client.params.ImageTagParam;
 import com.graf.docker.client.params.ListContainersParam;
 import com.graf.docker.client.params.ListImagesParam;
 import com.graf.docker.client.params.LogsParam;
@@ -630,6 +633,30 @@ public class DockerClientTest {
 		assertTrue(images.size() > 0);
 	}
 
+	@Test
+	public void testInspectImage() throws DockerException {
+		ImageInfo info = docker.inspectImage("2f14a0fb67b9");
+
+		assertEquals("debian:10-slim", info.getRepoTags().get(0));
+	}
+
+	@Test
+	public void testImageHistory() throws DockerException {
+		List<ImageHistory> history = docker.imageHistory("2f14a0fb67b9");
+		
+		assertTrue(history.size() > 0);
+	}
+	
+	@Test
+	public void testTagImage() throws DockerException{
+		docker.tagImage("debian:10-slim", ImageTagParam.repo("debian"), ImageTagParam.newTag("test"));
+		
+		ImageInfo info = docker.inspectImage("2f14a0fb67b9");
+		
+		assertTrue(info.getRepoTags().size() > 1);
+		assertEquals("debian:test", info.getRepoTags().get(1));
+	}
+	
 	private static boolean containsImage(List<Image> images, String imageRepo) {
 		for (Image image : images) {
 			if (image.getRepoTags().get(0).equals(imageRepo)) {

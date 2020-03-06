@@ -18,10 +18,13 @@ import com.graf.docker.client.models.ContainersDeletedInfo;
 import com.graf.docker.client.models.HostConfig;
 import com.graf.docker.client.models.Image;
 import com.graf.docker.client.models.ImageClearedCache;
+import com.graf.docker.client.models.ImageHistory;
+import com.graf.docker.client.models.ImageInfo;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.TopResults;
 import com.graf.docker.client.params.ClearCacheParam;
 import com.graf.docker.client.params.CreateImageParam;
+import com.graf.docker.client.params.ImageTagParam;
 import com.graf.docker.client.params.ListContainersParam;
 import com.graf.docker.client.params.ListImagesParam;
 import com.graf.docker.client.params.LogsParam;
@@ -306,6 +309,9 @@ public interface IDockerClient {
 	List<Image> listImages(ListImagesParam... param) throws DockerException;
 	ImageClearedCache clearImageBuildCache(ClearCacheParam... param) throws DockerException;
 	void createImage(CreateImageParam... param) throws DockerException;
+	ImageInfo inspectImage(String imageName) throws DockerException;
+	List<ImageHistory> imageHistory(String imageName) throws DockerException;
+	void tagImage(String name, ImageTagParam... param) throws DockerException;
 	
 	// Additionally Methods
 	// ===================================================================================
