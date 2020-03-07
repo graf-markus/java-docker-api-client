@@ -9,54 +9,125 @@ import com.google.gson.GsonBuilder;
 public class Image {
 
 	private String id;
-	private String parentId;
 	private List<String> repoTags;
-	private int created;
-	private int size;
-	private int sharedSize;
-	private int virtualSize;
-	private Map<String, String> labels;
-	private int containers;
+	private List<String> repoDigest;
+	private String parent;
+	private String comment;
+	private String created;
+	private String container;
+	private ContainerConfig containerConfig;
+	private String dockerVersion;
+	private String author;
+	private ContainerConfig config;
+	private String architecture;
+	private String os;
+	private String osVersion;
+	private long size;
+	private long virtualSize;
+	private GraphDriverData graphDriver;
+	private RootFS rootFS;
+	private Metadata metadata;
 
 	public String getId() {
 		return id;
-	}
-
-	public String getParentId() {
-		return parentId;
 	}
 
 	public List<String> getRepoTags() {
 		return repoTags;
 	}
 
-	public int getCreated() {
+	public List<String> getRepoDigest() {
+		return repoDigest;
+	}
+
+	public String getParent() {
+		return parent;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public String getCreated() {
 		return created;
 	}
 
-	public int getSize() {
+	public String getContainer() {
+		return container;
+	}
+
+	public ContainerConfig getContainerConfig() {
+		return containerConfig;
+	}
+
+	public String getDockerVersion() {
+		return dockerVersion;
+	}
+
+	public String getAuthor() {
+		return author;
+	}
+
+	public ContainerConfig getConfig() {
+		return config;
+	}
+
+	public String getArchitecture() {
+		return architecture;
+	}
+
+	public String getOs() {
+		return os;
+	}
+
+	public String getOsVersion() {
+		return osVersion;
+	}
+
+	public long getSize() {
 		return size;
 	}
 
-	public int getSharedSize() {
-		return sharedSize;
-	}
-
-	public int getVirtualSize() {
+	public long getVirtualSize() {
 		return virtualSize;
 	}
 
-	public Map<String, String> getLabels() {
-		return labels;
+	public GraphDriverData getGraphDriver() {
+		return graphDriver;
 	}
 
-	public int getContainers() {
-		return containers;
+	public RootFS getRootFS() {
+		return rootFS;
 	}
-	
+
+	public Metadata getMetadata() {
+		return metadata;
+	}
+
 	@Override
 	public String toString() {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		return gson.toJson(this);
+	}
+
+	class GraphDriverData {
+		private String name;
+		private Map<String, String> data;
+
+		public String getName() {
+			return name;
+		}
+
+		public Map<String, String> getData() {
+			return data;
+		}
+	}
+
+	class Metadata {
+		private String lastTagTime;
+
+		public String getLastTagTime() {
+			return lastTagTime;
+		}
 	}
 }

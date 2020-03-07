@@ -22,11 +22,17 @@ public class LogConfig {
 	public Map<String, String> getLogOptions() {
 		return logOptions;
 	}
-
+	
 	public static Builder builder() {
 		return new Builder();
 	}
 
+	@Override
+	public String toString() {
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		return gson.toJson(this);
+	}
+	
 	public static class Builder {
 
 		private String type;
@@ -52,7 +58,6 @@ public class LogConfig {
 		}
 
 		public LogConfig build() {
-
 			return new LogConfig(this);
 		}
 	}
@@ -67,11 +72,5 @@ public class LogConfig {
 		public static final String SPLUNK = "splunk";
 		public static final String ETWLOGS = "etwlogs";
 		public static final String NONE = "none";
-	}
-
-	@Override
-	public String toString() {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		return gson.toJson(this);
 	}
 }

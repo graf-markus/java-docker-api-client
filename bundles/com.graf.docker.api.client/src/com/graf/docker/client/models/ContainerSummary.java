@@ -1,12 +1,12 @@
 package com.graf.docker.client.models;
 
+import java.util.List;
 import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.annotations.SerializedName;
 
-public class Container {
+public class ContainerSummary {
 
 	private String id;
 	private String[] names;
@@ -14,15 +14,15 @@ public class Container {
 	private String imageID;
 	private String command;
 	private long created;
-	private String state;
-	private String status;
-	private PortMapping[] ports;
-	private Map<String, String> labels;
+	private List<Port> ports;
 	private long sizeRw;
 	private long sizeRootFs;
+	private Map<String, String> labels;
+	private String state;
+	private String status;
 	private HostConfig hostConfig;
 	private NetworkSettings networkSettings;
-	private ContainerMount[] mounts;
+	private List<Mount> mounts;
 
 	public String getId() {
 		return id;
@@ -56,7 +56,7 @@ public class Container {
 		return status;
 	}
 
-	public PortMapping[] getPorts() {
+	public List<Port> getPorts() {
 		return ports;
 	}
 
@@ -80,7 +80,7 @@ public class Container {
 		return networkSettings;
 	}
 
-	public ContainerMount[] getMounts() {
+	public List<Mount> getMounts() {
 		return mounts;
 	}
 
@@ -90,34 +90,20 @@ public class Container {
 		return gson.toJson(this);
 	}
 
-	public class PortMapping {
+	class HostConfig {
 
-		private int privatePort;
-		private int publicPort;
-		private String type;
-		@SerializedName("IP")
-		private String ip;
+		private String networkMode;
 
-		public int getPrivatePort() {
-			return privatePort;
+		public String getNetworkMode() {
+			return networkMode;
 		}
+	}
 
-		public int getPublicPort() {
-			return publicPort;
-		}
+	class NetworkSettings {
+		private Map<String, EndpointSettings> networks;
 
-		public String getType() {
-			return type;
-		}
-
-		public String getIp() {
-			return ip;
-		}
-
-		@Override
-		public String toString() {
-			Gson gson = new GsonBuilder().setPrettyPrinting().create();
-			return gson.toJson(this);
+		public Map<String, EndpointSettings> getNetworks() {
+			return networks;
 		}
 	}
 }

@@ -1,19 +1,21 @@
 package com.graf.docker.client.models;
 
+import java.util.List;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class ImageClearedCache {
+public class ContainerCreateResponse {
 
-	private String cachesDeleted;
-	private int spaceReclaimed;
+	private String id;
+	private List<String> warnings;
 
-	public String getCachesDeleted() {
-		return cachesDeleted;
+	public String getId() {
+		return id;
 	}
 
-	public int getSpaceReclaimed() {
-		return spaceReclaimed;
+	public List<String> getWarnings() {
+		return warnings;
 	}
 
 	@Override

@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.graf.docker.client.exceptions.DockerException;
-import com.graf.docker.client.models.Container;
+import com.graf.docker.client.models.ContainerSummary;
 import com.graf.docker.client.models.ContainerChange;
 import com.graf.docker.client.models.ContainerConfig;
-import com.graf.docker.client.models.ContainerCreation;
+import com.graf.docker.client.models.ContainerCreateResponse;
 import com.graf.docker.client.models.ContainerExit;
 import com.graf.docker.client.models.ContainerFileInfo;
 import com.graf.docker.client.models.ContainerInfo;
@@ -16,14 +16,19 @@ import com.graf.docker.client.models.ContainerStats;
 import com.graf.docker.client.models.ContainerUpdate;
 import com.graf.docker.client.models.ContainersDeletedInfo;
 import com.graf.docker.client.models.HostConfig;
+import com.graf.docker.client.models.ImageSummary;
+import com.graf.docker.client.models.BuildPruneResponse;
+import com.graf.docker.client.models.ImageDeleteResponseItem;
+import com.graf.docker.client.models.HistoryResponseItem;
 import com.graf.docker.client.models.Image;
-import com.graf.docker.client.models.ImageClearedCache;
-import com.graf.docker.client.models.ImageHistory;
-import com.graf.docker.client.models.ImageInfo;
+import com.graf.docker.client.models.ImagePruneResponse;
+import com.graf.docker.client.models.ImageSearchResponseItem;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.TopResults;
 import com.graf.docker.client.params.ClearCacheParam;
 import com.graf.docker.client.params.CreateImageParam;
+import com.graf.docker.client.params.ImageDeleteParam;
+import com.graf.docker.client.params.ImageSearchParam;
 import com.graf.docker.client.params.ImageTagParam;
 import com.graf.docker.client.params.ListContainersParam;
 import com.graf.docker.client.params.ListImagesParam;
@@ -38,7 +43,7 @@ public interface IDockerClient {
 	/**
 	 * List all containers. Default only running ones
 	 */
-	List<Container> listContainers(ListContainersParam... params) throws DockerException;
+	List<ContainerSummary> listContainers(ListContainersParam... params) throws DockerException;
 
 	/**
 	 * Creates a new Container with the given config.
@@ -47,7 +52,7 @@ public interface IDockerClient {
 	 * @return ContainerCreation
 	 * @throws DockerException
 	 */
-	ContainerCreation createContainer(ContainerConfig config) throws DockerException;
+	ContainerCreateResponse createContainer(ContainerConfig config) throws DockerException;
 
 	/**
 	 * Creates a new Container with the given config and name.
@@ -57,7 +62,7 @@ public interface IDockerClient {
 	 * @return ContainerCreation
 	 * @throws DockerException
 	 */
-	ContainerCreation createContainer(ContainerConfig config, String containerName) throws DockerException;
+	ContainerCreateResponse createContainer(ContainerConfig config, String containerName) throws DockerException;
 
 	/**
 	 * Inspect a container. Gives more information than <code>listContainers</code>
@@ -306,18 +311,21 @@ public interface IDockerClient {
 	// Image API
 	// ===================================================================================
 	
-	List<Image> listImages(ListImagesParam... param) throws DockerException;
-	ImageClearedCache clearImageBuildCache(ClearCacheParam... param) throws DockerException;
+	List<ImageSummary> listImages(ListImagesParam... param) throws DockerException;
+	BuildPruneResponse clearImageBuildCache(ClearCacheParam... param) throws DockerException;
 	void createImage(CreateImageParam... param) throws DockerException;
-	ImageInfo inspectImage(String imageName) throws DockerException;
-	List<ImageHistory> imageHistory(String imageName) throws DockerException;
+	Image inspectImage(String imageName) throws DockerException;
+	List<HistoryResponseItem> imageHistory(String imageName) throws DockerException;
 	void tagImage(String name, ImageTagParam... param) throws DockerException;
+	List<ImageDeleteResponseItem> deleteImage(String imageName, ImageDeleteParam... param) throws DockerException;
+	List<ImageSearchResponseItem> searchImage(String term, ImageSearchParam... param) throws DockerException;
+	ImagePruneResponse deleteUnusedImages() throws DockerException;
 	
 	// Additionally Methods
 	// ===================================================================================
 
 	/**
-	 * Creates a new Container and then starts the new created Container.<br>
+	 * Creates a new Container and then starts the newly created Container.<br>
 	 * <b>Attention!</b> if the Container already exists this Method throws an
 	 * error.<br>
 	 * Use the autoRemove option in ContainerConfig to delete the Container after
@@ -326,7 +334,7 @@ public interface IDockerClient {
 	 * @param config
 	 * @throws DockerException
 	 */
-	ContainerCreation runContainer(ContainerConfig config) throws DockerException;
+	ContainerCreateResponse runContainer(ContainerConfig config) throws DockerException;
 
 	/**
 	 * Creates a new Container and then starts the new created Container.<br>
@@ -339,7 +347,7 @@ public interface IDockerClient {
 	 * @param containerName
 	 * @throws DockerException
 	 */
-	ContainerCreation runContainer(ContainerConfig config, String containerName) throws DockerException;
+	ContainerCreateResponse runContainer(ContainerConfig config, String containerName) throws DockerException;
 
 	/**
 	 * Stops listening on stats of a Container

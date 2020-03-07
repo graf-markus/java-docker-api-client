@@ -3,19 +3,19 @@ package com.graf.docker.client.models;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class ContainerCreation {
+public class ImageDeleteResponseItem {
 
-	private String id;
-	private String[] warnings;
+	private String untagged;
+	private String deleted;
 
-	public String getId() {
-		return id;
+	public String getUntagged() {
+		return untagged;
 	}
 
-	public String[] getWarnings() {
-		return warnings;
+	public String getDeleted() {
+		return deleted;
 	}
-	
+
 	@Override
 	public String toString() {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();

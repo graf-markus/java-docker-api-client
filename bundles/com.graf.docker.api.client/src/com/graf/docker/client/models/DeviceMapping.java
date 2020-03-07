@@ -3,7 +3,7 @@ package com.graf.docker.client.models;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class Device {
+public class DeviceMapping {
 
 	private String pathOnHost;
 	private String pathInContainer;

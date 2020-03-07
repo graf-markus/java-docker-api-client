@@ -15,7 +15,7 @@ public class NetworkSettings {
 	private Map<String, Map<String, String>> portMapping;
 	private Map<String, List<PortBinding>> ports;
 	private String macAddress;
-	private Map<String, AttachedNetwork> networks;
+	private Map<String, EndpointSettings> networks;
 	private String endpointId;
 	private String sandboxId;
 	private boolean hairpinMode;
@@ -53,7 +53,7 @@ public class NetworkSettings {
 		return macAddress;
 	}
 
-	public Map<String, AttachedNetwork> getNetworks() {
+	public Map<String, EndpointSettings> getNetworks() {
 		return networks;
 	}
 

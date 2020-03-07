@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.CharBuffer;
 import java.util.ArrayList;
@@ -42,10 +41,10 @@ import com.graf.docker.client.exceptions.ExceptionMessage;
 import com.graf.docker.client.interfaces.FilterParam;
 import com.graf.docker.client.interfaces.IContainerStatsListener;
 import com.graf.docker.client.interfaces.IDockerClient;
-import com.graf.docker.client.models.Container;
+import com.graf.docker.client.models.ContainerSummary;
 import com.graf.docker.client.models.ContainerChange;
 import com.graf.docker.client.models.ContainerConfig;
-import com.graf.docker.client.models.ContainerCreation;
+import com.graf.docker.client.models.ContainerCreateResponse;
 import com.graf.docker.client.models.ContainerExit;
 import com.graf.docker.client.models.ContainerFileInfo;
 import com.graf.docker.client.models.ContainerInfo;
@@ -54,14 +53,19 @@ import com.graf.docker.client.models.ContainerStats;
 import com.graf.docker.client.models.ContainerUpdate;
 import com.graf.docker.client.models.ContainersDeletedInfo;
 import com.graf.docker.client.models.HostConfig;
+import com.graf.docker.client.models.ImageSummary;
+import com.graf.docker.client.models.BuildPruneResponse;
+import com.graf.docker.client.models.ImageDeleteResponseItem;
+import com.graf.docker.client.models.HistoryResponseItem;
 import com.graf.docker.client.models.Image;
-import com.graf.docker.client.models.ImageClearedCache;
-import com.graf.docker.client.models.ImageHistory;
-import com.graf.docker.client.models.ImageInfo;
+import com.graf.docker.client.models.ImagePruneResponse;
+import com.graf.docker.client.models.ImageSearchResponseItem;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.TopResults;
 import com.graf.docker.client.params.ClearCacheParam;
 import com.graf.docker.client.params.CreateImageParam;
+import com.graf.docker.client.params.ImageDeleteParam;
+import com.graf.docker.client.params.ImageSearchParam;
 import com.graf.docker.client.params.ImageTagParam;
 import com.graf.docker.client.params.ListContainersParam;
 import com.graf.docker.client.params.ListImagesParam;
@@ -83,20 +87,20 @@ public class DockerClient implements IDockerClient {
 	}
 
 	@Override
-	public List<Container> listContainers(final ListContainersParam... params) throws DockerException {
+	public List<ContainerSummary> listContainers(final ListContainersParam... params) throws DockerException {
 		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("containers").addPath("json")
 				.addParameters(params).build());
-		Container[] containers = execute(request, 200, Container[].class);
+		ContainerSummary[] containers = execute(request, 200, ContainerSummary[].class);
 		return Arrays.asList(containers);
 	}
 
 	@Override
-	public ContainerCreation createContainer(ContainerConfig config) throws DockerException {
+	public ContainerCreateResponse createContainer(ContainerConfig config) throws DockerException {
 		return createContainer(config, null);
 	}
 
 	@Override
-	public ContainerCreation createContainer(ContainerConfig config, String containerName) throws DockerException {
+	public ContainerCreateResponse createContainer(ContainerConfig config, String containerName) throws DockerException {
 		RequestBuilder builder = RequestBuilder.builder().setUrl(url).addPath("containers").addPath("create");
 		if (!isNullOrEmpty(containerName)) {
 			builder.addParameter("name", containerName);
@@ -108,7 +112,7 @@ public class DockerClient implements IDockerClient {
 		} catch (UnsupportedEncodingException e) {
 			throw new DockerException(e.getMessage());
 		}
-		return execute(request, 201, ContainerCreation.class);
+		return execute(request, 201, ContainerCreateResponse.class);
 	}
 
 	@Override
@@ -390,18 +394,18 @@ public class DockerClient implements IDockerClient {
 	// ==================================================
 
 	@Override
-	public List<Image> listImages(ListImagesParam... param) throws DockerException {
+	public List<ImageSummary> listImages(ListImagesParam... param) throws DockerException {
 		HttpGet request = new HttpGet(
 				RequestBuilder.builder().setUrl(url).addPath("images").addPath("json").addParameters(param).build());
-		Image[] images = execute(request, 200, Image[].class);
+		ImageSummary[] images = execute(request, 200, ImageSummary[].class);
 		return Arrays.asList(images);
 	}
 
 	@Override
-	public ImageClearedCache clearImageBuildCache(ClearCacheParam... param) throws DockerException {
+	public BuildPruneResponse clearImageBuildCache(ClearCacheParam... param) throws DockerException {
 		HttpPost request = new HttpPost(
 				RequestBuilder.builder().setUrl(url).addPath("build").addPath("prune").addParameters(param).build());
-		return execute(request, 200, ImageClearedCache.class);
+		return execute(request, 200, BuildPruneResponse.class);
 	}
 
 	@Override
@@ -412,36 +416,61 @@ public class DockerClient implements IDockerClient {
 	}
 
 	@Override
-	public ImageInfo inspectImage(String imageName) throws DockerException {
+	public Image inspectImage(String imageName) throws DockerException {
 		HttpGet request = new HttpGet(
 				RequestBuilder.builder().setUrl(url).addPath("images").addPath(imageName).addPath("json").build());
-		return execute(request, 200, ImageInfo.class);
+		return execute(request, 200, Image.class);
 	}
 
 	@Override
-	public List<ImageHistory> imageHistory(String imageName) throws DockerException {
+	public List<HistoryResponseItem> imageHistory(String imageName) throws DockerException {
 		HttpGet request = new HttpGet(
 				RequestBuilder.builder().setUrl(url).addPath("images").addPath(imageName).addPath("history").build());
-		ImageHistory[] images = execute(request, 200, ImageHistory[].class);
+		HistoryResponseItem[] images = execute(request, 200, HistoryResponseItem[].class);
 		return Arrays.asList(images);
 	}
 
 	@Override
 	public void tagImage(String imageName, ImageTagParam... param) throws DockerException {
-		HttpPost request = new HttpPost(RequestBuilder.builder().setUrl(url).addPath("images").addPath(imageName).addPath("tag").addParameters(param).build());
+		HttpPost request = new HttpPost(RequestBuilder.builder().setUrl(url).addPath("images").addPath(imageName)
+				.addPath("tag").addParameters(param).build());
 		execute(request, 201);
+	}
+
+	@Override
+	public List<ImageDeleteResponseItem> deleteImage(String imageName, ImageDeleteParam... param)
+			throws DockerException {
+		HttpDelete request = new HttpDelete(
+				RequestBuilder.builder().setUrl(url).addPath("images").addPath(imageName).addParameters(param).build());
+		ImageDeleteResponseItem[] info = execute(request, 200, ImageDeleteResponseItem[].class);
+		return Arrays.asList(info);
+	}
+
+	@Override
+	public List<ImageSearchResponseItem> searchImage(String term, ImageSearchParam... param) throws DockerException {
+		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("images").addPath("search")
+				.addParameter("term", term).addParameters(param).build());
+		ImageSearchResponseItem[] results = execute(request, 200, ImageSearchResponseItem[].class);
+		return Arrays.asList(results);
+	}
+
+	@Override
+	public ImagePruneResponse deleteUnusedImages() throws DockerException {
+		HttpPost request = new HttpPost(
+				RequestBuilder.builder().setUrl(url).addPath("images").addPath("prune").build());
+		return execute(request, 200, ImagePruneResponse.class);
 	}
 
 	// ==================================================
 
 	@Override
-	public ContainerCreation runContainer(ContainerConfig config) throws DockerException {
+	public ContainerCreateResponse runContainer(ContainerConfig config) throws DockerException {
 		return this.runContainer(config, null);
 	}
 
 	@Override
-	public ContainerCreation runContainer(ContainerConfig config, String containerName) throws DockerException {
-		ContainerCreation creation = this.createContainer(config, containerName);
+	public ContainerCreateResponse runContainer(ContainerConfig config, String containerName) throws DockerException {
+		ContainerCreateResponse creation = this.createContainer(config, containerName);
 		this.startContainer(creation.getId());
 		return creation;
 	}

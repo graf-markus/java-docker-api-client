@@ -9,6 +9,12 @@ public class Ulimit {
 	private long soft;
 	private long hard;
 
+	private Ulimit(Builder builder) {
+		this.name = builder.name;
+		this.soft = builder.soft;
+		this.hard = builder.hard;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -23,6 +29,12 @@ public class Ulimit {
 
 	public static Builder builder() {
 		return new Builder();
+	}
+	
+	@Override
+	public String toString() {
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		return gson.toJson(this);
 	}
 
 	public static class Builder {
@@ -61,15 +73,4 @@ public class Ulimit {
 		}
 	}
 
-	private Ulimit(Builder builder) {
-		this.name = builder.name;
-		this.soft = builder.soft;
-		this.hard = builder.hard;
-	}
-
-	@Override
-	public String toString() {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		return gson.toJson(this);
-	}
 }

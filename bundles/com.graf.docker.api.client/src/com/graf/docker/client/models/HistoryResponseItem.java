@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class ImageHistory {
+public class HistoryResponseItem {
 
 	private String id;
 	private int created;

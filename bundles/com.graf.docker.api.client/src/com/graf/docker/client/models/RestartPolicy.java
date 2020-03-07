@@ -8,6 +8,11 @@ public class RestartPolicy {
 	private String name;
 	private int maxRetryCount;
 
+	private RestartPolicy(Builder builder) {
+		this.name = builder.name;
+		this.maxRetryCount = builder.maxREtryCount;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -20,6 +25,13 @@ public class RestartPolicy {
 		return new Builder();
 	}
 
+
+	@Override
+	public String toString() {
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		return gson.toJson(this);
+	}
+	
 	public static class Builder {
 
 		private String name;
@@ -47,16 +59,5 @@ public class RestartPolicy {
 
 			return new RestartPolicy(this);
 		}
-	}
-
-	private RestartPolicy(Builder builder) {
-		this.name = builder.name;
-		this.maxRetryCount = builder.maxREtryCount;
-	}
-
-	@Override
-	public String toString() {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		return gson.toJson(this);
 	}
 }

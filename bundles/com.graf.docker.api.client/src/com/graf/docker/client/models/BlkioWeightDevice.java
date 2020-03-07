@@ -8,6 +8,11 @@ public class BlkioWeightDevice {
 	private String path;
 	private int weight;
 
+	private BlkioWeightDevice(Builder builder) {
+		this.path = builder.path;
+		this.weight = builder.weight;
+	}
+
 	public String getPath() {
 		return path;
 	}
@@ -18,6 +23,12 @@ public class BlkioWeightDevice {
 
 	public static Builder builder() {
 		return new Builder();
+	}
+
+	@Override
+	public String toString() {
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		return gson.toJson(this);
 	}
 
 	public static class Builder {
@@ -47,16 +58,5 @@ public class BlkioWeightDevice {
 
 			return new BlkioWeightDevice(this);
 		}
-	}
-
-	private BlkioWeightDevice(Builder builder) {
-		this.path = builder.path;
-		this.weight = builder.weight;
-	}
-	
-	@Override
-	public String toString() {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		return gson.toJson(this);
 	}
 }

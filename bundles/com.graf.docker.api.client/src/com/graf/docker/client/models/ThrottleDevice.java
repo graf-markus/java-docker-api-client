@@ -3,10 +3,15 @@ package com.graf.docker.client.models;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class BlkioDeviceRate {
+public class ThrottleDevice {
 
 	private String path;
 	private int rate;
+
+	private ThrottleDevice(Builder builder) {
+		this.path = builder.path;
+		this.rate = builder.rate;
+	}
 
 	public String getPath() {
 		return path;
@@ -18,6 +23,12 @@ public class BlkioDeviceRate {
 
 	public static Builder builder() {
 		return new Builder();
+	}
+
+	@Override
+	public String toString() {
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		return gson.toJson(this);
 	}
 
 	public static class Builder {
@@ -43,20 +54,9 @@ public class BlkioDeviceRate {
 			return Builder.this;
 		}
 
-		public BlkioDeviceRate build() {
+		public ThrottleDevice build() {
 
-			return new BlkioDeviceRate(this);
+			return new ThrottleDevice(this);
 		}
-	}
-
-	private BlkioDeviceRate(Builder builder) {
-		this.path = builder.path;
-		this.rate = builder.rate;
-	}
-	
-	@Override
-	public String toString() {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		return gson.toJson(this);
 	}
 }

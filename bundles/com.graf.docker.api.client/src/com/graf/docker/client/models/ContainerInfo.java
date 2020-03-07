@@ -29,7 +29,7 @@ public class ContainerInfo {
 	private String[] execIds;
 	private String logPath;
 	private long restartCount;
-	private ContainerMount[] mounts;
+	private MountPoint[] mounts;
 	private Node node;
 
 	public String getId() {
@@ -116,7 +116,7 @@ public class ContainerInfo {
 		return restartCount;
 	}
 
-	public ContainerMount[] getMounts() {
+	public MountPoint[] getMounts() {
 		return mounts;
 	}
 

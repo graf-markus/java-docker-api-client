@@ -7,9 +7,9 @@ import com.google.gson.GsonBuilder;
 
 public class NetworkingConfig {
 
-	private Map<String, EndpointConfig> endpointsConfig;
+	private Map<String, EndpointSettings> endpointsConfig;
 
-	public Map<String, EndpointConfig> getEndpointsConfig() {
+	public Map<String, EndpointSettings> getEndpointsConfig() {
 		return endpointsConfig;
 	}
 
@@ -23,16 +23,16 @@ public class NetworkingConfig {
 
 	public static class Builder {
 
-		private Map<String, EndpointConfig> endpointsConfig;
+		private Map<String, EndpointSettings> endpointsConfig;
 
 		public Builder() {
 		}
 
-		Builder(Map<String, EndpointConfig> endpointsConfig) {
+		Builder(Map<String, EndpointSettings> endpointsConfig) {
 			this.endpointsConfig = endpointsConfig;
 		}
 
-		public Builder endpointsConfig(Map<String, EndpointConfig> endpointsConfig) {
+		public Builder endpointsConfig(Map<String, EndpointSettings> endpointsConfig) {
 			this.endpointsConfig = endpointsConfig;
 			return Builder.this;
 		}
