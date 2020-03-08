@@ -42,16 +42,16 @@ import com.graf.docker.client.interfaces.FilterParam;
 import com.graf.docker.client.interfaces.IContainerStatsListener;
 import com.graf.docker.client.interfaces.IDockerClient;
 import com.graf.docker.client.models.ContainerSummary;
-import com.graf.docker.client.models.ContainerChange;
+import com.graf.docker.client.models.ContainerChangeResponseItem;
 import com.graf.docker.client.models.ContainerConfig;
 import com.graf.docker.client.models.ContainerCreateResponse;
-import com.graf.docker.client.models.ContainerExit;
+import com.graf.docker.client.models.ContainerWaitResponse;
 import com.graf.docker.client.models.ContainerFileInfo;
-import com.graf.docker.client.models.ContainerInfo;
+import com.graf.docker.client.models.ContainerInspectResponse;
 import com.graf.docker.client.models.ContainerLog;
 import com.graf.docker.client.models.ContainerStats;
-import com.graf.docker.client.models.ContainerUpdate;
-import com.graf.docker.client.models.ContainersDeletedInfo;
+import com.graf.docker.client.models.ContainerUpdateResponse;
+import com.graf.docker.client.models.ContainerPruneResponse;
 import com.graf.docker.client.models.HostConfig;
 import com.graf.docker.client.models.ImageSummary;
 import com.graf.docker.client.models.BuildPruneResponse;
@@ -61,7 +61,7 @@ import com.graf.docker.client.models.Image;
 import com.graf.docker.client.models.ImagePruneResponse;
 import com.graf.docker.client.models.ImageSearchResponseItem;
 import com.graf.docker.client.models.KillSignal;
-import com.graf.docker.client.models.TopResults;
+import com.graf.docker.client.models.ContainerTopResponse;
 import com.graf.docker.client.params.ClearCacheParam;
 import com.graf.docker.client.params.CreateImageParam;
 import com.graf.docker.client.params.ImageDeleteParam;
@@ -116,26 +116,26 @@ public class DockerClient implements IDockerClient {
 	}
 
 	@Override
-	public ContainerInfo inspectContainer(String containerId) throws DockerException {
+	public ContainerInspectResponse inspectContainer(String containerId) throws DockerException {
 		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
 				.addPath("json").build());
-		return execute(request, 200, ContainerInfo.class);
+		return execute(request, 200, ContainerInspectResponse.class);
 	}
 
 	@Override
-	public TopResults topContainer(String containerId) throws DockerException {
+	public ContainerTopResponse topContainer(String containerId) throws DockerException {
 		return topContainer(containerId, null);
 	}
 
 	@Override
-	public TopResults topContainer(String containerId, String psargs) throws DockerException {
+	public ContainerTopResponse topContainer(String containerId, String psargs) throws DockerException {
 		RequestBuilder builder = RequestBuilder.builder();
 		if (!isNullOrEmpty(psargs)) {
 			builder.addParameter("ps_args", psargs);
 		}
 		HttpGet request = new HttpGet(
 				builder.setUrl(url).addPath("containers").addPath(containerId).addPath("top").build());
-		return execute(request, 200, TopResults.class);
+		return execute(request, 200, ContainerTopResponse.class);
 	}
 
 	@Override
@@ -174,10 +174,10 @@ public class DockerClient implements IDockerClient {
 	}
 
 	@Override
-	public List<ContainerChange> inspectContainerChanges(String containerId) throws DockerException {
+	public List<ContainerChangeResponseItem> inspectContainerChanges(String containerId) throws DockerException {
 		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
 				.addPath("changes").build());
-		ContainerChange[] changes = execute(request, 200, ContainerChange[].class);
+		ContainerChangeResponseItem[] changes = execute(request, 200, ContainerChangeResponseItem[].class);
 		if (changes != null) {
 			return Arrays.asList(changes);
 		}
@@ -274,7 +274,7 @@ public class DockerClient implements IDockerClient {
 	}
 
 	@Override
-	public ContainerUpdate updateContainer(String containerId, HostConfig config) throws DockerException {
+	public ContainerUpdateResponse updateContainer(String containerId, HostConfig config) throws DockerException {
 		HttpPost request = new HttpPost(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
 				.addPath("update").build());
 		try {
@@ -283,7 +283,7 @@ public class DockerClient implements IDockerClient {
 		} catch (UnsupportedEncodingException e) {
 			throw new DockerException(e.getMessage());
 		}
-		return execute(request, 200, ContainerUpdate.class);
+		return execute(request, 200, ContainerUpdateResponse.class);
 	}
 
 	@Override
@@ -308,7 +308,7 @@ public class DockerClient implements IDockerClient {
 	}
 
 	@Override
-	public ContainerExit waitForContainer(String containerId) throws DockerException {
+	public ContainerWaitResponse waitForContainer(String containerId) throws DockerException {
 		HttpPost request = new HttpPost(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
 				.addPath("wait").build());
 		int statusCode = 0;
@@ -316,7 +316,7 @@ public class DockerClient implements IDockerClient {
 			statusCode = response.getStatusLine().getStatusCode();
 			byte[] bytes = new byte[4096];
 			int read = response.getEntity().getContent().read(bytes);
-			return gson.fromJson(new String(bytes, 0, read - 1), ContainerExit.class);
+			return gson.fromJson(new String(bytes, 0, read - 1), ContainerWaitResponse.class);
 		} catch (Exception e) {
 			throw new DockerException(e.getMessage(), statusCode);
 		}
@@ -384,10 +384,10 @@ public class DockerClient implements IDockerClient {
 	}
 
 	@Override
-	public ContainersDeletedInfo deleteContainers() throws DockerException {
+	public ContainerPruneResponse deleteContainers() throws DockerException {
 		HttpPost request = new HttpPost(
 				RequestBuilder.builder().setUrl(url).addPath("containers").addPath("prune").build());
-		return execute(request, 200, ContainersDeletedInfo.class);
+		return execute(request, 200, ContainerPruneResponse.class);
 	}
 
 	// Image API

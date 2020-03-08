@@ -1,19 +1,21 @@
 package com.graf.docker.client.models;
 
+import java.util.Map;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class ContainersDeletedInfo {
+public class GraphDriverData {
 
-	private String[] containersDeleted;
-	private int spaceReclaimed;
+	private String name;
+	private Map<String, String> data;
 
-	public String[] getContainersDeleted() {
-		return containersDeleted;
+	public String getName() {
+		return name;
 	}
 
-	public int getSpaceReclaimed() {
-		return spaceReclaimed;
+	public Map<String, String> getData() {
+		return data;
 	}
 
 	@Override

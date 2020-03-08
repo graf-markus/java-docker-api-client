@@ -1,7 +1,5 @@
 package com.graf.docker.client.models;
 
-import java.util.Map;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -15,6 +13,17 @@ public class Mount {
 	private BindOptions bindOptions;
 	private VolumeOptions volumeOptions;
 	private TmpfsOptions tmpfsOptions;
+
+	private Mount(Builder builder) {
+		this.target = builder.target;
+		this.source = builder.source;
+		this.type = builder.type;
+		this.readOnly = builder.readOnly;
+		this.consistency = builder.consistency;
+		this.bindOptions = builder.bindOptions;
+		this.volumeOptions = builder.volumeOptions;
+		this.tmpfsOptions = builder.tmpfsOptions;
+	}
 
 	public String getTarget() {
 		return target;
@@ -48,24 +57,8 @@ public class Mount {
 		return tmpfsOptions;
 	}
 
-	@Override
-	public String toString() {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		return gson.toJson(this);
-	}
-}
-
-class BindOptions {
-
-	private String propagation;
-	private boolean nonRecursive;
-
-	public String getPropagation() {
-		return propagation;
-	}
-
-	public boolean isNonRecursive() {
-		return nonRecursive;
+	public static Builder builder() {
+		return new Builder();
 	}
 
 	@Override
@@ -73,68 +66,64 @@ class BindOptions {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		return gson.toJson(this);
 	}
-}
 
-class VolumeOptions {
+	public static class Builder {
 
-	private boolean noCopy;
-	private Map<String, String> labels;
-	private DriverConfig driverConfig;
+		private String target;
+		private String source;
+		private String type;
+		private boolean readOnly;
+		private String consistency;
+		private BindOptions bindOptions;
+		private VolumeOptions volumeOptions;
+		private TmpfsOptions tmpfsOptions;
 
-	public boolean isNoCopy() {
-		return noCopy;
-	}
+		public Builder() {
+		}
 
-	public Map<String, String> getLabels() {
-		return labels;
-	}
+		public Builder target(String target) {
+			this.target = target;
+			return Builder.this;
+		}
 
-	public DriverConfig getDriverConfig() {
-		return driverConfig;
-	}
+		public Builder source(String source) {
+			this.source = source;
+			return Builder.this;
+		}
 
-	@Override
-	public String toString() {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		return gson.toJson(this);
-	}
-}
+		public Builder type(String type) {
+			this.type = type;
+			return Builder.this;
+		}
 
-class TmpfsOptions {
+		public Builder readOnly(boolean readOnly) {
+			this.readOnly = readOnly;
+			return Builder.this;
+		}
 
-	private int sizeBytes;
-	private int mode;
+		public Builder consistency(String consistency) {
+			this.consistency = consistency;
+			return Builder.this;
+		}
 
-	public int getSizeBytes() {
-		return sizeBytes;
-	}
+		public Builder bindOptions(BindOptions bindOptions) {
+			this.bindOptions = bindOptions;
+			return Builder.this;
+		}
 
-	public int getMode() {
-		return mode;
-	}
+		public Builder volumeOptions(VolumeOptions volumeOptions) {
+			this.volumeOptions = volumeOptions;
+			return Builder.this;
+		}
 
-	@Override
-	public String toString() {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		return gson.toJson(this);
-	}
-}
+		public Builder tmpfsOptions(TmpfsOptions tmpfsOptions) {
+			this.tmpfsOptions = tmpfsOptions;
+			return Builder.this;
+		}
 
-class DriverConfig {
-	private String name;
-	private Map<String, String> options;
+		public Mount build() {
 
-	public String getName() {
-		return name;
-	}
-
-	public Map<String, String> getOptions() {
-		return options;
-	}
-
-	@Override
-	public String toString() {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		return gson.toJson(this);
+			return new Mount(this);
+		}
 	}
 }

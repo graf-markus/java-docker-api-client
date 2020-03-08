@@ -1,5 +1,6 @@
 package com.graf.docker.client.models;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gson.Gson;
@@ -36,8 +37,7 @@ public class LogConfig {
 	public static class Builder {
 
 		private String type;
-
-		private Map<String, String> logOptions;
+		private Map<String, String> logOptions = new HashMap<>();
 
 		public Builder() {
 		}
@@ -57,6 +57,11 @@ public class LogConfig {
 			return Builder.this;
 		}
 
+		public Builder addLogOption(String key, String value) {
+			this.logOptions.put(key, value);
+			return Builder.this;
+		}
+		
 		public LogConfig build() {
 			return new LogConfig(this);
 		}

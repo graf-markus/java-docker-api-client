@@ -1,5 +1,6 @@
 package com.graf.docker.client.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -53,7 +54,7 @@ public class HealthConfig {
 
 	public static class Builder {
 
-		private List<String> test;
+		private List<String> test = new ArrayList<String>();
 		private int interval;
 		private int timeout;
 		private int retries;
@@ -62,19 +63,16 @@ public class HealthConfig {
 		public Builder() {
 		}
 
-		Builder(List<String> test, int interval, int timeout, int retries, int startPeriod) {
-			this.test = test;
-			this.interval = interval;
-			this.timeout = timeout;
-			this.retries = retries;
-			this.startPeriod = startPeriod;
-		}
-
 		public Builder test(List<String> test) {
 			this.test = test;
 			return Builder.this;
 		}
 
+		public Builder addTest(String test) {
+			this.test.add(test);
+			return Builder.this;
+		}
+		
 		public Builder interval(int interval) {
 			this.interval = interval;
 			return Builder.this;

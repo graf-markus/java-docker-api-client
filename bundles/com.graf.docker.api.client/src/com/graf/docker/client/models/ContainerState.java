@@ -1,9 +1,8 @@
 package com.graf.docker.client.models;
 
-import java.util.Date;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.SerializedName;
 
 public class ContainerState {
 
@@ -11,13 +10,15 @@ public class ContainerState {
 	private boolean running;
 	private boolean paused;
 	private boolean restarting;
-	private int pid;
-	private long exitCode;
-	private Date startedAt;
-	private Date finishedAt;
-	private String error;
+	@SerializedName("OOMKilled")
 	private boolean oomKilled;
 	private boolean dead;
+	private int pid;
+	private int exitCode;
+	private String error;
+	private String startedAt;
+	private String finishedAt;
+	private Health health;
 
 	public String getStatus() {
 		return status;
@@ -35,32 +36,36 @@ public class ContainerState {
 		return restarting;
 	}
 
-	public int getPid() {
-		return pid;
-	}
-
-	public long getExitCode() {
-		return exitCode;
-	}
-
-	public Date getStartedAt() {
-		return startedAt;
-	}
-
-	public Date getFinishedAt() {
-		return finishedAt;
-	}
-
-	public String getError() {
-		return error;
-	}
-
 	public boolean isOomKilled() {
 		return oomKilled;
 	}
 
 	public boolean isDead() {
 		return dead;
+	}
+
+	public int getPid() {
+		return pid;
+	}
+
+	public int getExitCode() {
+		return exitCode;
+	}
+
+	public String getError() {
+		return error;
+	}
+
+	public String getStartedAt() {
+		return startedAt;
+	}
+
+	public String getFinishedAt() {
+		return finishedAt;
+	}
+
+	public Health getHealth() {
+		return health;
 	}
 
 	@Override

@@ -2,10 +2,12 @@ package com.graf.docker.client.models;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.SerializedName;
 
 public class RestartPolicy {
 
 	private String name;
+	@SerializedName("MaximumRetryCount")
 	private int maxRetryCount;
 
 	private RestartPolicy(Builder builder) {
@@ -25,13 +27,12 @@ public class RestartPolicy {
 		return new Builder();
 	}
 
-
 	@Override
 	public String toString() {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		return gson.toJson(this);
 	}
-	
+
 	public static class Builder {
 
 		private String name;
@@ -59,5 +60,12 @@ public class RestartPolicy {
 
 			return new RestartPolicy(this);
 		}
+	}
+
+	public static class RestartPolicyName {
+		public static String RESTART_POLICY_EMPTY = "";
+		public static String RESTART_POLICY_ALWAYS = "always";
+		public static String RESTART_POLICY_UNLESS_STOPPED = "unless-stopped";
+		public static String RESTART_POLICY_ON_FAILURE = "on-failure";
 	}
 }

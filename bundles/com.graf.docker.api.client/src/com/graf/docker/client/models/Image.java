@@ -110,19 +110,6 @@ public class Image {
 		return gson.toJson(this);
 	}
 
-	class GraphDriverData {
-		private String name;
-		private Map<String, String> data;
-
-		public String getName() {
-			return name;
-		}
-
-		public Map<String, String> getData() {
-			return data;
-		}
-	}
-
 	class Metadata {
 		private String lastTagTime;
 

@@ -5,16 +5,16 @@ import java.util.concurrent.TimeUnit;
 
 import com.graf.docker.client.exceptions.DockerException;
 import com.graf.docker.client.models.ContainerSummary;
-import com.graf.docker.client.models.ContainerChange;
+import com.graf.docker.client.models.ContainerChangeResponseItem;
 import com.graf.docker.client.models.ContainerConfig;
 import com.graf.docker.client.models.ContainerCreateResponse;
-import com.graf.docker.client.models.ContainerExit;
+import com.graf.docker.client.models.ContainerWaitResponse;
 import com.graf.docker.client.models.ContainerFileInfo;
-import com.graf.docker.client.models.ContainerInfo;
+import com.graf.docker.client.models.ContainerInspectResponse;
 import com.graf.docker.client.models.ContainerLog;
 import com.graf.docker.client.models.ContainerStats;
-import com.graf.docker.client.models.ContainerUpdate;
-import com.graf.docker.client.models.ContainersDeletedInfo;
+import com.graf.docker.client.models.ContainerUpdateResponse;
+import com.graf.docker.client.models.ContainerPruneResponse;
 import com.graf.docker.client.models.HostConfig;
 import com.graf.docker.client.models.ImageSummary;
 import com.graf.docker.client.models.BuildPruneResponse;
@@ -24,7 +24,7 @@ import com.graf.docker.client.models.Image;
 import com.graf.docker.client.models.ImagePruneResponse;
 import com.graf.docker.client.models.ImageSearchResponseItem;
 import com.graf.docker.client.models.KillSignal;
-import com.graf.docker.client.models.TopResults;
+import com.graf.docker.client.models.ContainerTopResponse;
 import com.graf.docker.client.params.ClearCacheParam;
 import com.graf.docker.client.params.CreateImageParam;
 import com.graf.docker.client.params.ImageDeleteParam;
@@ -71,7 +71,7 @@ public interface IDockerClient {
 	 * @return ContainerInfo
 	 * @throws DockerException
 	 */
-	ContainerInfo inspectContainer(final String containerId) throws DockerException;
+	ContainerInspectResponse inspectContainer(final String containerId) throws DockerException;
 
 	/**
 	 * List running Processes inside a Container. Only working on running ones.
@@ -81,7 +81,7 @@ public interface IDockerClient {
 	 * @return TopResult
 	 * @throws DockerException
 	 */
-	TopResults topContainer(String containerId) throws DockerException;
+	ContainerTopResponse topContainer(String containerId) throws DockerException;
 
 	/**
 	 * List running Processes inside a Container. Only working on running ones.
@@ -91,7 +91,7 @@ public interface IDockerClient {
 	 * @return TopResult
 	 * @throws DockerException
 	 */
-	TopResults topContainer(String containerId, String psargs) throws DockerException;
+	ContainerTopResponse topContainer(String containerId, String psargs) throws DockerException;
 
 	/**
 	 * Get stdout and stderr logs from a Container.
@@ -110,7 +110,7 @@ public interface IDockerClient {
 	 * @return
 	 * @throws DockerException
 	 */
-	List<ContainerChange> inspectContainerChanges(String containerId) throws DockerException;
+	List<ContainerChangeResponseItem> inspectContainerChanges(String containerId) throws DockerException;
 
 	/**
 	 * Export the contents of a Container as a tarball.
@@ -226,7 +226,7 @@ public interface IDockerClient {
 	 * @return
 	 * @throws DockerException
 	 */
-	ContainerUpdate updateContainer(String containerId, HostConfig config) throws DockerException;
+	ContainerUpdateResponse updateContainer(String containerId, HostConfig config) throws DockerException;
 
 	/**
 	 * Renames a existing Container.
@@ -261,7 +261,7 @@ public interface IDockerClient {
 	 * @return
 	 * @throws DockerException
 	 */
-	ContainerExit waitForContainer(String containerId) throws DockerException;
+	ContainerWaitResponse waitForContainer(String containerId) throws DockerException;
 
 	/**
 	 * Removes a Container with the given id or name.
@@ -306,7 +306,7 @@ public interface IDockerClient {
 	 * @return ContainersDeletedInfo
 	 * @throws DockerException
 	 */
-	ContainersDeletedInfo deleteContainers() throws DockerException;
+	ContainerPruneResponse deleteContainers() throws DockerException;
 
 	// Image API
 	// ===================================================================================

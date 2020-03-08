@@ -1,19 +1,21 @@
 package com.graf.docker.client.models;
 
+import java.util.List;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public class ContainerExit {
+public class ContainerTopResponse {
 
-	private String error;
-	private int statusCode;
+	private List<String> titles;
+	private List<List<String>> processes;
 
-	public String getError() {
-		return error;
+	public List<String> getTitles() {
+		return titles;
 	}
 
-	public int getStatusCode() {
-		return statusCode;
+	public List<List<String>> getProcesses() {
+		return processes;
 	}
 
 	@Override

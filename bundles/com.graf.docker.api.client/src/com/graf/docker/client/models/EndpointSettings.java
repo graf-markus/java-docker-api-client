@@ -30,7 +30,7 @@ public class EndpointSettings {
 	@SerializedName("GlobalIPv6Address")
 	private String globalIPv6Address;
 	@SerializedName("GlobalIPv6PrefixLen")
-	private int globalIPv6PrefixLen;
+	private long globalIPv6PrefixLen;
 	private String macAddress;
 	private Map<String, String> driverOpts;
 
@@ -82,7 +82,7 @@ public class EndpointSettings {
 		return globalIPv6Address;
 	}
 
-	public int getGlobalIPv6PrefixLen() {
+	public long getGlobalIPv6PrefixLen() {
 		return globalIPv6PrefixLen;
 	}
 
@@ -111,8 +111,8 @@ public class EndpointSettings {
 	public static class Builder {
 
 		private EndpointIPAMConfig ipamConfig;
-		private List<String> links;
-		private List<String> aliases;
+		private List<String> links = new ArrayList<String>();
+		private List<String> aliases = new ArrayList<String>();
 		private String networkId;
 		private String endpointId;
 		private String gateway;
@@ -120,9 +120,9 @@ public class EndpointSettings {
 		private int ipPrefixLen;
 		private String ipv6Gateway;
 		private String globalIPv6Address;
-		private int globalIPv6PrefixLen;
+		private long globalIPv6PrefixLen;
 		private String macAddress;
-		private Map<String, String> driverOpts;
+		private Map<String, String> driverOpts = new HashMap<>();
 
 		public Builder() {
 		}
@@ -137,14 +137,8 @@ public class EndpointSettings {
 			return Builder.this;
 		}
 
-		public Builder links(String... links) {
-			if (links.length < 0) {
-				return Builder.this;
-			}
-			if (this.links != null) {
-				this.links = new ArrayList<String>();
-			}
-			this.links.addAll(Arrays.asList(links));
+		public Builder addLinks(String links) {
+			this.links.add(links);
 			return Builder.this;
 		}
 
@@ -153,14 +147,8 @@ public class EndpointSettings {
 			return Builder.this;
 		}
 
-		public Builder aliases(String... aliases) {
-			if (aliases.length < 0) {
-				return Builder.this;
-			}
-			if (this.aliases != null) {
-				this.aliases = new ArrayList<String>();
-			}
-			this.aliases.addAll(Arrays.asList(aliases));
+		public Builder addAliases(String aliases) {
+			this.aliases.add(aliases);
 			return Builder.this;
 		}
 
@@ -199,7 +187,7 @@ public class EndpointSettings {
 			return Builder.this;
 		}
 
-		public Builder globalIPv6PrefixLen(int globalIPv6PrefixLen) {
+		public Builder globalIPv6PrefixLen(long globalIPv6PrefixLen) {
 			this.globalIPv6PrefixLen = globalIPv6PrefixLen;
 			return Builder.this;
 		}
@@ -214,15 +202,13 @@ public class EndpointSettings {
 			return Builder.this;
 		}
 
-		public Builder driverOpts(String key, String value) {
-			if (this.driverOpts != null) {
-				this.driverOpts = new HashMap<String, String>();
-			}
+		public Builder addDriverOpt(String key, String value) {
 			this.driverOpts.put(key, value);
 			return Builder.this;
 		}
-
+		
 		public EndpointSettings build() {
+
 			return new EndpointSettings(this);
 		}
 	}
