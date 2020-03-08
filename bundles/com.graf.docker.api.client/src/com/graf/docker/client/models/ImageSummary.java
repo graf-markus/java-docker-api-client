@@ -11,7 +11,7 @@ public class ImageSummary {
 	private String id;
 	private String parentId;
 	private List<String> repoTags;
-	private List<String> repoDigets;
+	private List<String> repoDigests;
 	private int created;
 	private int size;
 	private int sharedSize;
@@ -31,8 +31,8 @@ public class ImageSummary {
 		return repoTags;
 	}
 
-	public List<String> getRepoDigets() {
-		return repoDigets;
+	public List<String> getRepoDigests() {
+		return repoDigests;
 	}
 
 	public int getCreated() {

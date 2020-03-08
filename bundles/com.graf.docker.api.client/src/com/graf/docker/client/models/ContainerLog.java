@@ -28,6 +28,12 @@ public class ContainerLog {
 		return new Builder();
 	}
 
+	@Override
+	public String toString() {
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		return gson.toJson(this);
+	}
+
 	public static class Builder {
 
 		private List<String> stdout = new ArrayList<String>();
@@ -67,9 +73,4 @@ public class ContainerLog {
 		}
 	}
 
-	@Override
-	public String toString() {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		return gson.toJson(this);
-	}
 }

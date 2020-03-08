@@ -9,7 +9,7 @@ public class CpuStats {
 	@SerializedName("cpu_usage")
 	private CpuUsage cpuUsage;
 	@SerializedName("system_cpu_usage")
-	private Long systemCpuUsage;
+	private long systemCpuUsage;
 	@SerializedName("throttling_data")
 	private ThrottlingData throttlingData;
 
@@ -17,7 +17,7 @@ public class CpuStats {
 		return cpuUsage;
 	}
 
-	public Long getSystemCpuUsage() {
+	public long getSystemCpuUsage() {
 		return systemCpuUsage;
 	}
 

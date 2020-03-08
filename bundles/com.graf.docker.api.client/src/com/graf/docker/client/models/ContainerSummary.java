@@ -9,7 +9,7 @@ import com.google.gson.GsonBuilder;
 public class ContainerSummary {
 
 	private String id;
-	private String[] names;
+	private List<String> names;
 	private String image;
 	private String imageID;
 	private String command;
@@ -28,7 +28,7 @@ public class ContainerSummary {
 		return id;
 	}
 
-	public String[] getNames() {
+	public List<String> getNames() {
 		return names;
 	}
 

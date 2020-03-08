@@ -16,6 +16,7 @@ import com.graf.docker.client.models.ContainerStats;
 import com.graf.docker.client.models.ContainerUpdateResponse;
 import com.graf.docker.client.models.ContainerPruneResponse;
 import com.graf.docker.client.models.HostConfig;
+import com.graf.docker.client.models.IdResponse;
 import com.graf.docker.client.models.ImageSummary;
 import com.graf.docker.client.models.BuildPruneResponse;
 import com.graf.docker.client.models.ImageDeleteResponseItem;
@@ -26,6 +27,7 @@ import com.graf.docker.client.models.ImageSearchResponseItem;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.ContainerTopResponse;
 import com.graf.docker.client.params.ClearCacheParam;
+import com.graf.docker.client.params.CommitImageParam;
 import com.graf.docker.client.params.CreateImageParam;
 import com.graf.docker.client.params.ImageDeleteParam;
 import com.graf.docker.client.params.ImageSearchParam;
@@ -114,6 +116,7 @@ public interface IDockerClient {
 
 	/**
 	 * Export the contents of a Container as a tarball.
+	 * 
 	 * @param containerId
 	 * @return String with the binary data
 	 * @throws DockerException
@@ -310,17 +313,160 @@ public interface IDockerClient {
 
 	// Image API
 	// ===================================================================================
-	
+	/**
+	 * Returns a list of images on the server. Note that it uses a different,
+	 * smaller representation of an image than inspecting a single image.
+	 * 
+	 * @param param
+	 * @return
+	 * @throws DockerException
+	 */
 	List<ImageSummary> listImages(ListImagesParam... param) throws DockerException;
+
+	/**
+	 * Cleans the Image Build Cache.
+	 * 
+	 * @param param
+	 * @return
+	 * @throws DockerException
+	 */
 	BuildPruneResponse clearImageBuildCache(ClearCacheParam... param) throws DockerException;
+
+	/**
+	 * Create an image by either pulling it from a registry or importing it.
+	 * 
+	 * @param param
+	 * @throws DockerException
+	 */
 	void createImage(CreateImageParam... param) throws DockerException;
+
+	/**
+	 * Return low-level information about an image.
+	 * 
+	 * @param imageName
+	 * @return
+	 * @throws DockerException
+	 */
 	Image inspectImage(String imageName) throws DockerException;
+
+	/**
+	 * Return parent layers of an image.
+	 * 
+	 * @param imageName
+	 * @return
+	 * @throws DockerException
+	 */
 	List<HistoryResponseItem> imageHistory(String imageName) throws DockerException;
+
+	/**
+	 * Tag an image so that it becomes part of a repository.
+	 * 
+	 * @param name
+	 * @param param
+	 * @throws DockerException
+	 */
 	void tagImage(String name, ImageTagParam... param) throws DockerException;
+
+	/**
+	 * Remove an image, along with any untagged parent images that were referenced
+	 * by that image.
+	 * 
+	 * Images can't be removed if they have descendant images, are being used by a
+	 * running container or are being used by a build.
+	 * 
+	 * @param imageName
+	 * @param param
+	 * @return
+	 * @throws DockerException
+	 */
 	List<ImageDeleteResponseItem> deleteImage(String imageName, ImageDeleteParam... param) throws DockerException;
+
+	/**
+	 * Search for an image on Docker Hub.
+	 * 
+	 * @param term
+	 * @param param
+	 * @return
+	 * @throws DockerException
+	 */
 	List<ImageSearchResponseItem> searchImage(String term, ImageSearchParam... param) throws DockerException;
+
+	/**
+	 * Delete unused Images.
+	 * 
+	 * @return
+	 * @throws DockerException
+	 */
 	ImagePruneResponse deleteUnusedImages() throws DockerException;
-	
+
+	/**
+	 * Create a new image from a container.
+	 * 
+	 * @param config
+	 * @param param
+	 * @return
+	 * @throws DockerException
+	 */
+	IdResponse commitImage(ContainerConfig config, CommitImageParam... param) throws DockerException;
+
+	/**
+	 * Get a tarball containing all images and metadata for a repository.
+	 * 
+	 * If name is a specific name and tag (e.g. ubuntu:latest), then only that image
+	 * (and its parents) are returned. If name is an image ID, similarly only that
+	 * image (and its parents) are returned, but with the exclusion of the
+	 * repositories file in the tarball, as there were no image names
+	 * referenced.<br>
+	 * <br>
+	 * 
+	 * Image tarball format An image tarball contains one directory per image layer
+	 * (named using its long ID), each containing these files:<br>
+	 * 
+	 * <b>VERSION:</b> currently 1.0 - the file format version<br>
+	 * <b>json:</b> detailed layer information, similar to docker inspect
+	 * layer_id<br>
+	 * <b>layer.tar:</b> A tarfile containing the filesystem changes in this layer
+	 * <br>
+	 * <br>
+	 * The layer.tar file contains aufs style .wh..wh.aufs files and directories for
+	 * storing attribute changes and deletions.<br>
+	 * <br>
+	 * 
+	 * If the tarball defines a repository, the tarball should also include a
+	 * repositories file at the root that contains a list of repository and tag
+	 * names mapped to layer IDs.
+	 * 
+	 * @param name
+	 * @return binary String
+	 * @throws DockerException
+	 */
+	String getImage(String name) throws DockerException;
+
+	/**
+	 * Get a tarball containing all images and metadata for several image
+	 * repositories.<br>
+	 * <br>
+	 * 
+	 * For each value of the names parameter: if it is a specific name and tag (e.g.
+	 * ubuntu:latest), then only that image (and its parents) are returned; if it is
+	 * an image ID, similarly only that image (and its parents) are returned and
+	 * there would be no names referenced in the 'repositories' file for this image
+	 * ID.
+	 * 
+	 * @param name
+	 * @return
+	 * @throws DockerException
+	 */
+	String getImages(String... name) throws DockerException;
+
+	/**
+	 * Load a set of images and tags into a repository.
+	 * 
+	 * @param pathToTarball
+	 * @throws DockerException
+	 */
+	void loadImage(String pathToTarball) throws DockerException;
+
 	// Additionally Methods
 	// ===================================================================================
 
@@ -355,8 +501,11 @@ public interface IDockerClient {
 	 * @param containerId
 	 */
 	void stopStatContainerStream(String containerId);
+
 	/**
-	 * Stops the Container with the given containerId and then removes the Container.
+	 * Stops the Container with the given containerId and then removes the
+	 * Container.
+	 * 
 	 * @param containerId
 	 * @throws DockerException
 	 */

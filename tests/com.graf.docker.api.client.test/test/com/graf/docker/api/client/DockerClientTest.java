@@ -105,7 +105,7 @@ public class DockerClientTest {
 
 		assertEquals(creation.getId(), containers.get(0).getId());
 		// Docker Engine adds / before Names
-		assertEquals("/test-container-name", containers.get(0).getNames()[0]);
+		assertEquals("/test-container-name", containers.get(0).getNames().get(0));
 	}
 
 	@Test
@@ -561,8 +561,9 @@ public class DockerClientTest {
 
 		String binary = docker.archiveContainer(containerId, "/");
 
-		BufferedWriter writer = new BufferedWriter(new FileWriter(new File("./archive.tar")));
-		writer.write(binary);
+		try(BufferedWriter writer = new BufferedWriter(new FileWriter(new File("./archive.tar")))){			
+			writer.write(binary);
+		};
 
 		assertTrue(Files.exists(Paths.get("./archive.tar")));
 		assertTrue(Files.size(Paths.get("./archive.tar")) > 0);

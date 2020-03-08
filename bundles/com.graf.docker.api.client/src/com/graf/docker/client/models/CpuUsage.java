@@ -1,6 +1,5 @@
 package com.graf.docker.client.models;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -10,15 +9,15 @@ import com.google.gson.annotations.SerializedName;
 public class CpuUsage {
 
 	@SerializedName("total_usage")
-	private Long totalUsage;
+	private long totalUsage;
 	@SerializedName("percpu_usage")
 	private List<Long> percpuUsage;
 	@SerializedName("usage_in_kernelmode")
-	private Long usageInKernelmode;
+	private long usageInKernelmode;
 	@SerializedName("usage_in_usermode")
-	private Long usageInUsermode;
+	private long usageInUsermode;
 
-	public Long getTotalUsage() {
+	public long getTotalUsage() {
 		return totalUsage;
 	}
 
@@ -26,11 +25,11 @@ public class CpuUsage {
 		return percpuUsage;
 	}
 
-	public Long getUsageInKernelmode() {
+	public long getUsageInKernelmode() {
 		return usageInKernelmode;
 	}
 
-	public Long getUsageInUsermode() {
+	public long getUsageInUsermode() {
 		return usageInUsermode;
 	}
 

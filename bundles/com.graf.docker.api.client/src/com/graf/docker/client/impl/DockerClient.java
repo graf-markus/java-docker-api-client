@@ -53,6 +53,7 @@ import com.graf.docker.client.models.ContainerStats;
 import com.graf.docker.client.models.ContainerUpdateResponse;
 import com.graf.docker.client.models.ContainerPruneResponse;
 import com.graf.docker.client.models.HostConfig;
+import com.graf.docker.client.models.IdResponse;
 import com.graf.docker.client.models.ImageSummary;
 import com.graf.docker.client.models.BuildPruneResponse;
 import com.graf.docker.client.models.ImageDeleteResponseItem;
@@ -63,6 +64,7 @@ import com.graf.docker.client.models.ImageSearchResponseItem;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.ContainerTopResponse;
 import com.graf.docker.client.params.ClearCacheParam;
+import com.graf.docker.client.params.CommitImageParam;
 import com.graf.docker.client.params.CreateImageParam;
 import com.graf.docker.client.params.ImageDeleteParam;
 import com.graf.docker.client.params.ImageSearchParam;
@@ -100,7 +102,8 @@ public class DockerClient implements IDockerClient {
 	}
 
 	@Override
-	public ContainerCreateResponse createContainer(ContainerConfig config, String containerName) throws DockerException {
+	public ContainerCreateResponse createContainer(ContainerConfig config, String containerName)
+			throws DockerException {
 		RequestBuilder builder = RequestBuilder.builder().setUrl(url).addPath("containers").addPath("create");
 		if (!isNullOrEmpty(containerName)) {
 			builder.addParameter("name", containerName);
@@ -459,6 +462,64 @@ public class DockerClient implements IDockerClient {
 		HttpPost request = new HttpPost(
 				RequestBuilder.builder().setUrl(url).addPath("images").addPath("prune").build());
 		return execute(request, 200, ImagePruneResponse.class);
+	}
+
+	@Override
+	public IdResponse commitImage(ContainerConfig config, CommitImageParam... param) throws DockerException {
+		HttpPost request = new HttpPost(
+				RequestBuilder.builder().setUrl(url).addPath("commit").addParameters(param).build());
+		try {
+			request.setEntity(new StringEntity(gson.toJson(config)));
+		} catch (UnsupportedEncodingException e) {
+			throw new DockerException(e.getMessage());
+		}
+		return execute(request, 201, IdResponse.class);
+	}
+
+	@Override
+	public String getImage(String name) throws DockerException {
+		HttpGet request = new HttpGet(
+				RequestBuilder.builder().setUrl(url).addPath("images").addPath(name).addPath("get").build());
+		int statusCode = 0;
+		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
+			statusCode = response.getStatusLine().getStatusCode();
+			if (statusCode == 200) {
+				String binaryString = EntityUtils.toString(response.getEntity());
+				return binaryString;
+			}
+			String jsonEntity = EntityUtils.toString(response.getEntity());
+			throw new DockerException(gson.fromJson(jsonEntity, ExceptionMessage.class).getMessage(), statusCode);
+		} catch (IOException e) {
+			throw new DockerException(e.getMessage(), statusCode);
+		}
+	}
+
+	@Override
+	public String getImages(String... names) throws DockerException {
+		String param = "";
+		for (String s : names) {
+			param += s + ",";
+		}
+		param = param.substring(0, param.length() - 1);
+		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("containers").addPath("export")
+				.addParameter("name", param).build());
+		int statusCode = 0;
+		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
+			statusCode = response.getStatusLine().getStatusCode();
+			if (statusCode == 200) {
+				String binaryString = EntityUtils.toString(response.getEntity());
+				return binaryString;
+			}
+			String jsonEntity = EntityUtils.toString(response.getEntity());
+			throw new DockerException(gson.fromJson(jsonEntity, ExceptionMessage.class).getMessage(), statusCode);
+		} catch (IOException e) {
+			throw new DockerException(e.getMessage(), statusCode);
+		}
+	}
+
+	@Override
+	public void loadImage(String pathToTarball) throws DockerException {
+		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("images").addPath("load").build());
 	}
 
 	// ==================================================
