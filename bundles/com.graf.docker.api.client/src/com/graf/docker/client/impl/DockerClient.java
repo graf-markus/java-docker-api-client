@@ -519,7 +519,16 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public void loadImage(String pathToTarball) throws DockerException {
-		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("images").addPath("load").build());
+		FileInputStream stream;
+		try {
+			stream = new FileInputStream(new File(pathToTarball));
+		} catch (FileNotFoundException e) {
+			throw new DockerException("File not found", 0);
+		}
+		HttpPost request = new HttpPost(RequestBuilder.builder().setUrl(url).addPath("images").addPath("load").build());
+		InputStreamEntity reqEntity = new InputStreamEntity(stream);
+		request.setEntity(reqEntity);
+		execute(request, 200);
 	}
 
 	// ==================================================
