@@ -102,6 +102,10 @@ public class EndpointSettings {
 		return driverOpts;
 	}
 
+	public static Builder builder() {
+		return new Builder();
+	}
+
 	@Override
 	public String toString() {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();

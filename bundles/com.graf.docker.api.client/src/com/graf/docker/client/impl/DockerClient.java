@@ -41,6 +41,7 @@ import com.graf.docker.client.exceptions.ExceptionMessage;
 import com.graf.docker.client.interfaces.FilterParam;
 import com.graf.docker.client.interfaces.IContainerStatsListener;
 import com.graf.docker.client.interfaces.IDockerClient;
+import com.graf.docker.client.interfaces.NetworkCreateResponse;
 import com.graf.docker.client.models.ContainerSummary;
 import com.graf.docker.client.models.ContainerChangeResponseItem;
 import com.graf.docker.client.models.ContainerConfig;
@@ -63,6 +64,7 @@ import com.graf.docker.client.models.ImagePruneResponse;
 import com.graf.docker.client.models.ImageSearchResponseItem;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.Network;
+import com.graf.docker.client.models.NetworkConfig;
 import com.graf.docker.client.models.ContainerTopResponse;
 import com.graf.docker.client.params.ClearCacheParam;
 import com.graf.docker.client.params.CommitImageParam;
@@ -151,11 +153,10 @@ public class DockerClient implements IDockerClient {
 			statusCode = response.getStatusLine().getStatusCode();
 			if (statusCode == 200) {
 				InputStream stream = response.getEntity().getContent();
-				int len = 0;
 				byte[] header = new byte[8];
 				StringBuilder builder = new StringBuilder();
 				ContainerLog.Builder logBuilder = ContainerLog.builder();
-				while ((len = stream.read(header)) != -1) {
+				while ((stream.read(header)) != -1) {
 					int sizeToRead = byteArrayToInt(new byte[] { header[4], header[5], header[6], header[7] });
 					byte[] read = new byte[sizeToRead];
 					stream.read(read);
@@ -565,10 +566,23 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public void deleteNetwork(String id) throws DockerException {
-		HttpDelete request = new HttpDelete(RequestBuilder.builder().setUrl(url).addPath("networks").addPath(id).build());
+		HttpDelete request = new HttpDelete(
+				RequestBuilder.builder().setUrl(url).addPath("networks").addPath(id).build());
 		execute(request, 204);
 	}
-	
+
+	@Override
+	public NetworkCreateResponse createNetwork(NetworkConfig config) throws DockerException {
+		HttpPost request = new HttpPost(
+				RequestBuilder.builder().setUrl(url).addPath("networks").addPath("create").build());
+		try {
+			request.setHeader("Content-Type", "application/json");
+			request.setEntity(new StringEntity(gson.toJson(config)));
+		} catch (UnsupportedEncodingException e) {
+			throw new DockerException(e.getMessage());
+		}
+		return execute(request, 201, NetworkCreateResponse.class);
+	}
 	// ==================================================
 
 	@Override
@@ -624,6 +638,7 @@ public class DockerClient implements IDockerClient {
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
 			statusCode = response.getStatusLine().getStatusCode();
 			String jsonEntity = EntityUtils.toString(response.getEntity());
+			System.out.println(jsonEntity);
 			if (statusCode == successStatusCode) {
 				return gson.fromJson(jsonEntity, returnClazz);
 			}

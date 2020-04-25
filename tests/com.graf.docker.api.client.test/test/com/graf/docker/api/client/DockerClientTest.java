@@ -21,6 +21,7 @@ import com.graf.docker.client.builder.DockerClientBuilder;
 import com.graf.docker.client.exceptions.DockerException;
 import com.graf.docker.client.interfaces.IContainerStatsListener;
 import com.graf.docker.client.interfaces.IDockerClient;
+import com.graf.docker.client.interfaces.NetworkCreateResponse;
 import com.graf.docker.client.models.ContainerSummary;
 import com.graf.docker.client.models.ContainerChangeResponseItem;
 import com.graf.docker.client.models.ContainerConfig;
@@ -42,6 +43,7 @@ import com.graf.docker.client.models.Image;
 import com.graf.docker.client.models.ImageSearchResponseItem;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.Network;
+import com.graf.docker.client.models.NetworkConfig;
 import com.graf.docker.client.models.ContainerTopResponse;
 import com.graf.docker.client.params.CreateImageParam;
 import com.graf.docker.client.params.ImageTagParam;
@@ -727,11 +729,22 @@ public class DockerClientTest {
 		List<Network> networks = docker.listNetworks();
 		assertTrue(networks.size() > 0);
 	}
-	
+
 	@Test
 	public void testInspectNetwork() throws DockerException {
 		LOGGER.log(Level.INFO, "");
-		//Network network = docker.inspectNetwork("82ddb7ccdca24601af5e025e83b836feed60cd69d2a73b5ffb35f9eca4f51b19");
-		//assertEquals(network.getName(), "bridge");
+		// Network network =
+		// docker.inspectNetwork("82ddbF7ccdca24601af5e025e83b836feed60cd69d2a73b5ffb35f9eca4f51b19");
+		// assertEquals(network.getName(), "bridge");
+	}
+
+	@Test
+	public void testCreateNetworkAndDeleteNetwork() throws DockerException {
+		LOGGER.log(Level.INFO, "");
+		NetworkConfig config = NetworkConfig.builder().name("test").build();
+		NetworkCreateResponse response = docker.createNetwork(config);
+		assertEquals("", response.getWarning());
+		String id = response.getId();
+		docker.deleteNetwork(id);
 	}
 }

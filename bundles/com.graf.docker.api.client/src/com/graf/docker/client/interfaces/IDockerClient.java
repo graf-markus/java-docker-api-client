@@ -26,6 +26,7 @@ import com.graf.docker.client.models.ImagePruneResponse;
 import com.graf.docker.client.models.ImageSearchResponseItem;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.Network;
+import com.graf.docker.client.models.NetworkConfig;
 import com.graf.docker.client.models.ContainerTopResponse;
 import com.graf.docker.client.params.ClearCacheParam;
 import com.graf.docker.client.params.CommitImageParam;
@@ -467,11 +468,12 @@ public interface IDockerClient {
 	 * @throws DockerException
 	 */
 	void loadImage(String pathToTarball) throws DockerException;
-	
+
 	// Network API
 	// ============================================================
 	/**
 	 * Returns a list of networks
+	 * 
 	 * @return
 	 * @throws DockerException
 	 */
@@ -484,17 +486,29 @@ public interface IDockerClient {
 	 * @throws DockerException
 	 */
 	Network inspectNetwork(String id) throws DockerException;
+
 	Network inspectNetwork(String id, boolean verbose) throws DockerException;
+
 	Network inspectNetwork(String id, boolean verbose, String scope) throws DockerException;
+
 	Network inspectNetwork(String id, String scope) throws DockerException;
-	
+
 	/**
 	 * 
 	 * @param id
 	 * @throws DockerException
 	 */
 	void deleteNetwork(String id) throws DockerException;
-	
+
+	/**
+	 * Create a new Network
+	 * 
+	 * @param config
+	 * @return
+	 * @throws DockerException
+	 */
+	NetworkCreateResponse createNetwork(NetworkConfig config) throws DockerException;
+
 	// Additionally Methods
 	// ===================================================================================
 
