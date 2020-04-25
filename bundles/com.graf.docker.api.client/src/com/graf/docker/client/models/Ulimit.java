@@ -30,7 +30,7 @@ public class Ulimit {
 	public static Builder builder() {
 		return new Builder();
 	}
-	
+
 	@Override
 	public String toString() {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -44,12 +44,6 @@ public class Ulimit {
 		private long hard;
 
 		public Builder() {
-		}
-
-		Builder(String name, long soft, long hard) {
-			this.name = name;
-			this.soft = soft;
-			this.hard = hard;
 		}
 
 		public Builder name(String name) {

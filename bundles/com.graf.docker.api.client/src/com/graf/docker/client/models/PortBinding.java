@@ -20,6 +20,12 @@ public class PortBinding {
 		return new Builder();
 	}
 
+	@Override
+	public String toString() {
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		return gson.toJson(this);
+	}
+
 	public static class Builder {
 
 		private String hostIp;
@@ -52,11 +58,5 @@ public class PortBinding {
 	private PortBinding(Builder builder) {
 		this.hostIp = builder.hostIp;
 		this.hostPort = builder.hostPort;
-	}
-
-	@Override
-	public String toString() {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		return gson.toJson(this);
 	}
 }

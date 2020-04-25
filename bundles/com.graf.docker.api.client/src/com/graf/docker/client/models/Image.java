@@ -1,7 +1,6 @@
 package com.graf.docker.client.models;
 
 import java.util.List;
-import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

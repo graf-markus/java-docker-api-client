@@ -1,6 +1,7 @@
 package com.graf.docker.client.models;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,15 +68,6 @@ public class DeviceRequest {
 		public Builder() {
 		}
 
-		Builder(String driver, int count, List<String> deviceIds, List<List<String>> capabilities,
-				Map<String, String> options) {
-			this.driver = driver;
-			this.count = count;
-			this.deviceIds = deviceIds;
-			this.capabilities = capabilities;
-			this.options = options;
-		}
-
 		public Builder driver(String driver) {
 			this.driver = driver;
 			return Builder.this;
@@ -93,6 +85,11 @@ public class DeviceRequest {
 
 		public Builder addDeviceIds(String deviceIds) {
 			this.deviceIds.add(deviceIds);
+			return Builder.this;
+		}
+
+		public Builder addDeviceIds(String... deviceIds) {
+			this.deviceIds.addAll(Arrays.asList(deviceIds));
 			return Builder.this;
 		}
 

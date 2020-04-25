@@ -1,6 +1,8 @@
 package com.graf.docker.client.models;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -405,7 +407,7 @@ public class HostConfig {
 	public static Builder builder() {
 		return new Builder();
 	}
-	
+
 	@Override
 	public String toString() {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -469,12 +471,12 @@ public class HostConfig {
 		private boolean publishAllPorts;
 		private boolean readonlyRootfs;
 		private List<String> securityOpt = new ArrayList<String>();
-		private Map<String, String> storageOpt;
-		private Map<String, String> tmpfs;
+		private Map<String, String> storageOpt = new HashMap<>();
+		private Map<String, String> tmpfs = new HashMap<>();
 		private String utsMode;
 		private String usernsMode;
 		private int shmSize;
-		private Map<String, String> sysctls;
+		private Map<String, String> sysctls = new HashMap<>();
 		private String runtime;
 		private List<String> maskedPaths = new ArrayList<String>();
 		private List<String> readonlyPath = new ArrayList<String>();
@@ -507,6 +509,11 @@ public class HostConfig {
 			return Builder.this;
 		}
 
+		public Builder addBlkioWeightDevice(BlkioWeightDevice... blkioWeightDevice) {
+			this.blkioWeightDevice.addAll(Arrays.asList(blkioWeightDevice));
+			return Builder.this;
+		}
+
 		public Builder blkioDeviceReadBps(List<ThrottleDevice> blkioDeviceReadBps) {
 			this.blkioDeviceReadBps = blkioDeviceReadBps;
 			return Builder.this;
@@ -514,6 +521,11 @@ public class HostConfig {
 
 		public Builder addBlkioDeviceReadBps(ThrottleDevice blkioDeviceReadBps) {
 			this.blkioDeviceReadBps.add(blkioDeviceReadBps);
+			return Builder.this;
+		}
+
+		public Builder addBlkioDeviceReadBps(ThrottleDevice... blkioDeviceReadBps) {
+			this.blkioDeviceReadBps.addAll(Arrays.asList(blkioDeviceReadBps));
 			return Builder.this;
 		}
 
@@ -527,6 +539,11 @@ public class HostConfig {
 			return Builder.this;
 		}
 
+		public Builder addBlkioDeviceWriteBps(ThrottleDevice... blkioDeviceWriteBps) {
+			this.blkioDeviceWriteBps.addAll(Arrays.asList(blkioDeviceWriteBps));
+			return Builder.this;
+		}
+
 		public Builder blkioDeviceReadIOps(List<ThrottleDevice> blkioDeviceReadIOps) {
 			this.blkioDeviceReadIOps = blkioDeviceReadIOps;
 			return Builder.this;
@@ -537,6 +554,11 @@ public class HostConfig {
 			return Builder.this;
 		}
 
+		public Builder addBlkioDeviceReadIOps(ThrottleDevice... blkioDeviceReadIOps) {
+			this.blkioDeviceReadIOps.addAll(Arrays.asList(blkioDeviceReadIOps));
+			return Builder.this;
+		}
+
 		public Builder blkioDeviceWriteIOps(List<ThrottleDevice> blkioDeviceWriteIOps) {
 			this.blkioDeviceWriteIOps = blkioDeviceWriteIOps;
 			return Builder.this;
@@ -544,6 +566,11 @@ public class HostConfig {
 
 		public Builder addBlkioDeviceWriteIOps(ThrottleDevice blkioDeviceWriteIOps) {
 			this.blkioDeviceWriteIOps.add(blkioDeviceWriteIOps);
+			return Builder.this;
+		}
+
+		public Builder addBlkioDeviceWriteIOps(ThrottleDevice... blkioDeviceWriteIOps) {
+			this.blkioDeviceWriteIOps.addAll(Arrays.asList(blkioDeviceWriteIOps));
 			return Builder.this;
 		}
 
@@ -587,6 +614,11 @@ public class HostConfig {
 			return Builder.this;
 		}
 
+		public Builder addDevices(DeviceMapping... devices) {
+			this.devices.addAll(Arrays.asList(devices));
+			return Builder.this;
+		}
+
 		public Builder deviceCgroupRules(List<String> deviceCgroupRules) {
 			this.deviceCgroupRules = deviceCgroupRules;
 			return Builder.this;
@@ -597,6 +629,11 @@ public class HostConfig {
 			return Builder.this;
 		}
 
+		public Builder addDeviceCgroupRules(String... deviceCgroupRules) {
+			this.deviceCgroupRules.addAll(Arrays.asList(deviceCgroupRules));
+			return Builder.this;
+		}
+
 		public Builder deviceRequests(List<DeviceRequest> deviceRequests) {
 			this.deviceRequests = deviceRequests;
 			return Builder.this;
@@ -604,6 +641,11 @@ public class HostConfig {
 
 		public Builder addDeviceRequests(DeviceRequest deviceRequests) {
 			this.deviceRequests.add(deviceRequests);
+			return Builder.this;
+		}
+
+		public Builder addDeviceRequests(DeviceRequest... deviceRequests) {
+			this.deviceRequests.addAll(Arrays.asList(deviceRequests));
 			return Builder.this;
 		}
 
@@ -662,6 +704,11 @@ public class HostConfig {
 			return Builder.this;
 		}
 
+		public Builder addUlimits(Ulimit... ulimits) {
+			this.ulimits.addAll(Arrays.asList(ulimits));
+			return Builder.this;
+		}
+
 		public Builder ioMaximumBandwidth(long ioMaximumBandwidth) {
 			this.ioMaximumBandwidth = ioMaximumBandwidth;
 			return Builder.this;
@@ -674,6 +721,11 @@ public class HostConfig {
 
 		public Builder addBinds(String binds) {
 			this.binds.add(binds);
+			return Builder.this;
+		}
+
+		public Builder addBinds(String... binds) {
+			this.binds.addAll(Arrays.asList(binds));
 			return Builder.this;
 		}
 
@@ -722,6 +774,11 @@ public class HostConfig {
 			return Builder.this;
 		}
 
+		public Builder addVolumesFrom(String... volumesFrom) {
+			this.volumesFrom.addAll(Arrays.asList(volumesFrom));
+			return Builder.this;
+		}
+
 		public Builder mounts(List<Mount> mounts) {
 			this.mounts = mounts;
 			return Builder.this;
@@ -729,6 +786,11 @@ public class HostConfig {
 
 		public Builder addMounts(Mount mounts) {
 			this.mounts.add(mounts);
+			return Builder.this;
+		}
+
+		public Builder addMounts(Mount... mounts) {
+			this.mounts.addAll(Arrays.asList(mounts));
 			return Builder.this;
 		}
 
@@ -742,6 +804,11 @@ public class HostConfig {
 			return Builder.this;
 		}
 
+		public Builder addCapabilities(String... capabilities) {
+			this.capabilities.addAll(Arrays.asList(capabilities));
+			return Builder.this;
+		}
+
 		public Builder capAdd(List<String> capAdd) {
 			this.capAdd = capAdd;
 			return Builder.this;
@@ -749,6 +816,11 @@ public class HostConfig {
 
 		public Builder addCapAdd(String capAdd) {
 			this.capAdd.add(capAdd);
+			return Builder.this;
+		}
+
+		public Builder addCapAdd(String... capAdd) {
+			this.capAdd.addAll(Arrays.asList(capAdd));
 			return Builder.this;
 		}
 
@@ -762,6 +834,11 @@ public class HostConfig {
 			return Builder.this;
 		}
 
+		public Builder addCapDrop(String... capDrop) {
+			this.capDrop.addAll(Arrays.asList(capDrop));
+			return Builder.this;
+		}
+
 		public Builder dns(List<String> dns) {
 			this.dns = dns;
 			return Builder.this;
@@ -769,6 +846,11 @@ public class HostConfig {
 
 		public Builder addDns(String dns) {
 			this.dns.add(dns);
+			return Builder.this;
+		}
+
+		public Builder addDns(String... dns) {
+			this.dns.addAll(Arrays.asList(dns));
 			return Builder.this;
 		}
 
@@ -782,6 +864,11 @@ public class HostConfig {
 			return Builder.this;
 		}
 
+		public Builder addDnsOptions(String... dnsOptions) {
+			this.dnsOptions.addAll(Arrays.asList(dnsOptions));
+			return Builder.this;
+		}
+
 		public Builder dnsSearch(List<String> dnsSearch) {
 			this.dnsSearch = dnsSearch;
 			return Builder.this;
@@ -789,6 +876,11 @@ public class HostConfig {
 
 		public Builder addDnsSearch(String dnsSearch) {
 			this.dnsSearch.add(dnsSearch);
+			return Builder.this;
+		}
+
+		public Builder addDnsSearch(String... dnsSearch) {
+			this.dnsSearch.addAll(Arrays.asList(dnsSearch));
 			return Builder.this;
 		}
 
@@ -802,6 +894,11 @@ public class HostConfig {
 			return Builder.this;
 		}
 
+		public Builder addExtraHosts(String... extraHosts) {
+			this.extraHosts.addAll(Arrays.asList(extraHosts));
+			return Builder.this;
+		}
+
 		public Builder groupAdd(List<String> groupAdd) {
 			this.groupAdd = groupAdd;
 			return Builder.this;
@@ -809,6 +906,11 @@ public class HostConfig {
 
 		public Builder addGroupAdd(String groupAdd) {
 			this.groupAdd.add(groupAdd);
+			return Builder.this;
+		}
+
+		public Builder addGroupAdd(String... groupAdd) {
+			this.groupAdd.addAll(Arrays.asList(groupAdd));
 			return Builder.this;
 		}
 
@@ -829,6 +931,11 @@ public class HostConfig {
 
 		public Builder addLinks(String links) {
 			this.links.add(links);
+			return Builder.this;
+		}
+
+		public Builder addLinks(String... links) {
+			this.links.addAll(Arrays.asList(links));
 			return Builder.this;
 		}
 
@@ -867,13 +974,28 @@ public class HostConfig {
 			return Builder.this;
 		}
 
+		public Builder addSecurityOpt(String... securityOpt) {
+			this.securityOpt.addAll(Arrays.asList(securityOpt));
+			return Builder.this;
+		}
+
 		public Builder storageOpt(Map<String, String> storageOpt) {
 			this.storageOpt = storageOpt;
 			return Builder.this;
 		}
 
+		public Builder addStorageOpt(String key, String value) {
+			this.storageOpt.put(key, value);
+			return Builder.this;
+		}
+
 		public Builder tmpfs(Map<String, String> tmpfs) {
 			this.tmpfs = tmpfs;
+			return Builder.this;
+		}
+
+		public Builder tmpfs(String key, String value) {
+			this.tmpfs.put(key, value);
 			return Builder.this;
 		}
 
@@ -897,6 +1019,11 @@ public class HostConfig {
 			return Builder.this;
 		}
 
+		public Builder addSysctls(String key, String value) {
+			this.sysctls.put(key, value);
+			return Builder.this;
+		}
+
 		public Builder runtime(String runtime) {
 			this.runtime = runtime;
 			return Builder.this;
@@ -912,6 +1039,11 @@ public class HostConfig {
 			return Builder.this;
 		}
 
+		public Builder addMaskedPaths(String... maskedPaths) {
+			this.maskedPaths.addAll(Arrays.asList(maskedPaths));
+			return Builder.this;
+		}
+
 		public Builder readonlyPath(List<String> readonlyPath) {
 			this.readonlyPath = readonlyPath;
 			return Builder.this;
@@ -921,9 +1053,14 @@ public class HostConfig {
 			this.readonlyPath.add(readonlyPath);
 			return Builder.this;
 		}
-		
-		//------------------------
-		
+
+		public Builder addReadonlyPath(String... readonlyPath) {
+			this.readonlyPath.addAll(Arrays.asList(readonlyPath));
+			return Builder.this;
+		}
+
+		// ------------------------
+
 		public Builder cpus(float cpus) {
 			return nanoCpus((long) (cpus * 1E9));
 		}

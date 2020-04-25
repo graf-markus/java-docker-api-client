@@ -39,11 +39,6 @@ public class ThrottleDevice {
 		public Builder() {
 		}
 
-		Builder(String path, int rate) {
-			this.path = path;
-			this.rate = rate;
-		}
-
 		public Builder path(String path) {
 			this.path = path;
 			return Builder.this;

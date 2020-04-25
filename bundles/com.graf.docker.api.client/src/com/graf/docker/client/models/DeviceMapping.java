@@ -26,7 +26,7 @@ public class DeviceMapping {
 	public String getCgroupPermissions() {
 		return cgroupPermissions;
 	}
-	
+
 	public static Builder builder() {
 		return new Builder();
 	}

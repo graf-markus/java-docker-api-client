@@ -1,6 +1,7 @@
 package com.graf.docker.client.models;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -72,7 +73,12 @@ public class HealthConfig {
 			this.test.add(test);
 			return Builder.this;
 		}
-		
+
+		public Builder addTest(String... test) {
+			this.test.addAll(Arrays.asList(test));
+			return Builder.this;
+		}
+
 		public Builder interval(int interval) {
 			this.interval = interval;
 			return Builder.this;

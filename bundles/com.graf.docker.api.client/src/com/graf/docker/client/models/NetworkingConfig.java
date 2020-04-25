@@ -22,6 +22,12 @@ public class NetworkingConfig {
 		return new Builder();
 	}
 
+	@Override
+	public String toString() {
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		return gson.toJson(this);
+	}
+
 	public static class Builder {
 
 		private Map<String, EndpointSettings> endpointsConfig = new HashMap<>();
@@ -43,11 +49,5 @@ public class NetworkingConfig {
 
 			return new NetworkingConfig(this);
 		}
-	}
-
-	@Override
-	public String toString() {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		return gson.toJson(this);
 	}
 }

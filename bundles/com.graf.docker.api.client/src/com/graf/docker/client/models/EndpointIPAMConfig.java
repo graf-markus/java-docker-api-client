@@ -1,6 +1,7 @@
 package com.graf.docker.client.models;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -66,6 +67,11 @@ public class EndpointIPAMConfig {
 
 		public Builder addLinkLocalIPs(String linkLocalIPs) {
 			this.linkLocalIPs.add(linkLocalIPs);
+			return Builder.this;
+		}
+		
+		public Builder addLinkLocalIPs(String... linkLocalIPs) {
+			this.linkLocalIPs.addAll(Arrays.asList(linkLocalIPs));
 			return Builder.this;
 		}
 

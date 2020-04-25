@@ -1,6 +1,7 @@
 package com.graf.docker.client.models;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -57,6 +58,11 @@ public class ContainerLog {
 			return Builder.this;
 		}
 
+		public Builder addStdout(String... stdout) {
+			this.stdout.addAll(Arrays.asList(stdout));
+			return Builder.this;
+		}
+
 		public Builder stderr(List<String> stderr) {
 			this.stderr = stderr;
 			return Builder.this;
@@ -64,6 +70,11 @@ public class ContainerLog {
 
 		public Builder addStderr(String stderr) {
 			this.stderr.add(stderr);
+			return Builder.this;
+		}
+
+		public Builder addStderr(String... stderr) {
+			this.stderr.addAll(Arrays.asList(stderr));
 			return Builder.this;
 		}
 

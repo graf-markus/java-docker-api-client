@@ -23,7 +23,7 @@ public class LogConfig {
 	public Map<String, String> getLogOptions() {
 		return logOptions;
 	}
-	
+
 	public static Builder builder() {
 		return new Builder();
 	}
@@ -33,7 +33,7 @@ public class LogConfig {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		return gson.toJson(this);
 	}
-	
+
 	public static class Builder {
 
 		private String type;
@@ -61,7 +61,7 @@ public class LogConfig {
 			this.logOptions.put(key, value);
 			return Builder.this;
 		}
-		
+
 		public LogConfig build() {
 			return new LogConfig(this);
 		}

@@ -72,7 +72,7 @@ public class Network {
 	public Map<String, String> getLabels() {
 		return labels;
 	}
-	
+
 	@Override
 	public String toString() {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();

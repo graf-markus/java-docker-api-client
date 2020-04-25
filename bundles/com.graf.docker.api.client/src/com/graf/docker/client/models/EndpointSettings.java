@@ -1,6 +1,7 @@
 package com.graf.docker.client.models;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -141,6 +142,11 @@ public class EndpointSettings {
 			return Builder.this;
 		}
 
+		public Builder addLinks(String... links) {
+			this.links.addAll(Arrays.asList(links));
+			return Builder.this;
+		}
+
 		public Builder aliases(List<String> aliases) {
 			this.aliases = aliases;
 			return Builder.this;
@@ -148,6 +154,11 @@ public class EndpointSettings {
 
 		public Builder addAliases(String aliases) {
 			this.aliases.add(aliases);
+			return Builder.this;
+		}
+
+		public Builder addAliases(String... aliases) {
+			this.aliases.addAll(Arrays.asList(aliases));
 			return Builder.this;
 		}
 
@@ -205,7 +216,7 @@ public class EndpointSettings {
 			this.driverOpts.put(key, value);
 			return Builder.this;
 		}
-		
+
 		public EndpointSettings build() {
 
 			return new EndpointSettings(this);
