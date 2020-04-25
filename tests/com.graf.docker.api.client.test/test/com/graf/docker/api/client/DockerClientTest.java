@@ -55,7 +55,7 @@ import com.graf.docker.client.params.RemoveContainersParam;
 public class DockerClientTest {
 
 	private static final Logger LOGGER = Logger.getLogger(DockerClientBuilder.class.getName());
-	private IDockerClient docker = DockerClientBuilder.builder().setUrl("http://192.168.1.1:2375").build();
+	private IDockerClient docker = DockerClientBuilder.builder().setUrl("http://localhost:2375").build();
 	private ContainerConfig config = ContainerConfig.builder().image("ubuntu")
 			.cmd("sh", "-c", "while :; do sleep 1; done").build();
 
