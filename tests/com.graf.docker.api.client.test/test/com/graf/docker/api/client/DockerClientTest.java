@@ -664,15 +664,15 @@ public class DockerClientTest {
 	@Test
 	public void testInspectImage() throws DockerException {
 		LOGGER.log(Level.INFO, "");
-		Image info = docker.inspectImage("ccc6e87d482b");
+		Image info = docker.inspectImage("e5aad4204d00");
 
-		assertEquals("ubuntu:latest", info.getRepoTags().get(0));
+		assertEquals("debian:10-slim", info.getRepoTags().get(0));
 	}
 
 	@Test
 	public void testImageHistory() throws DockerException {
 		LOGGER.log(Level.INFO, "");
-		List<HistoryResponseItem> history = docker.imageHistory("ccc6e87d482b");
+		List<HistoryResponseItem> history = docker.imageHistory("e5aad4204d00");
 
 		assertTrue(history.size() > 0);
 	}
@@ -680,12 +680,12 @@ public class DockerClientTest {
 	@Test
 	public void testTagImage() throws DockerException {
 		LOGGER.log(Level.INFO, "");
-		docker.tagImage("ccc6e87d482b", ImageTagParam.repo("ubuntu"), ImageTagParam.newTag("test"));
+		docker.tagImage("e5aad4204d00", ImageTagParam.repo("debian"), ImageTagParam.newTag("test"));
 
-		Image info = docker.inspectImage("ccc6e87d482b");
+		Image info = docker.inspectImage("e5aad4204d00");
 
 		assertTrue(info.getRepoTags().size() > 1);
-		assertEquals("ubuntu:test", info.getRepoTags().get(1));
+		assertEquals("debian:test", info.getRepoTags().get(1));
 	}
 
 	@Test
