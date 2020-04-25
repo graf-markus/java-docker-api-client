@@ -49,31 +49,31 @@ public class ContainerLog {
 		}
 
 		public Builder stdout(List<String> stdout) {
-			this.stdout = stdout;
+			this.stdout.addAll(stdout);
 			return Builder.this;
 		}
 
-		public Builder addStdout(String stdout) {
+		public Builder stdout(String stdout) {
 			this.stdout.add(stdout);
 			return Builder.this;
 		}
 
-		public Builder addStdout(String... stdout) {
+		public Builder stdout(String... stdout) {
 			this.stdout.addAll(Arrays.asList(stdout));
 			return Builder.this;
 		}
 
 		public Builder stderr(List<String> stderr) {
-			this.stderr = stderr;
+			this.stderr.addAll(stderr);
 			return Builder.this;
 		}
 
-		public Builder addStderr(String stderr) {
+		public Builder stderr(String stderr) {
 			this.stderr.add(stderr);
 			return Builder.this;
 		}
 
-		public Builder addStderr(String... stderr) {
+		public Builder stderr(String... stderr) {
 			this.stderr.addAll(Arrays.asList(stderr));
 			return Builder.this;
 		}

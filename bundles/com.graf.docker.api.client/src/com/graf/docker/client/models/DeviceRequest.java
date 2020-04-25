@@ -62,7 +62,7 @@ public class DeviceRequest {
 		private String driver;
 		private int count;
 		private List<String> deviceIds = new ArrayList<String>();
-		private List<List<String>> capabilities = new ArrayList<List<String>>();
+		private List<List<String>> capabilities = new ArrayList<>();
 		private Map<String, String> options = new HashMap<>();
 
 		public Builder() {
@@ -79,36 +79,31 @@ public class DeviceRequest {
 		}
 
 		public Builder deviceIds(List<String> deviceIds) {
-			this.deviceIds = deviceIds;
+			this.deviceIds.addAll(deviceIds);
 			return Builder.this;
 		}
 
-		public Builder addDeviceIds(String deviceIds) {
+		public Builder deviceIds(String deviceIds) {
 			this.deviceIds.add(deviceIds);
 			return Builder.this;
 		}
 
-		public Builder addDeviceIds(String... deviceIds) {
+		public Builder deviceIds(String... deviceIds) {
 			this.deviceIds.addAll(Arrays.asList(deviceIds));
 			return Builder.this;
 		}
 
-		public Builder capabilities(List<List<String>> capabilities) {
-			this.capabilities = capabilities;
-			return Builder.this;
-		}
-
-		public Builder addCapabilities(List<String> capabilities) {
+		public Builder capabilities(List<String> capabilities) {
 			this.capabilities.add(capabilities);
 			return Builder.this;
 		}
 
 		public Builder options(Map<String, String> options) {
-			this.options = options;
+			this.options.putAll(options);
 			return Builder.this;
 		}
 
-		public Builder addOption(String key, String value) {
+		public Builder option(String key, String value) {
 			this.options.put(key, value);
 			return Builder.this;
 		}

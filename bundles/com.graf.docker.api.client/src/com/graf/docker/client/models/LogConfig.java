@@ -42,22 +42,17 @@ public class LogConfig {
 		public Builder() {
 		}
 
-		Builder(String type, Map<String, String> logOptions) {
-			this.type = type;
-			this.logOptions = logOptions;
-		}
-
 		public Builder type(String type) {
 			this.type = type;
 			return Builder.this;
 		}
 
 		public Builder logOptions(Map<String, String> logOptions) {
-			this.logOptions = logOptions;
+			this.logOptions.putAll(logOptions);
 			return Builder.this;
 		}
 
-		public Builder addLogOption(String key, String value) {
+		public Builder logOption(String key, String value) {
 			this.logOptions.put(key, value);
 			return Builder.this;
 		}

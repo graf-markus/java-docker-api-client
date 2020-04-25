@@ -500,76 +500,76 @@ public class HostConfig {
 		}
 
 		public Builder blkioWeightDevice(List<BlkioWeightDevice> blkioWeightDevice) {
-			this.blkioWeightDevice = blkioWeightDevice;
+			this.blkioWeightDevice.addAll(blkioWeightDevice);
 			return Builder.this;
 		}
 
-		public Builder addBlkioWeightDevice(BlkioWeightDevice blkioWeightDevice) {
+		public Builder blkioWeightDevice(BlkioWeightDevice blkioWeightDevice) {
 			this.blkioWeightDevice.add(blkioWeightDevice);
 			return Builder.this;
 		}
 
-		public Builder addBlkioWeightDevice(BlkioWeightDevice... blkioWeightDevice) {
+		public Builder blkioWeightDevice(BlkioWeightDevice... blkioWeightDevice) {
 			this.blkioWeightDevice.addAll(Arrays.asList(blkioWeightDevice));
 			return Builder.this;
 		}
 
 		public Builder blkioDeviceReadBps(List<ThrottleDevice> blkioDeviceReadBps) {
-			this.blkioDeviceReadBps = blkioDeviceReadBps;
+			this.blkioDeviceReadBps.addAll(blkioDeviceReadBps);
 			return Builder.this;
 		}
 
-		public Builder addBlkioDeviceReadBps(ThrottleDevice blkioDeviceReadBps) {
+		public Builder blkioDeviceReadBps(ThrottleDevice blkioDeviceReadBps) {
 			this.blkioDeviceReadBps.add(blkioDeviceReadBps);
 			return Builder.this;
 		}
 
-		public Builder addBlkioDeviceReadBps(ThrottleDevice... blkioDeviceReadBps) {
+		public Builder blkioDeviceReadBps(ThrottleDevice... blkioDeviceReadBps) {
 			this.blkioDeviceReadBps.addAll(Arrays.asList(blkioDeviceReadBps));
 			return Builder.this;
 		}
 
 		public Builder blkioDeviceWriteBps(List<ThrottleDevice> blkioDeviceWriteBps) {
-			this.blkioDeviceWriteBps = blkioDeviceWriteBps;
+			this.blkioDeviceWriteBps.addAll(blkioDeviceWriteBps);
 			return Builder.this;
 		}
 
-		public Builder addBlkioDeviceWriteBps(ThrottleDevice blkioDeviceWriteBps) {
+		public Builder blkioDeviceWriteBps(ThrottleDevice blkioDeviceWriteBps) {
 			this.blkioDeviceWriteBps.add(blkioDeviceWriteBps);
 			return Builder.this;
 		}
 
-		public Builder addBlkioDeviceWriteBps(ThrottleDevice... blkioDeviceWriteBps) {
+		public Builder blkioDeviceWriteBps(ThrottleDevice... blkioDeviceWriteBps) {
 			this.blkioDeviceWriteBps.addAll(Arrays.asList(blkioDeviceWriteBps));
 			return Builder.this;
 		}
 
 		public Builder blkioDeviceReadIOps(List<ThrottleDevice> blkioDeviceReadIOps) {
-			this.blkioDeviceReadIOps = blkioDeviceReadIOps;
+			this.blkioDeviceReadIOps.addAll(blkioDeviceReadIOps);
 			return Builder.this;
 		}
 
-		public Builder addBlkioDeviceReadIOps(ThrottleDevice blkioDeviceReadIOps) {
+		public Builder blkioDeviceReadIOps(ThrottleDevice blkioDeviceReadIOps) {
 			this.blkioDeviceReadIOps.add(blkioDeviceReadIOps);
 			return Builder.this;
 		}
 
-		public Builder addBlkioDeviceReadIOps(ThrottleDevice... blkioDeviceReadIOps) {
+		public Builder blkioDeviceReadIOps(ThrottleDevice... blkioDeviceReadIOps) {
 			this.blkioDeviceReadIOps.addAll(Arrays.asList(blkioDeviceReadIOps));
 			return Builder.this;
 		}
 
 		public Builder blkioDeviceWriteIOps(List<ThrottleDevice> blkioDeviceWriteIOps) {
-			this.blkioDeviceWriteIOps = blkioDeviceWriteIOps;
+			this.blkioDeviceWriteIOps.addAll(blkioDeviceWriteIOps);
 			return Builder.this;
 		}
 
-		public Builder addBlkioDeviceWriteIOps(ThrottleDevice blkioDeviceWriteIOps) {
+		public Builder blkioDeviceWriteIOps(ThrottleDevice blkioDeviceWriteIOps) {
 			this.blkioDeviceWriteIOps.add(blkioDeviceWriteIOps);
 			return Builder.this;
 		}
 
-		public Builder addBlkioDeviceWriteIOps(ThrottleDevice... blkioDeviceWriteIOps) {
+		public Builder blkioDeviceWriteIOps(ThrottleDevice... blkioDeviceWriteIOps) {
 			this.blkioDeviceWriteIOps.addAll(Arrays.asList(blkioDeviceWriteIOps));
 			return Builder.this;
 		}
@@ -605,46 +605,46 @@ public class HostConfig {
 		}
 
 		public Builder devices(List<DeviceMapping> devices) {
-			this.devices = devices;
+			this.devices.addAll(devices);
 			return Builder.this;
 		}
 
-		public Builder addDevices(DeviceMapping devices) {
+		public Builder devices(DeviceMapping devices) {
 			this.devices.add(devices);
 			return Builder.this;
 		}
 
-		public Builder addDevices(DeviceMapping... devices) {
+		public Builder devices(DeviceMapping... devices) {
 			this.devices.addAll(Arrays.asList(devices));
 			return Builder.this;
 		}
 
 		public Builder deviceCgroupRules(List<String> deviceCgroupRules) {
-			this.deviceCgroupRules = deviceCgroupRules;
+			this.deviceCgroupRules.addAll(deviceCgroupRules);
 			return Builder.this;
 		}
 
-		public Builder addDeviceCgroupRules(String deviceCgroupRules) {
+		public Builder deviceCgroupRules(String deviceCgroupRules) {
 			this.deviceCgroupRules.add(deviceCgroupRules);
 			return Builder.this;
 		}
 
-		public Builder addDeviceCgroupRules(String... deviceCgroupRules) {
+		public Builder deviceCgroupRules(String... deviceCgroupRules) {
 			this.deviceCgroupRules.addAll(Arrays.asList(deviceCgroupRules));
 			return Builder.this;
 		}
 
 		public Builder deviceRequests(List<DeviceRequest> deviceRequests) {
-			this.deviceRequests = deviceRequests;
+			this.deviceRequests.addAll(deviceRequests);
 			return Builder.this;
 		}
 
-		public Builder addDeviceRequests(DeviceRequest deviceRequests) {
+		public Builder deviceRequests(DeviceRequest deviceRequests) {
 			this.deviceRequests.add(deviceRequests);
 			return Builder.this;
 		}
 
-		public Builder addDeviceRequests(DeviceRequest... deviceRequests) {
+		public Builder deviceRequests(DeviceRequest... deviceRequests) {
 			this.deviceRequests.addAll(Arrays.asList(deviceRequests));
 			return Builder.this;
 		}
@@ -695,16 +695,16 @@ public class HostConfig {
 		}
 
 		public Builder ulimits(List<Ulimit> ulimits) {
-			this.ulimits = ulimits;
+			this.ulimits.addAll(ulimits);
 			return Builder.this;
 		}
 
-		public Builder addUlimits(Ulimit ulimits) {
+		public Builder ulimits(Ulimit ulimits) {
 			this.ulimits.add(ulimits);
 			return Builder.this;
 		}
 
-		public Builder addUlimits(Ulimit... ulimits) {
+		public Builder ulimits(Ulimit... ulimits) {
 			this.ulimits.addAll(Arrays.asList(ulimits));
 			return Builder.this;
 		}
@@ -715,16 +715,16 @@ public class HostConfig {
 		}
 
 		public Builder binds(List<String> binds) {
-			this.binds = binds;
+			this.binds.addAll(binds);
 			return Builder.this;
 		}
 
-		public Builder addBinds(String binds) {
+		public Builder binds(String binds) {
 			this.binds.add(binds);
 			return Builder.this;
 		}
 
-		public Builder addBinds(String... binds) {
+		public Builder binds(String... binds) {
 			this.binds.addAll(Arrays.asList(binds));
 			return Builder.this;
 		}
@@ -765,151 +765,151 @@ public class HostConfig {
 		}
 
 		public Builder volumesFrom(List<String> volumesFrom) {
-			this.volumesFrom = volumesFrom;
+			this.volumesFrom.addAll(volumesFrom);
 			return Builder.this;
 		}
 
-		public Builder addVolumesFrom(String volumesFrom) {
+		public Builder volumesFrom(String volumesFrom) {
 			this.volumesFrom.add(volumesFrom);
 			return Builder.this;
 		}
 
-		public Builder addVolumesFrom(String... volumesFrom) {
+		public Builder volumesFrom(String... volumesFrom) {
 			this.volumesFrom.addAll(Arrays.asList(volumesFrom));
 			return Builder.this;
 		}
 
 		public Builder mounts(List<Mount> mounts) {
-			this.mounts = mounts;
+			this.mounts.addAll(mounts);
 			return Builder.this;
 		}
 
-		public Builder addMounts(Mount mounts) {
+		public Builder mounts(Mount mounts) {
 			this.mounts.add(mounts);
 			return Builder.this;
 		}
 
-		public Builder addMounts(Mount... mounts) {
+		public Builder mounts(Mount... mounts) {
 			this.mounts.addAll(Arrays.asList(mounts));
 			return Builder.this;
 		}
 
 		public Builder capabilities(List<String> capabilities) {
-			this.capabilities = capabilities;
+			this.capabilities.addAll(capabilities);
 			return Builder.this;
 		}
 
-		public Builder addCapabilities(String capabilities) {
+		public Builder capabilities(String capabilities) {
 			this.capabilities.add(capabilities);
 			return Builder.this;
 		}
 
-		public Builder addCapabilities(String... capabilities) {
+		public Builder capabilities(String... capabilities) {
 			this.capabilities.addAll(Arrays.asList(capabilities));
 			return Builder.this;
 		}
 
 		public Builder capAdd(List<String> capAdd) {
-			this.capAdd = capAdd;
+			this.capAdd.addAll(capAdd);
 			return Builder.this;
 		}
 
-		public Builder addCapAdd(String capAdd) {
+		public Builder capAdd(String capAdd) {
 			this.capAdd.add(capAdd);
 			return Builder.this;
 		}
 
-		public Builder addCapAdd(String... capAdd) {
+		public Builder capAdd(String... capAdd) {
 			this.capAdd.addAll(Arrays.asList(capAdd));
 			return Builder.this;
 		}
 
 		public Builder capDrop(List<String> capDrop) {
-			this.capDrop = capDrop;
+			this.capDrop.addAll(capDrop);
 			return Builder.this;
 		}
 
-		public Builder addCapDrop(String capDrop) {
+		public Builder capDrop(String capDrop) {
 			this.capDrop.add(capDrop);
 			return Builder.this;
 		}
 
-		public Builder addCapDrop(String... capDrop) {
+		public Builder capDrop(String... capDrop) {
 			this.capDrop.addAll(Arrays.asList(capDrop));
 			return Builder.this;
 		}
 
 		public Builder dns(List<String> dns) {
-			this.dns = dns;
+			this.dns.addAll(dns);
 			return Builder.this;
 		}
 
-		public Builder addDns(String dns) {
+		public Builder dns(String dns) {
 			this.dns.add(dns);
 			return Builder.this;
 		}
 
-		public Builder addDns(String... dns) {
+		public Builder dns(String... dns) {
 			this.dns.addAll(Arrays.asList(dns));
 			return Builder.this;
 		}
 
 		public Builder dnsOptions(List<String> dnsOptions) {
-			this.dnsOptions = dnsOptions;
+			this.dnsOptions.addAll(dnsOptions);
 			return Builder.this;
 		}
 
-		public Builder addDnsOptions(String dnsOptions) {
+		public Builder dnsOptions(String dnsOptions) {
 			this.dnsOptions.add(dnsOptions);
 			return Builder.this;
 		}
 
-		public Builder addDnsOptions(String... dnsOptions) {
+		public Builder dnsOptions(String... dnsOptions) {
 			this.dnsOptions.addAll(Arrays.asList(dnsOptions));
 			return Builder.this;
 		}
 
 		public Builder dnsSearch(List<String> dnsSearch) {
-			this.dnsSearch = dnsSearch;
+			this.dnsSearch.addAll(dnsSearch);
 			return Builder.this;
 		}
 
-		public Builder addDnsSearch(String dnsSearch) {
+		public Builder dnsSearch(String dnsSearch) {
 			this.dnsSearch.add(dnsSearch);
 			return Builder.this;
 		}
 
-		public Builder addDnsSearch(String... dnsSearch) {
+		public Builder dnsSearch(String... dnsSearch) {
 			this.dnsSearch.addAll(Arrays.asList(dnsSearch));
 			return Builder.this;
 		}
 
 		public Builder extraHosts(List<String> extraHosts) {
-			this.extraHosts = extraHosts;
+			this.extraHosts.addAll(extraHosts);
 			return Builder.this;
 		}
 
-		public Builder addExtraHosts(String extraHosts) {
+		public Builder extraHosts(String extraHosts) {
 			this.extraHosts.add(extraHosts);
 			return Builder.this;
 		}
 
-		public Builder addExtraHosts(String... extraHosts) {
+		public Builder extraHosts(String... extraHosts) {
 			this.extraHosts.addAll(Arrays.asList(extraHosts));
 			return Builder.this;
 		}
 
 		public Builder groupAdd(List<String> groupAdd) {
-			this.groupAdd = groupAdd;
+			this.groupAdd.addAll(groupAdd);
 			return Builder.this;
 		}
 
-		public Builder addGroupAdd(String groupAdd) {
+		public Builder groupAdd(String groupAdd) {
 			this.groupAdd.add(groupAdd);
 			return Builder.this;
 		}
 
-		public Builder addGroupAdd(String... groupAdd) {
+		public Builder groupAdd(String... groupAdd) {
 			this.groupAdd.addAll(Arrays.asList(groupAdd));
 			return Builder.this;
 		}
@@ -925,16 +925,16 @@ public class HostConfig {
 		}
 
 		public Builder links(List<String> links) {
-			this.links = links;
+			this.links.addAll(links);
 			return Builder.this;
 		}
 
-		public Builder addLinks(String links) {
+		public Builder links(String links) {
 			this.links.add(links);
 			return Builder.this;
 		}
 
-		public Builder addLinks(String... links) {
+		public Builder links(String... links) {
 			this.links.addAll(Arrays.asList(links));
 			return Builder.this;
 		}
@@ -965,32 +965,32 @@ public class HostConfig {
 		}
 
 		public Builder securityOpt(List<String> securityOpt) {
-			this.securityOpt = securityOpt;
+			this.securityOpt.addAll(securityOpt);
 			return Builder.this;
 		}
 
-		public Builder addSecurityOpt(String securityOpt) {
+		public Builder securityOpt(String securityOpt) {
 			this.securityOpt.add(securityOpt);
 			return Builder.this;
 		}
 
-		public Builder addSecurityOpt(String... securityOpt) {
+		public Builder securityOpt(String... securityOpt) {
 			this.securityOpt.addAll(Arrays.asList(securityOpt));
 			return Builder.this;
 		}
 
 		public Builder storageOpt(Map<String, String> storageOpt) {
-			this.storageOpt = storageOpt;
+			this.storageOpt.putAll(storageOpt);
 			return Builder.this;
 		}
 
-		public Builder addStorageOpt(String key, String value) {
+		public Builder storageOpt(String key, String value) {
 			this.storageOpt.put(key, value);
 			return Builder.this;
 		}
 
 		public Builder tmpfs(Map<String, String> tmpfs) {
-			this.tmpfs = tmpfs;
+			this.tmpfs.putAll(tmpfs);
 			return Builder.this;
 		}
 
@@ -1015,11 +1015,11 @@ public class HostConfig {
 		}
 
 		public Builder sysctls(Map<String, String> sysctls) {
-			this.sysctls = sysctls;
+			this.sysctls.putAll(sysctls);
 			return Builder.this;
 		}
 
-		public Builder addSysctls(String key, String value) {
+		public Builder sysctls(String key, String value) {
 			this.sysctls.put(key, value);
 			return Builder.this;
 		}
@@ -1030,31 +1030,31 @@ public class HostConfig {
 		}
 
 		public Builder maskedPaths(List<String> maskedPaths) {
-			this.maskedPaths = maskedPaths;
+			this.maskedPaths.addAll(maskedPaths);
 			return Builder.this;
 		}
 
-		public Builder addMaskedPaths(String maskedPaths) {
+		public Builder maskedPaths(String maskedPaths) {
 			this.maskedPaths.add(maskedPaths);
 			return Builder.this;
 		}
 
-		public Builder addMaskedPaths(String... maskedPaths) {
+		public Builder maskedPaths(String... maskedPaths) {
 			this.maskedPaths.addAll(Arrays.asList(maskedPaths));
 			return Builder.this;
 		}
 
 		public Builder readonlyPath(List<String> readonlyPath) {
-			this.readonlyPath = readonlyPath;
+			this.readonlyPath.addAll(readonlyPath);
 			return Builder.this;
 		}
 
-		public Builder addReadonlyPath(String readonlyPath) {
+		public Builder readonlyPath(String readonlyPath) {
 			this.readonlyPath.add(readonlyPath);
 			return Builder.this;
 		}
 
-		public Builder addReadonlyPath(String... readonlyPath) {
+		public Builder readonlyPath(String... readonlyPath) {
 			this.readonlyPath.addAll(Arrays.asList(readonlyPath));
 			return Builder.this;
 		}

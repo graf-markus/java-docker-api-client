@@ -48,33 +48,27 @@ public class IPAM {
 		public Builder() {
 		}
 
-		Builder(String driver, List<Map<String, String>> config, Map<String, String> options) {
-			this.driver = driver;
-			this.config = config;
-			this.options = options;
-		}
-
 		public Builder driver(String driver) {
 			this.driver = driver;
 			return Builder.this;
 		}
 
 		public Builder config(List<Map<String, String>> config) {
-			this.config = config;
+			this.config.addAll(config);
 			return Builder.this;
 		}
 
-		public Builder addConfig(Map<String, String> config) {
+		public Builder config(Map<String, String> config) {
 			this.config.add(config);
 			return Builder.this;
 		}
 
 		public Builder options(Map<String, String> options) {
-			this.options = options;
+			this.options.putAll(options);
 			return Builder.this;
 		}
 
-		public Builder addOption(String key, String value) {
+		public Builder option(String key, String value) {
 			this.options.put(key, value);
 			return Builder.this;
 		}

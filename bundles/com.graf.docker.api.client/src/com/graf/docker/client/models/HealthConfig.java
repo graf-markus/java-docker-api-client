@@ -65,16 +65,16 @@ public class HealthConfig {
 		}
 
 		public Builder test(List<String> test) {
-			this.test = test;
+			this.test.addAll(test);
 			return Builder.this;
 		}
 
-		public Builder addTest(String test) {
+		public Builder test(String test) {
 			this.test.add(test);
 			return Builder.this;
 		}
 
-		public Builder addTest(String... test) {
+		public Builder test(String... test) {
 			this.test.addAll(Arrays.asList(test));
 			return Builder.this;
 		}

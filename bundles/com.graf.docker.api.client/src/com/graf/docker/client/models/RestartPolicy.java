@@ -12,7 +12,7 @@ public class RestartPolicy {
 
 	private RestartPolicy(Builder builder) {
 		this.name = builder.name;
-		this.maxRetryCount = builder.maxREtryCount;
+		this.maxRetryCount = builder.maxRetryCount;
 	}
 
 	public String getName() {
@@ -36,14 +36,9 @@ public class RestartPolicy {
 	public static class Builder {
 
 		private String name;
-		private int maxREtryCount;
+		private int maxRetryCount;
 
 		public Builder() {
-		}
-
-		Builder(String name, int maxREtryCount) {
-			this.name = name;
-			this.maxREtryCount = maxREtryCount;
 		}
 
 		public Builder name(String name) {
@@ -51,8 +46,8 @@ public class RestartPolicy {
 			return Builder.this;
 		}
 
-		public Builder maxREtryCount(int maxREtryCount) {
-			this.maxREtryCount = maxREtryCount;
+		public Builder maxRetryCount(int maxREtryCount) {
+			this.maxRetryCount = maxREtryCount;
 			return Builder.this;
 		}
 

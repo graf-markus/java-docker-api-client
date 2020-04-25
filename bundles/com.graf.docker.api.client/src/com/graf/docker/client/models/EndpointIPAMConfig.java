@@ -61,16 +61,16 @@ public class EndpointIPAMConfig {
 		}
 
 		public Builder linkLocalIPs(List<String> linkLocalIPs) {
-			this.linkLocalIPs = linkLocalIPs;
+			this.linkLocalIPs.addAll(linkLocalIPs);
 			return Builder.this;
 		}
 
-		public Builder addLinkLocalIPs(String linkLocalIPs) {
+		public Builder linkLocalIPs(String linkLocalIPs) {
 			this.linkLocalIPs.add(linkLocalIPs);
 			return Builder.this;
 		}
-		
-		public Builder addLinkLocalIPs(String... linkLocalIPs) {
+
+		public Builder linkLocalIPs(String... linkLocalIPs) {
 			this.linkLocalIPs.addAll(Arrays.asList(linkLocalIPs));
 			return Builder.this;
 		}

@@ -133,31 +133,31 @@ public class EndpointSettings {
 		}
 
 		public Builder links(List<String> links) {
-			this.links = links;
+			this.links.addAll(links);
 			return Builder.this;
 		}
 
-		public Builder addLinks(String links) {
+		public Builder links(String links) {
 			this.links.add(links);
 			return Builder.this;
 		}
 
-		public Builder addLinks(String... links) {
+		public Builder links(String... links) {
 			this.links.addAll(Arrays.asList(links));
 			return Builder.this;
 		}
 
 		public Builder aliases(List<String> aliases) {
-			this.aliases = aliases;
+			this.aliases.addAll(aliases);
 			return Builder.this;
 		}
 
-		public Builder addAliases(String aliases) {
+		public Builder aliases(String aliases) {
 			this.aliases.add(aliases);
 			return Builder.this;
 		}
 
-		public Builder addAliases(String... aliases) {
+		public Builder aliases(String... aliases) {
 			this.aliases.addAll(Arrays.asList(aliases));
 			return Builder.this;
 		}
@@ -208,11 +208,11 @@ public class EndpointSettings {
 		}
 
 		public Builder driverOpts(Map<String, String> driverOpts) {
-			this.driverOpts = driverOpts;
+			this.driverOpts.putAll(driverOpts);
 			return Builder.this;
 		}
 
-		public Builder addDriverOpt(String key, String value) {
+		public Builder driverOpt(String key, String value) {
 			this.driverOpts.put(key, value);
 			return Builder.this;
 		}

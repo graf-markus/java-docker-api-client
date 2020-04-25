@@ -34,11 +34,6 @@ public class PortBinding {
 		public Builder() {
 		}
 
-		Builder(String hostIp, String hostPort) {
-			this.hostIp = hostIp;
-			this.hostPort = hostPort;
-		}
-
 		public Builder hostIp(String hostIp) {
 			this.hostIp = hostIp;
 			return Builder.this;

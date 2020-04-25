@@ -252,12 +252,19 @@ public class ContainerConfig {
 			return Builder.this;
 		}
 
-		public Builder addExposedPort(String port) {
+		public Builder exposedPorts(List<String> ports) {
+			for (String p : ports) {
+				exposedPorts.put(p, new Object());
+			}
+			return Builder.this;
+		}
+
+		public Builder exposedPorts(String port) {
 			this.exposedPorts.put(port, new Object());
 			return Builder.this;
 		}
 
-		public Builder addExBuilder(String... ports) {
+		public Builder exposedPorts(String... ports) {
 			for (String p : ports) {
 				this.exposedPorts.put(p, new Object());
 			}
@@ -280,22 +287,22 @@ public class ContainerConfig {
 		}
 
 		public Builder env(List<String> env) {
-			this.env = env;
+			this.env.addAll(env);
 			return Builder.this;
 		}
 
-		public Builder addEnv(String env) {
+		public Builder env(String env) {
 			this.env.add(env);
 			return Builder.this;
 		}
 
-		public Builder addEnv(String... env) {
+		public Builder env(String... env) {
 			this.env.addAll(Arrays.asList(env));
 			return Builder.this;
 		}
 
 		public Builder cmd(List<String> cmd) {
-			this.cmd = cmd;
+			this.cmd.addAll(cmd);
 			return Builder.this;
 		}
 
@@ -304,7 +311,7 @@ public class ContainerConfig {
 			return Builder.this;
 		}
 
-		public Builder addCmd(String cmd) {
+		public Builder cmd(String cmd) {
 			this.cmd.add(cmd);
 			return Builder.this;
 		}
@@ -324,12 +331,19 @@ public class ContainerConfig {
 			return Builder.this;
 		}
 
-		public Builder addVolumes(String volume) {
+		public Builder volumes(List<String> volume) {
+			for (String v : volume) {
+				volumes.put(v, new Object());
+			}
+			return Builder.this;
+		}
+
+		public Builder volumes(String volume) {
 			this.volumes.put(volume, new Object());
 			return Builder.this;
 		}
 
-		public Builder addVolumes(String... volumes) {
+		public Builder volumes(String... volumes) {
 			for (String v : volumes) {
 				this.volumes.put(v, new Object());
 			}
@@ -342,16 +356,16 @@ public class ContainerConfig {
 		}
 
 		public Builder entrypoint(List<String> entrypoint) {
-			this.entrypoint = entrypoint;
+			this.entrypoint.addAll(entrypoint);
 			return Builder.this;
 		}
 
-		public Builder addEntrypoint(String entrypoint) {
+		public Builder entrypoint(String entrypoint) {
 			this.entrypoint.add(entrypoint);
 			return Builder.this;
 		}
 
-		public Builder addEntrypoint(String... entrypoint) {
+		public Builder entrypoint(String... entrypoint) {
 			this.entrypoint.addAll(Arrays.asList(entrypoint));
 			return Builder.this;
 		}
@@ -367,26 +381,26 @@ public class ContainerConfig {
 		}
 
 		public Builder onBuild(List<String> onBuild) {
-			this.onBuild = onBuild;
+			this.onBuild.addAll(onBuild);
 			return Builder.this;
 		}
 
-		public Builder addOnBuild(String onBuild) {
+		public Builder onBuild(String onBuild) {
 			this.onBuild.add(onBuild);
 			return Builder.this;
 		}
 
-		public Builder addOnBuild(String... onBuild) {
+		public Builder onBuild(String... onBuild) {
 			this.onBuild.addAll(Arrays.asList(onBuild));
 			return Builder.this;
 		}
 
 		public Builder labels(Map<String, String> labels) {
-			this.labels = labels;
+			this.labels.putAll(labels);
 			return Builder.this;
 		}
-
-		public Builder addLabel(String key, String value) {
+		
+		public Builder labels(String key, String value) {
 			this.labels.put(key, value);
 			return Builder.this;
 		}
@@ -402,16 +416,16 @@ public class ContainerConfig {
 		}
 
 		public Builder shell(List<String> shell) {
-			this.shell = shell;
+			this.shell.addAll(shell);
 			return Builder.this;
 		}
 
-		public Builder addShell(String shell) {
+		public Builder shell(String shell) {
 			this.shell.add(shell);
 			return Builder.this;
 		}
 
-		public Builder addShell(String... shell) {
+		public Builder shell(String... shell) {
 			this.shell.addAll(Arrays.asList(shell));
 			return Builder.this;
 		}

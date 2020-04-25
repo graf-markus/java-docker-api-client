@@ -44,11 +44,11 @@ public class DriverConfig {
 		}
 
 		public Builder options(Map<String, String> options) {
-			this.options = options;
+			this.options.putAll(options);
 			return Builder.this;
 		}
 
-		public Builder addOption(String key, String value) {
+		public Builder option(String key, String value) {
 			this.options.put(key, value);
 			return Builder.this;
 		}

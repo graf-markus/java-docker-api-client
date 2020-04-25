@@ -51,11 +51,11 @@ public class VolumeOptions {
 		}
 
 		public Builder labels(Map<String, String> labels) {
-			this.labels = labels;
+			this.labels.putAll(labels);
 			return Builder.this;
 		}
 
-		public Builder addLabel(String key, String value) {
+		public Builder labels(String key, String value) {
 			this.labels.put(key, value);
 			return Builder.this;
 		}

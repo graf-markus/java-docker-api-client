@@ -161,9 +161,9 @@ public class DockerClient implements IDockerClient {
 					stream.read(read);
 					builder.append(new String(read));
 					if (header[0] == 1) {
-						logBuilder.addStdout(builder.toString());
+						logBuilder.stdout(builder.toString());
 					} else if (header[0] == 2) {
-						logBuilder.addStderr(builder.toString());
+						logBuilder.stderr(builder.toString());
 					}
 					header = new byte[8];
 					builder.setLength(0);

@@ -36,11 +36,11 @@ public class NetworkingConfig {
 		}
 
 		public Builder endpointsConfig(Map<String, EndpointSettings> endpointsConfig) {
-			this.endpointsConfig = endpointsConfig;
+			this.endpointsConfig.putAll(endpointsConfig);
 			return Builder.this;
 		}
 
-		public Builder addEnpointsConfig(String key, EndpointSettings value) {
+		public Builder enpointsConfig(String key, EndpointSettings value) {
 			this.endpointsConfig.put(key, value);
 			return Builder.this;
 		}
