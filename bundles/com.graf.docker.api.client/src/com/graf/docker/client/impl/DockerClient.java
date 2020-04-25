@@ -62,6 +62,7 @@ import com.graf.docker.client.models.Image;
 import com.graf.docker.client.models.ImagePruneResponse;
 import com.graf.docker.client.models.ImageSearchResponseItem;
 import com.graf.docker.client.models.KillSignal;
+import com.graf.docker.client.models.Network;
 import com.graf.docker.client.models.ContainerTopResponse;
 import com.graf.docker.client.params.ClearCacheParam;
 import com.graf.docker.client.params.CommitImageParam;
@@ -531,6 +532,43 @@ public class DockerClient implements IDockerClient {
 		execute(request, 200);
 	}
 
+	// Network API
+	// ==============================================================
+	@Override
+	public List<Network> listNetworks() throws DockerException {
+		HttpGet rquest = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("networks").build());
+		Network[] networks = execute(rquest, 200, Network[].class);
+		return Arrays.asList(networks);
+	}
+
+	@Override
+	public Network inspectNetwork(String id) throws DockerException {
+		return inspectNetwork(id, false, "");
+	}
+
+	@Override
+	public Network inspectNetwork(String id, boolean verbose) throws DockerException {
+		return inspectNetwork(id, verbose, "");
+	}
+
+	@Override
+	public Network inspectNetwork(String id, boolean verbose, String scope) throws DockerException {
+		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("networks").addPath(id)
+				.addParameter("verbose", String.valueOf(verbose)).addParameter("scope", scope).build());
+		return execute(request, 200, Network.class);
+	}
+
+	@Override
+	public Network inspectNetwork(String id, String scope) throws DockerException {
+		return inspectNetwork(id, false, scope);
+	}
+
+	@Override
+	public void deleteNetwork(String id) throws DockerException {
+		HttpDelete request = new HttpDelete(RequestBuilder.builder().setUrl(url).addPath("networks").addPath(id).build());
+		execute(request, 204);
+	}
+	
 	// ==================================================
 
 	@Override
@@ -586,6 +624,7 @@ public class DockerClient implements IDockerClient {
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
 			statusCode = response.getStatusLine().getStatusCode();
 			String jsonEntity = EntityUtils.toString(response.getEntity());
+			System.out.println(jsonEntity);
 			if (statusCode == successStatusCode) {
 				return gson.fromJson(jsonEntity, returnClazz);
 			}

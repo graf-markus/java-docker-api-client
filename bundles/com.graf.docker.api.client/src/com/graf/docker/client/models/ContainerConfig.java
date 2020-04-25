@@ -2,6 +2,8 @@ package com.graf.docker.client.models;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,7 +19,7 @@ public class ContainerConfig {
 	private boolean attachStdin;
 	private boolean attachStdout;
 	private boolean attachStderr;
-	private Set<String> exposedPorts;
+	private Map<String, Object> exposedPorts;
 	private boolean tty;
 	private boolean openStdin;
 	private boolean stdinOnce;
@@ -93,7 +95,7 @@ public class ContainerConfig {
 		return attachStderr;
 	}
 
-	public Set<String> getExposedPorts() {
+	public Map<String, Object> getExposedPorts() {
 		return exposedPorts;
 	}
 
@@ -180,7 +182,7 @@ public class ContainerConfig {
 	public static Builder builder() {
 		return new Builder();
 	}
-	
+
 	@Override
 	public String toString() {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -195,7 +197,7 @@ public class ContainerConfig {
 		private boolean attachStdin;
 		private boolean attachStdout;
 		private boolean attachStderr;
-		private Set<String> exposedPorts;
+		private Map<String, Object> exposedPorts = new HashMap<>();
 		private boolean tty;
 		private boolean openStdin;
 		private boolean stdinOnce;
@@ -204,13 +206,13 @@ public class ContainerConfig {
 		private HealthConfig healthcheck;
 		private boolean argsEscaped;
 		private String image;
-		private Map<String, Object> volumes;
+		private Map<String, Object> volumes = new HashMap<>();
 		private String workingDir;
 		private List<String> entrypoint = new ArrayList<String>();
 		private boolean networkDisabled;
 		private String macAddress;
 		private List<String> onBuild = new ArrayList<String>();
-		private Map<String, String> labels;
+		private Map<String, String> labels = new HashMap<>();
 		private String stopSignal;
 		private int stopTimeout;
 		private List<String> shell = new ArrayList<String>();
@@ -250,8 +252,15 @@ public class ContainerConfig {
 			return Builder.this;
 		}
 
-		public Builder exposedPorts(Set<String> exposedPorts) {
-			this.exposedPorts = exposedPorts;
+		public Builder addExposedPort(String port) {
+			this.exposedPorts.put(port, new Object());
+			return Builder.this;
+		}
+
+		public Builder addExBuilder(String... ports) {
+			for (String p : ports) {
+				this.exposedPorts.put(p, new Object());
+			}
 			return Builder.this;
 		}
 
@@ -280,6 +289,11 @@ public class ContainerConfig {
 			return Builder.this;
 		}
 
+		public Builder addEnv(String... env) {
+			this.env.addAll(Arrays.asList(env));
+			return Builder.this;
+		}
+
 		public Builder cmd(List<String> cmd) {
 			this.cmd = cmd;
 			return Builder.this;
@@ -294,8 +308,7 @@ public class ContainerConfig {
 			this.cmd.add(cmd);
 			return Builder.this;
 		}
-		
-		
+
 		public Builder healthcheck(HealthConfig healthcheck) {
 			this.healthcheck = healthcheck;
 			return Builder.this;
@@ -311,13 +324,15 @@ public class ContainerConfig {
 			return Builder.this;
 		}
 
-		public Builder volumes(Map<String, Object> volumes) {
-			this.volumes = volumes;
+		public Builder addVolumes(String volume) {
+			this.volumes.put(volume, new Object());
 			return Builder.this;
 		}
 
-		public Builder addVolumes(String key, Object value) {
-			this.volumes.put(key, value);
+		public Builder addVolumes(String... volumes) {
+			for (String v : volumes) {
+				this.volumes.put(v, new Object());
+			}
 			return Builder.this;
 		}
 
@@ -333,6 +348,11 @@ public class ContainerConfig {
 
 		public Builder addEntrypoint(String entrypoint) {
 			this.entrypoint.add(entrypoint);
+			return Builder.this;
+		}
+
+		public Builder addEntrypoint(String... entrypoint) {
+			this.entrypoint.addAll(Arrays.asList(entrypoint));
 			return Builder.this;
 		}
 
@@ -353,6 +373,11 @@ public class ContainerConfig {
 
 		public Builder addOnBuild(String onBuild) {
 			this.onBuild.add(onBuild);
+			return Builder.this;
+		}
+
+		public Builder addOnBuild(String... onBuild) {
+			this.onBuild.addAll(Arrays.asList(onBuild));
 			return Builder.this;
 		}
 
@@ -383,6 +408,11 @@ public class ContainerConfig {
 
 		public Builder addShell(String shell) {
 			this.shell.add(shell);
+			return Builder.this;
+		}
+
+		public Builder addShell(String... shell) {
+			this.shell.addAll(Arrays.asList(shell));
 			return Builder.this;
 		}
 

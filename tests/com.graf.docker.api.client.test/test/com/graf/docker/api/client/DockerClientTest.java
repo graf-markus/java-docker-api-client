@@ -40,6 +40,7 @@ import com.graf.docker.client.models.HistoryResponseItem;
 import com.graf.docker.client.models.Image;
 import com.graf.docker.client.models.ImageSearchResponseItem;
 import com.graf.docker.client.models.KillSignal;
+import com.graf.docker.client.models.Network;
 import com.graf.docker.client.models.ContainerTopResponse;
 import com.graf.docker.client.params.CreateImageParam;
 import com.graf.docker.client.params.ImageTagParam;
@@ -69,7 +70,6 @@ public class DockerClientTest {
 		List<ContainerSummary> containers = null;
 
 		containers = docker.listContainers(ListContainersParam.allContainers());
-		
 
 		assertTrue(containers.isEmpty());
 
@@ -561,9 +561,10 @@ public class DockerClientTest {
 
 		String binary = docker.archiveContainer(containerId, "/");
 
-		try(BufferedWriter writer = new BufferedWriter(new FileWriter(new File("./archive.tar")))){			
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(new File("./archive.tar")))) {
 			writer.write(binary);
-		};
+		}
+		;
 
 		assertTrue(Files.exists(Paths.get("./archive.tar")));
 		assertTrue(Files.size(Paths.get("./archive.tar")) > 0);
@@ -663,7 +664,7 @@ public class DockerClientTest {
 	@Test
 	public void testInspectImage() throws DockerException {
 		LOGGER.log(Level.INFO, "");
-		Image info = docker.inspectImage("72300a873c2c");
+		Image info = docker.inspectImage("ccc6e87d482b");
 
 		assertEquals("ubuntu:latest", info.getRepoTags().get(0));
 	}
@@ -671,7 +672,7 @@ public class DockerClientTest {
 	@Test
 	public void testImageHistory() throws DockerException {
 		LOGGER.log(Level.INFO, "");
-		List<HistoryResponseItem> history = docker.imageHistory("72300a873c2c");
+		List<HistoryResponseItem> history = docker.imageHistory("ccc6e87d482b");
 
 		assertTrue(history.size() > 0);
 	}
@@ -679,9 +680,9 @@ public class DockerClientTest {
 	@Test
 	public void testTagImage() throws DockerException {
 		LOGGER.log(Level.INFO, "");
-		docker.tagImage("72300a873c2c", ImageTagParam.repo("ubuntu"), ImageTagParam.newTag("test"));
+		docker.tagImage("ccc6e87d482b", ImageTagParam.repo("ubuntu"), ImageTagParam.newTag("test"));
 
-		Image info = docker.inspectImage("72300a873c2c");
+		Image info = docker.inspectImage("ccc6e87d482b");
 
 		assertTrue(info.getRepoTags().size() > 1);
 		assertEquals("ubuntu:test", info.getRepoTags().get(1));
@@ -718,5 +719,19 @@ public class DockerClientTest {
 			}
 		}
 		return false;
+	}
+
+	@Test
+	public void testListNetworks() throws DockerException {
+		LOGGER.log(Level.INFO, "");
+		List<Network> networks = docker.listNetworks();
+		assertTrue(networks.size() > 0);
+	}
+	
+	@Test
+	public void testInspectNetwork() throws DockerException {
+		LOGGER.log(Level.INFO, "");
+		Network network = docker.inspectNetwork("82ddb7ccdca24601af5e025e83b836feed60cd69d2a73b5ffb35f9eca4f51b19");
+		assertEquals(network.getName(), "bridge");
 	}
 }
