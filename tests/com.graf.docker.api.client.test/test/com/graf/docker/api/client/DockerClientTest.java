@@ -196,8 +196,9 @@ public class DockerClientTest {
 
 		String binary = docker.exportContainer(containerId);
 
-		BufferedWriter writer = new BufferedWriter(new FileWriter(new File("./export.tar.gz")));
-		writer.write(binary);
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(new File("./export.tar.gz")))) {
+			writer.write(binary);
+		}
 
 		assertTrue(Files.exists(Paths.get("./export.tar.gz")));
 		assertTrue(Files.size(Paths.get("./export.tar.gz")) > 0);
@@ -568,7 +569,6 @@ public class DockerClientTest {
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(new File("./archive.tar")))) {
 			writer.write(binary);
 		}
-		;
 
 		assertTrue(Files.exists(Paths.get("./archive.tar")));
 		assertTrue(Files.size(Paths.get("./archive.tar")) > 0);
@@ -712,7 +712,35 @@ public class DockerClientTest {
 	@Test
 	public void testImagePrune() throws DockerException {
 		LOGGER.log(Level.INFO, "");
+		docker.createImage(CreateImageParam.fromImage("hello-world"));
 		ImagePruneResponse info = docker.deleteUnusedImages();
+		System.out.println(info);
+	}
+
+	@Test
+	public void testGetImageSingle() throws DockerException, IOException {
+		LOGGER.log(Level.INFO, "");
+		String binary = docker.getImage("ubuntu:latest");
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(new File("./image.tar.gz")))) {
+			writer.write(binary);
+		}
+		assertTrue(Files.exists(Paths.get("./image.tar.gz")));
+		assertTrue(Files.size(Paths.get("./image.tar.gz")) > 0);
+
+		Files.delete(Paths.get("./image.tar.gz"));
+	}
+	
+	@Test
+	public void testGetImageMultiple() throws DockerException, IOException {
+		LOGGER.log(Level.INFO, "");
+		String binary = docker.getImages("ubuntu:latest", "debian");
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(new File("./images.tar.gz")))) {
+			writer.write(binary);
+		}
+		assertTrue(Files.exists(Paths.get("./images.tar.gz")));
+		assertTrue(Files.size(Paths.get("./images.tar.gz")) > 0);
+
+		Files.delete(Paths.get("./images.tar.gz"));
 	}
 
 	private static boolean containsImage(List<ImageSummary> images, String imageRepo) {

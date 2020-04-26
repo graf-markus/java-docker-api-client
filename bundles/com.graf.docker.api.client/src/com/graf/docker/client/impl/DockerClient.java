@@ -456,12 +456,8 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public IdResponse commitImage(ContainerConfig config, CommitImageParam... param) throws DockerException {
-		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPath("commit").addParameters(param).build();
-		try {
-			request.setEntity(new StringEntity(gson.toJson(config)));
-		} catch (UnsupportedEncodingException e) {
-			throw new DockerException(e.getMessage());
-		}
+		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPath("commit").addParameters(param)
+				.setBody(config).build();
 		return execute(request, 201, IdResponse.class);
 	}
 
@@ -484,13 +480,12 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public String getImages(String... names) throws DockerException {
-		String param = "";
+		RequestBuilder builder = RequestBuilder.get();
 		for (String s : names) {
-			param += s + ",";
+			builder.addParameter("names", s);
 		}
-		param = param.substring(0, param.length() - 1);
-		HttpGet request = (HttpGet) RequestBuilder.get().setUrl(url).addPaths("containers", "export")
-				.addParameter("name", param).build();
+		HttpGet request = (HttpGet) builder.setUrl(url).addPaths("images", "get").build();
+		System.out.println(request);
 		int statusCode = 0;
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
 			statusCode = response.getStatusLine().getStatusCode();
