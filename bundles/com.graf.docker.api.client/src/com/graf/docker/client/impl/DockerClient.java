@@ -70,6 +70,9 @@ import com.graf.docker.client.models.NetworkConnect;
 import com.graf.docker.client.models.NetworkCreateResponse;
 import com.graf.docker.client.models.NetworkDisconnect;
 import com.graf.docker.client.models.NetworkPruneResponse;
+import com.graf.docker.client.models.Volume;
+import com.graf.docker.client.models.VolumeConfig;
+import com.graf.docker.client.models.VolumeListResponse;
 import com.graf.docker.client.models.ContainerTopResponse;
 import com.graf.docker.client.params.ClearCacheParam;
 import com.graf.docker.client.params.CommitImageParam;
@@ -79,6 +82,7 @@ import com.graf.docker.client.params.ImageSearchParam;
 import com.graf.docker.client.params.ImageTagParam;
 import com.graf.docker.client.params.ListContainersParam;
 import com.graf.docker.client.params.ListImagesParam;
+import com.graf.docker.client.params.ListVolumesParam;
 import com.graf.docker.client.params.LogsParam;
 import com.graf.docker.client.params.NetworkPruneParam;
 import com.graf.docker.client.params.Param;
@@ -590,6 +594,24 @@ public class DockerClient implements IDockerClient {
 				.addParameters(params).build();
 		return execute(request, 200, NetworkPruneResponse.class);
 	}
+
+	// ==================================================
+
+	// Volume API
+
+	@Override
+	public VolumeListResponse listVolumes(ListVolumesParam... params) throws DockerException {
+		HttpGet request = (HttpGet) RequestBuilder.get().setUrl(url).addPaths("volumes").addParameters(params).build();
+		return execute(request, 200, VolumeListResponse.class);
+	}
+
+	@Override
+	public Volume createVolume(VolumeConfig config) throws DockerException {
+		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("volumes", "create").setBody(config)
+				.build();
+		return execute(request, 201, Volume.class);
+	}
+
 	// ==================================================
 
 	@Override

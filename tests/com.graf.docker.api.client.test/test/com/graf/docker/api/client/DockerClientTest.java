@@ -45,6 +45,9 @@ import com.graf.docker.client.models.Network;
 import com.graf.docker.client.models.NetworkConfig;
 import com.graf.docker.client.models.NetworkCreateResponse;
 import com.graf.docker.client.models.NetworkPruneResponse;
+import com.graf.docker.client.models.Volume;
+import com.graf.docker.client.models.VolumeConfig;
+import com.graf.docker.client.models.VolumeListResponse;
 import com.graf.docker.client.models.ContainerTopResponse;
 import com.graf.docker.client.params.CreateImageParam;
 import com.graf.docker.client.params.ImageTagParam;
@@ -729,7 +732,7 @@ public class DockerClientTest {
 
 		Files.delete(Paths.get("./image.tar.gz"));
 	}
-	
+
 	@Test
 	public void testGetImageMultiple() throws DockerException, IOException {
 		LOGGER.log(Level.INFO, "");
@@ -814,5 +817,15 @@ public class DockerClientTest {
 		NetworkCreateResponse createResponse = docker.createNetwork(config);
 		NetworkPruneResponse pruneResponse = docker.pruneNetworks();
 		assertEquals("test", pruneResponse.getNetworksDeleted().get(0));
+	}
+
+	@Test
+	public void testCreateVolumeAndListVolumes() throws DockerException {
+		LOGGER.log(Level.INFO, "");
+		Volume vol = docker.createVolume(VolumeConfig.builder().name("test").build());
+		assertEquals("test", vol.getName());
+
+		VolumeListResponse response = docker.listVolumes();
+		assertEquals("test", response.getVolumes().get(0).getName());
 	}
 }

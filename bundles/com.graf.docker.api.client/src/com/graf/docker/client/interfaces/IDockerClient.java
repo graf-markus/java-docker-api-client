@@ -30,6 +30,9 @@ import com.graf.docker.client.models.Network;
 import com.graf.docker.client.models.NetworkConfig;
 import com.graf.docker.client.models.NetworkCreateResponse;
 import com.graf.docker.client.models.NetworkPruneResponse;
+import com.graf.docker.client.models.Volume;
+import com.graf.docker.client.models.VolumeConfig;
+import com.graf.docker.client.models.VolumeListResponse;
 import com.graf.docker.client.models.ContainerTopResponse;
 import com.graf.docker.client.params.ClearCacheParam;
 import com.graf.docker.client.params.CommitImageParam;
@@ -39,6 +42,7 @@ import com.graf.docker.client.params.ImageSearchParam;
 import com.graf.docker.client.params.ImageTagParam;
 import com.graf.docker.client.params.ListContainersParam;
 import com.graf.docker.client.params.ListImagesParam;
+import com.graf.docker.client.params.ListVolumesParam;
 import com.graf.docker.client.params.LogsParam;
 import com.graf.docker.client.params.NetworkPruneParam;
 import com.graf.docker.client.params.RemoveContainersParam;
@@ -545,6 +549,25 @@ public interface IDockerClient {
 	 * @throws DockerException
 	 */
 	NetworkPruneResponse pruneNetworks(NetworkPruneParam... params) throws DockerException;
+
+	// Volume API
+
+	/**
+	 * List Volumes.
+	 * 
+	 * @param params
+	 * @return VolumeListResponse
+	 * @throws DockerException
+	 */
+	VolumeListResponse listVolumes(ListVolumesParam... params) throws DockerException;
+
+	/**
+	 * Create a Volume.
+	 * @param config
+	 * @return
+	 * @throws DockerException
+	 */
+	Volume createVolume(VolumeConfig config) throws DockerException;
 
 	// Additionally Methods
 	// ===================================================================================
