@@ -1,4 +1,4 @@
-package com.graf.docker.client.interfaces;
+package com.graf.docker.client.models;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

@@ -28,6 +28,7 @@ import com.graf.docker.client.models.ImageSearchResponseItem;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.Network;
 import com.graf.docker.client.models.NetworkConfig;
+import com.graf.docker.client.models.NetworkCreateResponse;
 import com.graf.docker.client.models.NetworkPruneResponse;
 import com.graf.docker.client.models.ContainerTopResponse;
 import com.graf.docker.client.params.ClearCacheParam;
