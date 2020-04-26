@@ -51,18 +51,19 @@ import com.graf.docker.client.params.ImageTagParam;
 import com.graf.docker.client.params.ListContainersParam;
 import com.graf.docker.client.params.ListImagesParam;
 import com.graf.docker.client.params.LogsParam;
+import com.graf.docker.client.params.NetworkPruneParam;
 import com.graf.docker.client.params.RemoveContainersParam;
 
 public class DockerClientTest {
 
 	private static final Logger LOGGER = Logger.getLogger(DockerClientBuilder.class.getName());
-	private IDockerClient docker = DockerClientBuilder.builder().setUrl("http://localhost:2375").build();
+	private IDockerClient docker = DockerClientBuilder.builder().setUrl("http://192.168.1.1:2375").build();
 	private ContainerConfig config = ContainerConfig.builder().image("ubuntu")
 			.cmd("sh", "-c", "while :; do sleep 1; done").build();
 
 	@After
 	public void tearDown() throws Exception {
-		List<ContainerSummary> containers = docker.listContainers(ListContainersParam.allContainers());
+		List<ContainerSummary> containers = docker.listContainers(ListContainersParam.all());
 		for (ContainerSummary c : containers) {
 			docker.removeContainer(c.getId(), RemoveContainersParam.force());
 		}
@@ -73,7 +74,7 @@ public class DockerClientTest {
 		LOGGER.log(Level.INFO, "");
 		List<ContainerSummary> containers = null;
 
-		containers = docker.listContainers(ListContainersParam.allContainers());
+		containers = docker.listContainers(ListContainersParam.all());
 
 		assertTrue(containers.isEmpty());
 
@@ -83,7 +84,7 @@ public class DockerClientTest {
 
 		String containerId = creation.getId();
 
-		containers = docker.listContainers(ListContainersParam.allContainers());
+		containers = docker.listContainers(ListContainersParam.all());
 
 		assertFalse(containers.isEmpty());
 		docker.removeContainer(containerId);
@@ -94,7 +95,7 @@ public class DockerClientTest {
 	public void testCreateContainerContainerConfig() throws DockerException {
 		LOGGER.log(Level.INFO, "");
 		ContainerCreateResponse creation = docker.createContainer(config);
-		List<ContainerSummary> containers = docker.listContainers(ListContainersParam.allContainers());
+		List<ContainerSummary> containers = docker.listContainers(ListContainersParam.all());
 		assertTrue(containers.size() > 0);
 
 		assertEquals(creation.getId(), containers.get(0).getId());
@@ -104,7 +105,7 @@ public class DockerClientTest {
 	public void testCreateContainerContainerConfigString() throws DockerException {
 		LOGGER.log(Level.INFO, "");
 		ContainerCreateResponse creation = docker.createContainer(config, "test-container-name");
-		List<ContainerSummary> containers = docker.listContainers(ListContainersParam.allContainers());
+		List<ContainerSummary> containers = docker.listContainers(ListContainersParam.all());
 		assertTrue(containers.size() > 0);
 
 		assertEquals(creation.getId(), containers.get(0).getId());
@@ -518,11 +519,11 @@ public class DockerClientTest {
 		ContainerCreateResponse creation = docker.createContainer(config);
 		String containerId = creation.getId();
 
-		List<ContainerSummary> containers = docker.listContainers(ListContainersParam.allContainers());
+		List<ContainerSummary> containers = docker.listContainers(ListContainersParam.all());
 		assertTrue(containsContainer(containers, containerId));
 
 		docker.removeContainer(containerId);
-		containers = docker.listContainers(ListContainersParam.allContainers());
+		containers = docker.listContainers(ListContainersParam.all());
 
 		assertFalse(containsContainer(containers, containerId));
 	}
@@ -590,11 +591,11 @@ public class DockerClientTest {
 		info = docker.inspectContainer(containerId);
 		assertFalse(info.getState().isRunning());
 
-		assertTrue(containsContainer(docker.listContainers(ListContainersParam.allContainers()), containerId));
+		assertTrue(containsContainer(docker.listContainers(ListContainersParam.all()), containerId));
 
 		ContainerPruneResponse deletedInfo = docker.deleteContainers();
 
-		assertFalse(containsContainer(docker.listContainers(ListContainersParam.allContainers()), containerId));
+		assertFalse(containsContainer(docker.listContainers(ListContainersParam.all()), containerId));
 		assertTrue(deletedInfo.getContainersDeleted().size() > 0);
 		assertTrue(deletedInfo.getContainersDeleted().get(0).equals(containerId));
 	}
@@ -640,7 +641,7 @@ public class DockerClientTest {
 	@Test
 	public void testListImages() throws DockerException {
 		LOGGER.log(Level.INFO, "");
-		List<ImageSummary> images = docker.listImages(ListImagesParam.allImages());
+		List<ImageSummary> images = docker.listImages(ListImagesParam.all());
 
 		assertTrue(images.size() > 0);
 		assertTrue(containsImage(images, "ubuntu:latest"));
@@ -657,9 +658,9 @@ public class DockerClientTest {
 	@Test
 	public void testCreateImage() throws DockerException {
 		LOGGER.log(Level.INFO, "");
-		docker.createImage(CreateImageParam.fromImage("debian"), CreateImageParam.withTag("10-slim"));
+		docker.createImage(CreateImageParam.fromImage("debian"), CreateImageParam.tag("10-slim"));
 
-		List<ImageSummary> images = docker.listImages(ListImagesParam.withReference("debian"));
+		List<ImageSummary> images = docker.listImages(ListImagesParam.reference("debian"));
 
 		assertTrue(images.size() > 0);
 	}
@@ -779,6 +780,8 @@ public class DockerClientTest {
 	@Test
 	public void testPruneNetworks() throws DockerException {
 		LOGGER.log(Level.INFO, "");
+		NetworkPruneParam param = NetworkPruneParam.label("test");
+		System.out.println(param);
 		NetworkConfig config = NetworkConfig.builder().name("test").build();
 		NetworkCreateResponse createResponse = docker.createNetwork(config);
 		NetworkPruneResponse pruneResponse = docker.pruneNetworks();

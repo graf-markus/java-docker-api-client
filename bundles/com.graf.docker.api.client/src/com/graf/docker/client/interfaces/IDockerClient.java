@@ -40,6 +40,7 @@ import com.graf.docker.client.params.ImageTagParam;
 import com.graf.docker.client.params.ListContainersParam;
 import com.graf.docker.client.params.ListImagesParam;
 import com.graf.docker.client.params.LogsParam;
+import com.graf.docker.client.params.NetworkPruneParam;
 import com.graf.docker.client.params.RemoveContainersParam;
 
 public interface IDockerClient {
@@ -543,7 +544,7 @@ public interface IDockerClient {
 	 * 
 	 * @throws DockerException
 	 */
-	NetworkPruneResponse pruneNetworks() throws DockerException;
+	NetworkPruneResponse pruneNetworks(NetworkPruneParam... params) throws DockerException;
 
 	// Additionally Methods
 	// ===================================================================================

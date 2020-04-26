@@ -80,6 +80,7 @@ import com.graf.docker.client.params.ImageTagParam;
 import com.graf.docker.client.params.ListContainersParam;
 import com.graf.docker.client.params.ListImagesParam;
 import com.graf.docker.client.params.LogsParam;
+import com.graf.docker.client.params.NetworkPruneParam;
 import com.graf.docker.client.params.Param;
 import com.graf.docker.client.params.RemoveContainersParam;
 
@@ -589,8 +590,9 @@ public class DockerClient implements IDockerClient {
 	}
 
 	@Override
-	public NetworkPruneResponse pruneNetworks() throws DockerException {
-		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("networks", "prune").build();
+	public NetworkPruneResponse pruneNetworks(NetworkPruneParam... params) throws DockerException {
+		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("networks", "prune")
+				.addParameters(params).build();
 		return execute(request, 200, NetworkPruneResponse.class);
 	}
 	// ==================================================

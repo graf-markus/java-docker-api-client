@@ -2,7 +2,7 @@ package com.graf.docker.client.params;
 
 public class CreateImageParam extends Param {
 
-	public CreateImageParam(String name, String value) {
+	protected CreateImageParam(String name, String value) {
 		super(name, value);
 	}
 
@@ -14,7 +14,7 @@ public class CreateImageParam extends Param {
 	 * Name of the image to pull. The name may include a tag or digest.
 	 * 
 	 * @param image
-	 * @return
+	 * @return CreateImageParam
 	 */
 	public static CreateImageParam fromImage(String image) {
 		return create("fromImage", image);
@@ -24,7 +24,7 @@ public class CreateImageParam extends Param {
 	 * Source to import.
 	 * 
 	 * @param url
-	 * @return
+	 * @return CreateImageParam
 	 */
 	public static CreateImageParam fromSrc(String url) {
 		return create("fromSrc", url);
@@ -34,9 +34,9 @@ public class CreateImageParam extends Param {
 	 * Repository name given to an image when it is imported.
 	 * 
 	 * @param repoName
-	 * @return
+	 * @return CreateImageParam
 	 */
-	public static CreateImageParam withRepo(String repoName) {
+	public static CreateImageParam repo(String repoName) {
 		return create("repo", repoName);
 	}
 
@@ -46,9 +46,9 @@ public class CreateImageParam extends Param {
 	 * 
 	 * 
 	 * @param tag
-	 * @return
+	 * @return CreateImageParam
 	 */
-	public static CreateImageParam withTag(String tag) {
+	public static CreateImageParam tag(String tag) {
 		return create("tag", tag);
 	}
 
@@ -57,9 +57,9 @@ public class CreateImageParam extends Param {
 	 * 
 	 * 
 	 * @param message
-	 * @return
+	 * @return CreateImageParam
 	 */
-	public static CreateImageParam withMessage(String message) {
+	public static CreateImageParam message(String message) {
 		return create("message", message);
 	}
 
@@ -67,9 +67,9 @@ public class CreateImageParam extends Param {
 	 * Platform in the format os[/arch[/variant]]
 	 * 
 	 * @param platform
-	 * @return
+	 * @return CreateImageParam
 	 */
-	public static CreateImageParam withPlatform(String platform) {
+	public static CreateImageParam platform(String platform) {
 		return create("platform", platform);
 	}
 }

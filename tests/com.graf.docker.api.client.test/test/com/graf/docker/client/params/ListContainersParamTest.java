@@ -10,14 +10,14 @@ public class ListContainersParamTest {
 
 	@Test
 	public void testAllContainers() {
-		ListContainersParam param = ListContainersParam.allContainers();
+		ListContainersParam param = ListContainersParam.all();
 		assertEquals("all", param.name());
 		assertTrue(Boolean.valueOf(param.value()));
 	}
 
 	@Test
 	public void testAllContainersBoolean() {
-		ListContainersParam param = ListContainersParam.allContainers(false);
+		ListContainersParam param = ListContainersParam.all(false);
 		assertEquals("all", param.name());
 		assertFalse(Boolean.valueOf(param.value()));
 	}
@@ -45,63 +45,67 @@ public class ListContainersParamTest {
 
 	@Test
 	public void testWithContainerSizes() {
-		ListContainersParam param = ListContainersParam.withContainerSizes(false);
+		ListContainersParam param = ListContainersParam.containerSizes(false);
 		assertEquals("size", param.name());
 		assertFalse(Boolean.valueOf(param.value()));
 	}
 
 	@Test
 	public void testWithExitStatus() {
-		ListContainersParam param = ListContainersParam.withExitStatus(0);
+		ListContainersParam param = ListContainersParam.exitStatus(0);
 		assertEquals("exited", param.name());
 		assertEquals("0", param.value());
 	}
 
 	@Test
 	public void testWithStatusCreated() {
-		ListContainersParam param = ListContainersParam.withStatusCreated();
+		ListContainersParam param = ListContainersParam.statusCreated();
 		assertEquals("status", param.name());
 		assertEquals("created", param.value());
 	}
 
 	@Test
 	public void testWithStatusRestarting() {
-		ListContainersParam param = ListContainersParam.withStatusRestarting();
+		ListContainersParam param = ListContainersParam.statusRestarting();
 		assertEquals("status", param.name());
 		assertEquals("restarting", param.value());
 	}
 
 	@Test
 	public void testWithStatusRunning() {
-		ListContainersParam param = ListContainersParam.withStatusRunning();
+		ListContainersParam param = ListContainersParam.statusRunning();
 		assertEquals("status", param.name());
 		assertEquals("running", param.value());
 	}
 
 	@Test
 	public void testWithStatusPaused() {
-		ListContainersParam param = ListContainersParam.withStatusPaused();
+		ListContainersParam param = ListContainersParam.statusPaused();
 		assertEquals("status", param.name());
 		assertEquals("paused", param.value());
 	}
 
 	@Test
 	public void testWithStatusExited() {
-		ListContainersParam param = ListContainersParam.withStatusExited();
+		ListContainersParam param = ListContainersParam.statusExited();
 		assertEquals("status", param.name());
 		assertEquals("exited", param.value());
 	}
 
 	@Test
 	public void testWithLabelStringString() {
-		ListContainersParam param = ListContainersParam.withLabel("test", "test");
+		ListContainersParam param = ListContainersParam.label("test", "test");
 		assertEquals("label", param.name());
 		assertEquals("test=test", param.value());
+		
+		param = ListContainersParam.label("test", "");
+		assertEquals("label", param.name());
+		assertEquals("test", param.value());
 	}
 
 	@Test
 	public void testWithLabelString() {
-		ListContainersParam param = ListContainersParam.withLabel("test");
+		ListContainersParam param = ListContainersParam.label("test");
 		assertEquals("label", param.name());
 		assertEquals("test", param.value());
 	}

@@ -2,7 +2,7 @@ package com.graf.docker.client.params;
 
 public class CommitImageParam extends Param {
 
-	public CommitImageParam(String name, String value) {
+	protected CommitImageParam(String name, String value) {
 		super(name, value);
 	}
 
@@ -11,30 +11,30 @@ public class CommitImageParam extends Param {
 	}
 
 	/**
-	 * The ID or name of the container to commit.
+	 * The ID or name of the Container to commit.
 	 * 
 	 * @param container
-	 * @return
+	 * @return CommitImageParam
 	 */
 	public static CommitImageParam container(String container) {
 		return create("container", container);
 	}
 
 	/**
-	 * Repository name for the created image.
+	 * Repository name for the created Image.
 	 * 
 	 * @param repo
-	 * @return
+	 * @return CommitImageParam
 	 */
 	public static CommitImageParam repo(String repo) {
 		return create("repo", repo);
 	}
 
 	/**
-	 * Tag name for the create image.
+	 * Tag name for the create Image.
 	 * 
 	 * @param tag
-	 * @return
+	 * @return CommitImageParam
 	 */
 	public static CommitImageParam tag(String tag) {
 		return create("tag", tag);
@@ -44,7 +44,7 @@ public class CommitImageParam extends Param {
 	 * Commit message.
 	 * 
 	 * @param comment
-	 * @return
+	 * @return CommitImageParam
 	 */
 	public static CommitImageParam comment(String comment) {
 		return create("comment", comment);
@@ -54,7 +54,7 @@ public class CommitImageParam extends Param {
 	 * Author of the image (e.g., John Hannibal Smith <hannibal@a-team.com>)
 	 * 
 	 * @param author
-	 * @return
+	 * @return CommitImageParam
 	 */
 	public static CommitImageParam author(String author) {
 		return create("author", author);
@@ -64,7 +64,17 @@ public class CommitImageParam extends Param {
 	 * Whether to pause the container before committing.
 	 * 
 	 * @param pause
-	 * @return
+	 * @return CommitImageParam
+	 */
+	public static CommitImageParam pause() {
+		return pause(true);
+	}
+
+	/**
+	 * Whether to pause the container before committing.
+	 * 
+	 * @param pause
+	 * @return CommitImageParam
 	 */
 	public static CommitImageParam pause(boolean pause) {
 		return create("pause", String.valueOf(pause));
@@ -74,7 +84,7 @@ public class CommitImageParam extends Param {
 	 * Dockerfile instructions to apply while committing
 	 * 
 	 * @param path
-	 * @return
+	 * @return CommitImageParam
 	 */
 	public static CommitImageParam changes(String path) {
 		return create("changes", path);

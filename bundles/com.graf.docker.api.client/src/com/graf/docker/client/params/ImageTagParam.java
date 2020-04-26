@@ -2,7 +2,7 @@ package com.graf.docker.client.params;
 
 public class ImageTagParam extends Param {
 
-	public ImageTagParam(String name, String value) {
+	protected ImageTagParam(String name, String value) {
 		super(name, value);
 	}
 
@@ -14,7 +14,7 @@ public class ImageTagParam extends Param {
 	 * The repository to tag in. For example, someuser/someimage.
 	 * 
 	 * @param repo
-	 * @return
+	 * @return ImageTagParam
 	 */
 	public static ImageTagParam repo(String repo) {
 		return create("repo", repo);
@@ -24,7 +24,7 @@ public class ImageTagParam extends Param {
 	 * The name of the new tag.
 	 * 
 	 * @param tag
-	 * @return
+	 * @return ImageTagParam
 	 */
 	public static ImageTagParam newTag(String tag) {
 		return create("tag", tag);

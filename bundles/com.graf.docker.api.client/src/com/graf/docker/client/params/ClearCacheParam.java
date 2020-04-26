@@ -4,66 +4,123 @@ import com.graf.docker.client.interfaces.FilterParam;
 
 public class ClearCacheParam extends Param {
 
-	public ClearCacheParam(String name, String value) {
+	protected ClearCacheParam(String name, String value) {
 		super(name, value);
 	}
-	
+
+	/**
+	 * Remove all types of build cache.
+	 * 
+	 * @return ClearCacheParam
+	 */
 	public static ClearCacheParam all() {
 		return all(true);
 	}
 
+	/**
+	 * Remove all types of build cache.
+	 * 
+	 * @param all
+	 * @return ClearCacheParam
+	 */
 	public static ClearCacheParam all(boolean all) {
 		return create("all", String.valueOf(all));
 	}
-	
+
+	/**
+	 * 
+	 * @return ClearCacheParam
+	 */
 	public static ClearCacheParam inUse() {
 		return inUse(true);
 	}
 
+	/**
+	 * 
+	 * @param inuse
+	 * @return ClearCacheParam
+	 */
 	public static ClearCacheParam inUse(boolean inuse) {
 		return create("inuse", String.valueOf(inuse));
 	}
-	
+
+	/**
+	 * 
+	 * @return ClearCacheParam
+	 */
 	public static ClearCacheParam shared() {
 		return shared(true);
 	}
 
+	/**
+	 * 
+	 * @param shared
+	 * @return ClearCacheParam
+	 */
 	public static ClearCacheParam shared(boolean shared) {
 		return create("shared", String.valueOf(shared));
 	}
-	
+
+	/**
+	 * 
+	 * @return ClearCacheParam
+	 */
 	public static ClearCacheParam isPrivate() {
 		return isPrivate(true);
 	}
 
+	/**
+	 * 
+	 * @param isPrivate
+	 * @return ClearCacheParam
+	 */
 	public static ClearCacheParam isPrivate(boolean isPrivate) {
 		return create("private", String.valueOf(isPrivate));
 	}
-	
+
+	/**
+	 * 
+	 * @param storage
+	 * @return ClearCacheParam
+	 */
 	public static ClearCacheParam keepStorage(int storage) {
 		return create("keep-storage", String.valueOf(storage));
 	}
-	
-	public static ClearCacheParam withId(String id) {
+
+	/**
+	 * 
+	 * @param id
+	 * @return ClearCacheParam
+	 */
+	public static ClearCacheParam id(String id) {
 		return filter("id", String.valueOf(id));
 	}
-	
-	public static ClearCacheParam withParent(String id) {
+
+	/**
+	 * 
+	 * @param id
+	 * @return ClearCacheParam
+	 */
+	public static ClearCacheParam parent(String id) {
 		return filter("parent", String.valueOf(id));
 	}
-	
-	public static ClearCacheParam withType(String type) {
+
+	/**
+	 * 
+	 * @param type
+	 * @return ClearCacheParam
+	 */
+	public static ClearCacheParam type(String type) {
 		return filter("type", type);
 	}
-	
-	public static ClearCacheParam withDescription(String des) {
+
+	/**
+	 * 
+	 * @param des
+	 * @return ClearCacheParam
+	 */
+	public static ClearCacheParam description(String des) {
 		return filter("description", des);
-	}
-	
-	
-	
-	private static boolean isNullOrEmpty(String value) {
-		return value == null || value.isEmpty();
 	}
 
 	private static ClearCacheParam filter(String key, String value) {

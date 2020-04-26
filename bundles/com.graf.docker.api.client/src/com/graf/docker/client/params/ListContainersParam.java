@@ -4,7 +4,7 @@ import com.graf.docker.client.interfaces.FilterParam;
 
 public class ListContainersParam extends Param {
 
-	public ListContainersParam(String name, String value) {
+	protected ListContainersParam(String name, String value) {
 		super(name, value);
 	}
 
@@ -15,7 +15,7 @@ public class ListContainersParam extends Param {
 	 * @param value custom value
 	 * @return ListContainersParam
 	 */
-	public static ListContainersParam create(final String name, final String value) {
+	public static ListContainersParam create(String name, String value) {
 		return new ListContainersParam(name, value);
 	}
 
@@ -26,7 +26,7 @@ public class ListContainersParam extends Param {
 	 * @param value Value of filter
 	 * @return ListContainersParam
 	 */
-	public static ListContainersParam filter(final String key, final String value) {
+	public static ListContainersParam filter(String key, String value) {
 		return new ListContainersFilterParam(key, value);
 	}
 
@@ -35,8 +35,8 @@ public class ListContainersParam extends Param {
 	 *
 	 * @return ListContainersParam
 	 */
-	public static ListContainersParam allContainers() {
-		return allContainers(true);
+	public static ListContainersParam all() {
+		return all(true);
 	}
 
 	/**
@@ -45,7 +45,7 @@ public class ListContainersParam extends Param {
 	 * @param all Whether to show all containers
 	 * @return ListContainersParam
 	 */
-	public static ListContainersParam allContainers(final boolean all) {
+	public static ListContainersParam all(boolean all) {
 		return create("all", String.valueOf(all));
 	}
 
@@ -55,7 +55,7 @@ public class ListContainersParam extends Param {
 	 * @param limit Limit for number of containers to list
 	 * @return ListContainersParam
 	 */
-	public static ListContainersParam limitContainers(final Integer limit) {
+	public static ListContainersParam limitContainers(int limit) {
 		return create("limit", String.valueOf(limit));
 	}
 
@@ -65,7 +65,7 @@ public class ListContainersParam extends Param {
 	 * @param id container ID
 	 * @return ListContainersParam
 	 */
-	public static ListContainersParam containersCreatedSince(final String id) {
+	public static ListContainersParam containersCreatedSince(String id) {
 		return create("since", id);
 	}
 
@@ -75,7 +75,7 @@ public class ListContainersParam extends Param {
 	 * @param id container ID
 	 * @return ListContainersParam
 	 */
-	public static ListContainersParam containersCreatedBefore(final String id) {
+	public static ListContainersParam containersCreatedBefore(String id) {
 		return create("before", String.valueOf(id));
 	}
 
@@ -85,7 +85,7 @@ public class ListContainersParam extends Param {
 	 * @param size Whether to show container sizes
 	 * @return ListContainersParam
 	 */
-	public static ListContainersParam withContainerSizes(final Boolean size) {
+	public static ListContainersParam containerSizes(Boolean size) {
 		return create("size", String.valueOf(size));
 	}
 
@@ -95,7 +95,7 @@ public class ListContainersParam extends Param {
 	 * @param exitStatus Integer exit status
 	 * @return ListContainersParam
 	 */
-	public static ListContainersParam withExitStatus(final int exitStatus) {
+	public static ListContainersParam exitStatus(int exitStatus) {
 		return filter("exited", String.valueOf(exitStatus));
 	}
 
@@ -104,7 +104,7 @@ public class ListContainersParam extends Param {
 	 *
 	 * @return ListContainersParam
 	 */
-	public static ListContainersParam withStatusCreated() {
+	public static ListContainersParam statusCreated() {
 		return filter("status", "created");
 	}
 
@@ -113,7 +113,7 @@ public class ListContainersParam extends Param {
 	 *
 	 * @return ListContainersParam
 	 */
-	public static ListContainersParam withStatusRestarting() {
+	public static ListContainersParam statusRestarting() {
 		return filter("status", "restarting");
 	}
 
@@ -122,7 +122,7 @@ public class ListContainersParam extends Param {
 	 *
 	 * @return ListContainersParam
 	 */
-	public static ListContainersParam withStatusRunning() {
+	public static ListContainersParam statusRunning() {
 		return filter("status", "running");
 	}
 
@@ -131,7 +131,7 @@ public class ListContainersParam extends Param {
 	 *
 	 * @return ListContainersParam
 	 */
-	public static ListContainersParam withStatusPaused() {
+	public static ListContainersParam statusPaused() {
 		return filter("status", "paused");
 	}
 
@@ -140,7 +140,7 @@ public class ListContainersParam extends Param {
 	 *
 	 * @return ListContainersParam
 	 */
-	public static ListContainersParam withStatusExited() {
+	public static ListContainersParam statusExited() {
 		return filter("status", "exited");
 	}
 
@@ -151,7 +151,7 @@ public class ListContainersParam extends Param {
 	 * @param value The value of the label
 	 * @return ListContainersParam
 	 */
-	public static ListContainersParam withLabel(final String label, final String value) {
+	public static ListContainersParam label(String label, String value) {
 		return isNullOrEmpty(value) ? filter("label", label) : filter("label", label + "=" + value);
 	}
 
@@ -161,17 +161,17 @@ public class ListContainersParam extends Param {
 	 * @param label The label to filter on
 	 * @return ListContainersParam
 	 */
-	public static ListContainersParam withLabel(final String label) {
-		return withLabel(label, null);
+	public static ListContainersParam label(String label) {
+		return label(label, null);
 	}
 
 	/**
 	 * Show containers with specified image.
 	 * 
 	 * @param imageName
-	 * @return
+	 * @return ListContainersParam
 	 */
-	public static ListContainersParam withImage(final String imageName) {
+	public static ListContainersParam withImage(String imageName) {
 		return filter("ancestor", imageName);
 	}
 
@@ -179,9 +179,9 @@ public class ListContainersParam extends Param {
 	 * Show containers with specified name.
 	 * 
 	 * @param name
-	 * @return
+	 * @return ListContainersParam
 	 */
-	public static ListContainersParam withName(final String name) {
+	public static ListContainersParam withName(String name) {
 		return filter("name", name);
 	}
 
@@ -189,9 +189,9 @@ public class ListContainersParam extends Param {
 	 * Show containers with specified id.
 	 * 
 	 * @param containerId
-	 * @return
+	 * @return ListContainersParam
 	 */
-	public static ListContainersParam withId(final String containerId) {
+	public static ListContainersParam withId(String containerId) {
 		return filter("id", containerId);
 	}
 
@@ -199,9 +199,9 @@ public class ListContainersParam extends Param {
 	 * Show containers which are Tasks.
 	 * 
 	 * @param isTask
-	 * @return
+	 * @return ListContainersParam
 	 */
-	public static ListContainersParam isContainerTask(final boolean isTask) {
+	public static ListContainersParam isContainerTask(boolean isTask) {
 		return filter("is-task", String.valueOf(isTask));
 	}
 
@@ -209,9 +209,9 @@ public class ListContainersParam extends Param {
 	 * Show containers with specified HealthStatus.
 	 * 
 	 * @param status
-	 * @return
+	 * @return ListContainersParam
 	 */
-	public static ListContainersParam withHealth(final HealthStatus status) {
+	public static ListContainersParam withHealth(HealthStatus status) {
 		return filter("health", status.toString().toLowerCase());
 	}
 
@@ -226,9 +226,8 @@ public class ListContainersParam extends Param {
 }
 
 class ListContainersFilterParam extends ListContainersParam implements FilterParam {
-	
+
 	public ListContainersFilterParam(String name, String value) {
 		super(name, value);
 	}
 }
-

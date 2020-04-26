@@ -14,7 +14,7 @@ public class ImageDeleteParam extends Param {
 	 * Remove the image even if it is being used by stopped containers or has other
 	 * tags
 	 * 
-	 * @return
+	 * @return ImageDeleteParam
 	 */
 	public static ImageDeleteParam force() {
 		return force(true);
@@ -25,7 +25,7 @@ public class ImageDeleteParam extends Param {
 	 * tags
 	 * 
 	 * @param force
-	 * @return
+	 * @return ImageDeleteParam
 	 */
 	public static ImageDeleteParam force(boolean force) {
 		return create("force", String.valueOf(force));
@@ -34,7 +34,7 @@ public class ImageDeleteParam extends Param {
 	/**
 	 * Do not delete untagged parent images
 	 * 
-	 * @return
+	 * @return ImageDeleteParam
 	 */
 	public static ImageDeleteParam noprune() {
 		return noprune(true);
@@ -44,7 +44,7 @@ public class ImageDeleteParam extends Param {
 	 * Do not delete untagged parent images
 	 * 
 	 * @param noPrune
-	 * @return
+	 * @return ImageDeleteParam
 	 */
 	public static ImageDeleteParam noprune(boolean noPrune) {
 		return create("noprune", String.valueOf(noPrune));

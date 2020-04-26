@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class LogsParam extends Param {
 
-	public LogsParam(String name, String value) {
+	protected LogsParam(String name, String value) {
 		super(name, value);
 	}
 
@@ -23,7 +23,7 @@ public class LogsParam extends Param {
 	 * @param follow Whether to return stream.
 	 * @return LogsParam
 	 */
-	public static LogsParam follow(final boolean follow) {
+	public static LogsParam follow(boolean follow) {
 		return create("follow", String.valueOf(follow));
 	}
 
@@ -42,7 +42,7 @@ public class LogsParam extends Param {
 	 * @param stdout Whether to show stdout log.
 	 * @return LogsParam
 	 */
-	public static LogsParam stdout(final boolean stdout) {
+	public static LogsParam stdout(boolean stdout) {
 		return create("stdout", String.valueOf(stdout));
 	}
 
@@ -61,7 +61,7 @@ public class LogsParam extends Param {
 	 * @param stderr Whether to show stderr log.
 	 * @return LogsParam
 	 */
-	public static LogsParam stderr(final boolean stderr) {
+	public static LogsParam stderr(boolean stderr) {
 		return create("stderr", String.valueOf(stderr));
 	}
 
@@ -72,14 +72,14 @@ public class LogsParam extends Param {
 	 * @param timestamp Only output entries since timestamp.
 	 * @return LogsParam
 	 */
-	public static LogsParam since(final Integer timestamp) {
+	public static LogsParam since(Integer timestamp) {
 		return create("since", String.valueOf(timestamp));
 	}
 
 	public static LogsParam until(Date date) {
-		return create ("until", String.valueOf(date));
+		return create("until", String.valueOf(date));
 	}
-	
+
 	/**
 	 * Print timestamp for every log line.
 	 *
@@ -95,7 +95,7 @@ public class LogsParam extends Param {
 	 * @param timestamps Whether to print timestamp for every log line.
 	 * @return LogsParam
 	 */
-	public static LogsParam timestamps(final boolean timestamps) {
+	public static LogsParam timestamps(boolean timestamps) {
 		return create("timestamps", String.valueOf(timestamps));
 	}
 
@@ -105,7 +105,7 @@ public class LogsParam extends Param {
 	 * @param lines Number of lines to output at the end of logs.
 	 * @return LogsParam
 	 */
-	public static LogsParam tail(final Integer lines) {
+	public static LogsParam tail(Integer lines) {
 		return create("tail", String.valueOf(lines));
 	}
 
@@ -116,7 +116,7 @@ public class LogsParam extends Param {
 	 * @param value custom value
 	 * @return LogsParam
 	 */
-	public static LogsParam create(final String name, final String value) {
+	public static LogsParam create(String name, String value) {
 		return new LogsParam(name, value);
 	}
 }
