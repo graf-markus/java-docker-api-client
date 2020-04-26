@@ -19,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpRequest;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -47,6 +48,7 @@ import com.graf.docker.client.models.ContainerChangeResponseItem;
 import com.graf.docker.client.models.ContainerConfig;
 import com.graf.docker.client.models.ContainerCreateResponse;
 import com.graf.docker.client.models.ContainerWaitResponse;
+import com.graf.docker.client.models.EndpointSettings;
 import com.graf.docker.client.models.ContainerFileInfo;
 import com.graf.docker.client.models.ContainerInspectResponse;
 import com.graf.docker.client.models.ContainerLog;
@@ -65,6 +67,9 @@ import com.graf.docker.client.models.ImageSearchResponseItem;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.Network;
 import com.graf.docker.client.models.NetworkConfig;
+import com.graf.docker.client.models.NetworkConnect;
+import com.graf.docker.client.models.NetworkDisconnect;
+import com.graf.docker.client.models.NetworkPruneResponse;
 import com.graf.docker.client.models.ContainerTopResponse;
 import com.graf.docker.client.params.ClearCacheParam;
 import com.graf.docker.client.params.CommitImageParam;
@@ -93,8 +98,8 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public List<ContainerSummary> listContainers(final ListContainersParam... params) throws DockerException {
-		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("containers").addPath("json")
-				.addParameters(params).build());
+		HttpGet request = (HttpGet) RequestBuilder.get().setUrl(url).addPaths("containers", "json")
+				.addParameters(params).build();
 		ContainerSummary[] containers = execute(request, 200, ContainerSummary[].class);
 		return Arrays.asList(containers);
 	}
@@ -107,24 +112,18 @@ public class DockerClient implements IDockerClient {
 	@Override
 	public ContainerCreateResponse createContainer(ContainerConfig config, String containerName)
 			throws DockerException {
-		RequestBuilder builder = RequestBuilder.builder().setUrl(url).addPath("containers").addPath("create");
+		RequestBuilder builder = RequestBuilder.post().setUrl(url).addPaths("containers", "create").setBody(config);
 		if (!isNullOrEmpty(containerName)) {
 			builder.addParameter("name", containerName);
 		}
-		HttpPost request = new HttpPost(builder.build());
-		try {
-			request.setHeader("Content-Type", "application/json");
-			request.setEntity(new StringEntity(gson.toJson(config)));
-		} catch (UnsupportedEncodingException e) {
-			throw new DockerException(e.getMessage());
-		}
+		HttpPost request = (HttpPost) builder.build();
 		return execute(request, 201, ContainerCreateResponse.class);
 	}
 
 	@Override
 	public ContainerInspectResponse inspectContainer(String containerId) throws DockerException {
-		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
-				.addPath("json").build());
+		HttpGet request = (HttpGet) RequestBuilder.get().setUrl(url).addPaths("containers", containerId, "json")
+				.build();
 		return execute(request, 200, ContainerInspectResponse.class);
 	}
 
@@ -135,19 +134,18 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public ContainerTopResponse topContainer(String containerId, String psargs) throws DockerException {
-		RequestBuilder builder = RequestBuilder.builder();
+		RequestBuilder builder = RequestBuilder.get();
 		if (!isNullOrEmpty(psargs)) {
 			builder.addParameter("ps_args", psargs);
 		}
-		HttpGet request = new HttpGet(
-				builder.setUrl(url).addPath("containers").addPath(containerId).addPath("top").build());
+		HttpGet request = (HttpGet) builder.setUrl(url).addPaths("containers", containerId, "top").build();
 		return execute(request, 200, ContainerTopResponse.class);
 	}
 
 	@Override
 	public ContainerLog logContainer(String containerId, LogsParam... param) throws DockerException {
-		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
-				.addPath("logs").addParameters(param).build());
+		HttpGet request = (HttpGet) RequestBuilder.get().setUrl(url).addPaths("containers", containerId, "logs")
+				.addParameters(param).build();
 		int statusCode = 0;
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
 			statusCode = response.getStatusLine().getStatusCode();
@@ -180,8 +178,8 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public List<ContainerChangeResponseItem> inspectContainerChanges(String containerId) throws DockerException {
-		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
-				.addPath("changes").build());
+		HttpGet request = (HttpGet) RequestBuilder.get().setUrl(url).addPaths("containers", containerId, "changes")
+				.build();
 		ContainerChangeResponseItem[] changes = execute(request, 200, ContainerChangeResponseItem[].class);
 		if (changes != null) {
 			return Arrays.asList(changes);
@@ -191,8 +189,8 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public String exportContainer(String containerId) throws DockerException {
-		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
-				.addPath("export").build());
+		HttpGet request = (HttpGet) RequestBuilder.get().setUrl(url).addPaths("containers", containerId, "export")
+				.build();
 		int statusCode = 0;
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
 			statusCode = response.getStatusLine().getStatusCode();
@@ -209,15 +207,15 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public ContainerStats statContainer(String containerId) throws DockerException {
-		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
-				.addPath("stats").addParameter("stream", String.valueOf(false)).build());
+		HttpGet request = (HttpGet) RequestBuilder.get().setUrl(url).addPaths("containers", containerId, "stats")
+				.addParameter("stream", String.valueOf(false)).build();
 		return execute(request, 200, ContainerStats.class);
 	}
 
 	@Override
 	public void statContainerStream(String containerId, IContainerStatsListener listener) throws DockerException {
-		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
-				.addPath("stats").build());
+		HttpGet request = (HttpGet) RequestBuilder.get().setUrl(url).addPaths("containers", containerId, "stats")
+				.build();
 		Thread t = new Thread(new ContainerStatsRunnable(request, listener));
 		t.start();
 		getStatsThreadsMap().put(containerId, t);
@@ -225,15 +223,14 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public void resizeTTYContainer(String containerId, int height, int width) throws DockerException {
-		HttpPost request = new HttpPost(
-				RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId).addPath("resize")
-						.addParameter("h", String.valueOf(height)).addParameter("w", String.valueOf(width)).build());
+		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("containers", containerId, "resize")
+				.addParameter("h", String.valueOf(height)).addParameter("w", String.valueOf(width)).build();
 		execute(request, 200, String.class);
 	}
 
 	public void startContainer(String containerId) throws DockerException {
-		HttpPost request = new HttpPost(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
-				.addPath("start").build());
+		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("containers", containerId, "start")
+				.build();
 		execute(request, 204);
 	}
 
@@ -249,8 +246,8 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public void stopContainer(String containerId, int time, TimeUnit unit) throws DockerException {
-		HttpPost request = new HttpPost(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
-				.addPath("stop").addParameter("t", String.valueOf(((int) unit.toSeconds(time)))).build());
+		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("containers", containerId, "stop")
+				.addParameter("t", String.valueOf(((int) unit.toSeconds(time)))).build();
 		execute(request, 204);
 	}
 
@@ -266,56 +263,50 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public void restartContainer(String containerId, int time, TimeUnit unit) throws DockerException {
-		HttpPost request = new HttpPost(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
-				.addPath("restart").addParameter("t", String.valueOf(((int) unit.toSeconds(time)))).build());
+		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("containers", containerId, "restart")
+				.addParameter("t", String.valueOf(((int) unit.toSeconds(time)))).build();
 		execute(request, 204);
 	}
 
 	@Override
 	public void killContainer(String containerId, KillSignal signal) throws DockerException {
-		HttpPost request = new HttpPost(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
-				.addPath("kill").addParameter("signal", signal.toString()).build());
+		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("containers", containerId, "kill")
+				.addParameter("signal", signal.toString()).build();
 		execute(request, 204);
 	}
 
 	@Override
 	public ContainerUpdateResponse updateContainer(String containerId, HostConfig config) throws DockerException {
-		HttpPost request = new HttpPost(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
-				.addPath("update").build());
-		try {
-			request.setHeader("Content-Type", "application/json");
-			request.setEntity(new StringEntity(gson.toJson(config)));
-		} catch (UnsupportedEncodingException e) {
-			throw new DockerException(e.getMessage());
-		}
+		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("containers", containerId, "update")
+				.setBody(config).build();
 		return execute(request, 200, ContainerUpdateResponse.class);
 	}
 
 	@Override
 	public void renameContainer(String containerId, String name) throws DockerException {
-		HttpPost request = new HttpPost(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
-				.addPath("rename").addParameter("name", name).build());
+		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("containers", containerId, "rename")
+				.addParameter("name", name).build();
 		execute(request, 204);
 	}
 
 	@Override
 	public void pauseContainer(String containerId) throws DockerException {
-		HttpPost request = new HttpPost(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
-				.addPath("pause").build());
+		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("containers", containerId, "pause")
+				.build();
 		execute(request, 204);
 	}
 
 	@Override
 	public void unpauseContainer(String containerId) throws DockerException {
-		HttpPost request = new HttpPost(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
-				.addPath("unpause").build());
+		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("containers", containerId, "unpause")
+				.build();
 		execute(request, 204);
 	}
 
 	@Override
 	public ContainerWaitResponse waitForContainer(String containerId) throws DockerException {
-		HttpPost request = new HttpPost(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
-				.addPath("wait").build());
+		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("containers", containerId, "wait")
+				.build();
 		int statusCode = 0;
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
 			statusCode = response.getStatusLine().getStatusCode();
@@ -329,15 +320,15 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public void removeContainer(String containerId, RemoveContainersParam... params) throws DockerException {
-		HttpDelete request = new HttpDelete(RequestBuilder.builder().setUrl(url).addPath("containers")
-				.addPath(containerId).addParameters(params).build());
+		HttpDelete request = (HttpDelete) RequestBuilder.delete().setUrl(url).addPaths("containers", containerId)
+				.addParameters(params).build();
 		execute(request, 204);
 	}
 
 	@Override
 	public ContainerFileInfo fileInfoContainer(String containerId, String path) throws DockerException {
-		HttpHead request = new HttpHead(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
-				.addPath("archive").addParameter("path", path).build());
+		HttpHead request = (HttpHead) RequestBuilder.head().setUrl(url).addPaths("containers", containerId, "archive")
+				.addParameter("path", path).build();
 		int statusCode = 0;
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
 			statusCode = response.getStatusLine().getStatusCode();
@@ -356,8 +347,8 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public String archiveContainer(String containerId, String path) throws DockerException {
-		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
-				.addPath("archive").addParameter("path", path).build());
+		HttpGet request = (HttpGet) RequestBuilder.get().setUrl(url).addPaths("containers", containerId, "archive")
+				.addParameter("path", path).build();
 		int statusCode = 0;
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
 			statusCode = response.getStatusLine().getStatusCode();
@@ -378,10 +369,10 @@ public class DockerClient implements IDockerClient {
 		try {
 			stream = new FileInputStream(new File(hostPath));
 		} catch (FileNotFoundException e) {
-			throw new DockerException("File not found", 0);
+			throw new DockerException("File not found");
 		}
-		HttpPut request = new HttpPut(RequestBuilder.builder().setUrl(url).addPath("containers").addPath(containerId)
-				.addPath("archive").addParameter("path", containerPath).build());
+		HttpPut request = (HttpPut) RequestBuilder.put().setUrl(url).addPaths("containers", containerId, "archive")
+				.addParameter("path", containerPath).build();
 		InputStreamEntity reqEntity = new InputStreamEntity(stream, 1, ContentType.APPLICATION_OCTET_STREAM);
 		reqEntity.setChunked(true);
 		request.setEntity(reqEntity);
@@ -390,8 +381,7 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public ContainerPruneResponse deleteContainers() throws DockerException {
-		HttpPost request = new HttpPost(
-				RequestBuilder.builder().setUrl(url).addPath("containers").addPath("prune").build());
+		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("containers", "prune").build();
 		return execute(request, 200, ContainerPruneResponse.class);
 	}
 
@@ -400,76 +390,72 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public List<ImageSummary> listImages(ListImagesParam... param) throws DockerException {
-		HttpGet request = new HttpGet(
-				RequestBuilder.builder().setUrl(url).addPath("images").addPath("json").addParameters(param).build());
+		HttpGet request = (HttpGet) RequestBuilder.get().setUrl(url).addPaths("images", "json").addParameters(param)
+				.build();
 		ImageSummary[] images = execute(request, 200, ImageSummary[].class);
 		return Arrays.asList(images);
 	}
 
 	@Override
 	public BuildPruneResponse clearImageBuildCache(ClearCacheParam... param) throws DockerException {
-		HttpPost request = new HttpPost(
-				RequestBuilder.builder().setUrl(url).addPath("build").addPath("prune").addParameters(param).build());
+		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("build", "prune").addParameters(param)
+				.build();
 		return execute(request, 200, BuildPruneResponse.class);
 	}
 
 	@Override
 	public void createImage(CreateImageParam... param) throws DockerException {
-		HttpPost request = new HttpPost(
-				RequestBuilder.builder().setUrl(url).addPath("images").addPath("create").addParameters(param).build());
+		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("images", "create")
+				.addParameters(param).build();
 		execute(request, 200);
 	}
 
 	@Override
 	public Image inspectImage(String imageName) throws DockerException {
-		HttpGet request = new HttpGet(
-				RequestBuilder.builder().setUrl(url).addPath("images").addPath(imageName).addPath("json").build());
+		HttpGet request = (HttpGet) RequestBuilder.get().setUrl(url).addPaths("images", imageName, "json").build();
 		return execute(request, 200, Image.class);
 	}
 
 	@Override
 	public List<HistoryResponseItem> imageHistory(String imageName) throws DockerException {
-		HttpGet request = new HttpGet(
-				RequestBuilder.builder().setUrl(url).addPath("images").addPath(imageName).addPath("history").build());
+		HttpGet request = (HttpGet) RequestBuilder.get().setUrl(url).addPaths("images", imageName, "history").build();
 		HistoryResponseItem[] images = execute(request, 200, HistoryResponseItem[].class);
 		return Arrays.asList(images);
 	}
 
 	@Override
 	public void tagImage(String imageName, ImageTagParam... param) throws DockerException {
-		HttpPost request = new HttpPost(RequestBuilder.builder().setUrl(url).addPath("images").addPath(imageName)
-				.addPath("tag").addParameters(param).build());
+		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("images", imageName, "tag")
+				.addParameters(param).build();
 		execute(request, 201);
 	}
 
 	@Override
 	public List<ImageDeleteResponseItem> deleteImage(String imageName, ImageDeleteParam... param)
 			throws DockerException {
-		HttpDelete request = new HttpDelete(
-				RequestBuilder.builder().setUrl(url).addPath("images").addPath(imageName).addParameters(param).build());
+		HttpDelete request = (HttpDelete) RequestBuilder.delete().setUrl(url).addPaths("images", imageName)
+				.addParameters(param).build();
 		ImageDeleteResponseItem[] info = execute(request, 200, ImageDeleteResponseItem[].class);
 		return Arrays.asList(info);
 	}
 
 	@Override
 	public List<ImageSearchResponseItem> searchImage(String term, ImageSearchParam... param) throws DockerException {
-		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("images").addPath("search")
-				.addParameter("term", term).addParameters(param).build());
+		HttpGet request = (HttpGet) RequestBuilder.get().setUrl(url).addPaths("images", "search")
+				.addParameter("term", term).addParameters(param).build();
 		ImageSearchResponseItem[] results = execute(request, 200, ImageSearchResponseItem[].class);
 		return Arrays.asList(results);
 	}
 
 	@Override
 	public ImagePruneResponse deleteUnusedImages() throws DockerException {
-		HttpPost request = new HttpPost(
-				RequestBuilder.builder().setUrl(url).addPath("images").addPath("prune").build());
+		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("images", "prune").build();
 		return execute(request, 200, ImagePruneResponse.class);
 	}
 
 	@Override
 	public IdResponse commitImage(ContainerConfig config, CommitImageParam... param) throws DockerException {
-		HttpPost request = new HttpPost(
-				RequestBuilder.builder().setUrl(url).addPath("commit").addParameters(param).build());
+		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPath("commit").addParameters(param).build();
 		try {
 			request.setEntity(new StringEntity(gson.toJson(config)));
 		} catch (UnsupportedEncodingException e) {
@@ -480,8 +466,7 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public String getImage(String name) throws DockerException {
-		HttpGet request = new HttpGet(
-				RequestBuilder.builder().setUrl(url).addPath("images").addPath(name).addPath("get").build());
+		HttpGet request = (HttpGet) RequestBuilder.get().setUrl(url).addPaths("images", name, "get").build();
 		int statusCode = 0;
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
 			statusCode = response.getStatusLine().getStatusCode();
@@ -503,8 +488,8 @@ public class DockerClient implements IDockerClient {
 			param += s + ",";
 		}
 		param = param.substring(0, param.length() - 1);
-		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("containers").addPath("export")
-				.addParameter("name", param).build());
+		HttpGet request = (HttpGet) RequestBuilder.get().setUrl(url).addPaths("containers", "export")
+				.addParameter("name", param).build();
 		int statusCode = 0;
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
 			statusCode = response.getStatusLine().getStatusCode();
@@ -527,7 +512,7 @@ public class DockerClient implements IDockerClient {
 		} catch (FileNotFoundException e) {
 			throw new DockerException("File not found", 0);
 		}
-		HttpPost request = new HttpPost(RequestBuilder.builder().setUrl(url).addPath("images").addPath("load").build());
+		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("images", "load").build();
 		InputStreamEntity reqEntity = new InputStreamEntity(stream);
 		request.setEntity(reqEntity);
 		execute(request, 200);
@@ -537,7 +522,7 @@ public class DockerClient implements IDockerClient {
 	// ==============================================================
 	@Override
 	public List<Network> listNetworks() throws DockerException {
-		HttpGet rquest = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("networks").build());
+		HttpGet rquest = (HttpGet) RequestBuilder.get().setUrl(url).addPath("networks").build();
 		Network[] networks = execute(rquest, 200, Network[].class);
 		return Arrays.asList(networks);
 	}
@@ -554,8 +539,8 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public Network inspectNetwork(String id, boolean verbose, String scope) throws DockerException {
-		HttpGet request = new HttpGet(RequestBuilder.builder().setUrl(url).addPath("networks").addPath(id)
-				.addParameter("verbose", String.valueOf(verbose)).addParameter("scope", scope).build());
+		HttpGet request = (HttpGet) RequestBuilder.get().setUrl(url).addPath("networks").addPath(id)
+				.addParameter("verbose", String.valueOf(verbose)).addParameter("scope", scope).build();
 		return execute(request, 200, Network.class);
 	}
 
@@ -566,22 +551,47 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public void deleteNetwork(String id) throws DockerException {
-		HttpDelete request = new HttpDelete(
-				RequestBuilder.builder().setUrl(url).addPath("networks").addPath(id).build());
+		HttpDelete request = (HttpDelete) RequestBuilder.delete().setUrl(url).addPaths("networks", id).build();
 		execute(request, 204);
 	}
 
 	@Override
 	public NetworkCreateResponse createNetwork(NetworkConfig config) throws DockerException {
-		HttpPost request = new HttpPost(
-				RequestBuilder.builder().setUrl(url).addPath("networks").addPath("create").build());
-		try {
-			request.setHeader("Content-Type", "application/json");
-			request.setEntity(new StringEntity(gson.toJson(config)));
-		} catch (UnsupportedEncodingException e) {
-			throw new DockerException(e.getMessage());
-		}
+		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("networks", "create").setBody(config)
+				.build();
 		return execute(request, 201, NetworkCreateResponse.class);
+	}
+
+	@Override
+	public void connectToNetwork(String id, String container, EndpointSettings endpoint) throws DockerException {
+		NetworkConnect connect;
+		if (endpoint != null) {
+			connect = new NetworkConnect(container, endpoint);
+		} else {
+			connect = new NetworkConnect(container);
+		}
+		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("networks", id, "connect")
+				.setBody(connect).build();
+		execute(request, 200);
+	}
+
+	@Override
+	public void connectToNetwork(String id, String container) throws DockerException {
+		connectToNetwork(id, container, null);
+	}
+
+	@Override
+	public void disconnectFromNetwork(String id, String container, boolean force) throws DockerException {
+		NetworkDisconnect disconnect = new NetworkDisconnect(container, force);
+		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("networks", id, "disconnect")
+				.setBody(disconnect).build();
+		execute(request, 200);
+	}
+
+	@Override
+	public NetworkPruneResponse pruneNetworks() throws DockerException {
+		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("networks", "prune").build();
+		return execute(request, 200, NetworkPruneResponse.class);
 	}
 	// ==================================================
 
@@ -626,7 +636,6 @@ public class DockerClient implements IDockerClient {
 			if (statusCode == successStatusCode) {
 				return;
 			}
-			jsonEntity = EntityUtils.toString(response.getEntity());
 			throw new DockerException(gson.fromJson(jsonEntity, ExceptionMessage.class).getMessage(), statusCode);
 		} catch (IOException e) {
 			throw new DockerException(e.getMessage(), statusCode);
@@ -675,12 +684,16 @@ public class DockerClient implements IDockerClient {
 		private Map<String, List<String>> filterParams;
 		private List<String> paths;
 		private String url;
+		private String body = null;
+		private RequestType type;
+		private Gson gson;
 
 		public RequestBuilder() {
 			pathBuilder = new StringBuilder();
 			params = new ArrayList<>();
 			paths = new ArrayList<>();
 			filterParams = new HashMap<>();
+			gson = new Gson();
 		}
 
 		public RequestBuilder setUrl(String url) {
@@ -693,8 +706,20 @@ public class DockerClient implements IDockerClient {
 			return this;
 		}
 
+		public RequestBuilder addPaths(String... paths) {
+			for (String p : paths) {
+				this.paths.add("/" + p);
+			}
+			return this;
+		}
+
 		public RequestBuilder addParameter(final String name, final String value) {
 			params.add(new Param(name, value));
+			return this;
+		}
+
+		public <T> RequestBuilder setBody(T body) {
+			this.body = gson.toJson(body);
 			return this;
 		}
 
@@ -715,7 +740,7 @@ public class DockerClient implements IDockerClient {
 			return this;
 		}
 
-		public String build() {
+		public HttpUriRequest build() throws DockerException {
 			pathBuilder.append(this.url);
 			if (paths != null) {
 				for (String s : paths) {
@@ -744,11 +769,70 @@ public class DockerClient implements IDockerClient {
 				}
 				pathBuilder.append("filters=").append(params);
 			}
-			return pathBuilder.toString();
+			HttpUriRequest request;
+			if (type == RequestType.GET) {
+				request = new HttpGet(pathBuilder.toString());
+				return request;
+			}
+			if (type == RequestType.PUT) {
+				request = new HttpPut(pathBuilder.toString());
+				return request;
+			}
+			if (type == RequestType.POST) {
+				request = new HttpPost(pathBuilder.toString());
+				if (body != null) {
+					request.setHeader("Content-Type", "application/json");
+					try {
+						((HttpPost) request).setEntity(new StringEntity(body));
+					} catch (UnsupportedEncodingException e) {
+						throw new DockerException(e.getMessage());
+					}
+				}
+				return request;
+			}
+			if (type == RequestType.DELETE) {
+				request = new HttpDelete(pathBuilder.toString());
+				return request;
+			}
+			if (type == RequestType.HEAD) {
+				request = new HttpHead(pathBuilder.toString());
+				return request;
+			}
+			return null;
 		}
 
-		public static RequestBuilder builder() {
-			return new RequestBuilder();
+		public static RequestBuilder post() {
+			RequestBuilder builder = new RequestBuilder();
+			builder.type = RequestType.POST;
+			return builder;
+		}
+
+		public static RequestBuilder put() {
+			RequestBuilder builder = new RequestBuilder();
+			builder.type = RequestType.PUT;
+			return builder;
+		}
+
+		public static RequestBuilder get() {
+			RequestBuilder builder = new RequestBuilder();
+			builder.type = RequestType.GET;
+			return builder;
+		}
+
+		public static RequestBuilder delete() {
+			RequestBuilder builder = new RequestBuilder();
+			builder.type = RequestType.DELETE;
+			return builder;
+		}
+
+		public static RequestBuilder head() {
+			RequestBuilder builder = new RequestBuilder();
+			builder.type = RequestType.HEAD;
+			return builder;
+		}
+
+		private enum RequestType {
+			POST, PUT, DELETE, GET, HEAD
 		}
 	}
 

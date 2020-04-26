@@ -7,8 +7,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -44,6 +44,7 @@ import com.graf.docker.client.models.ImageSearchResponseItem;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.Network;
 import com.graf.docker.client.models.NetworkConfig;
+import com.graf.docker.client.models.NetworkPruneResponse;
 import com.graf.docker.client.models.ContainerTopResponse;
 import com.graf.docker.client.params.CreateImageParam;
 import com.graf.docker.client.params.ImageTagParam;
@@ -201,7 +202,6 @@ public class DockerClientTest {
 		assertTrue(Files.size(Paths.get("./export.tar.gz")) > 0);
 
 		Files.delete(Paths.get("./export.tar.gz"));
-
 	}
 
 	@Test
@@ -733,9 +733,8 @@ public class DockerClientTest {
 	@Test
 	public void testInspectNetwork() throws DockerException {
 		LOGGER.log(Level.INFO, "");
-		// Network network =
-		// docker.inspectNetwork("82ddbF7ccdca24601af5e025e83b836feed60cd69d2a73b5ffb35f9eca4f51b19");
-		// assertEquals(network.getName(), "bridge");
+		Network network = docker.inspectNetwork("bridge");
+		assertEquals(network.getName(), "bridge");
 	}
 
 	@Test
@@ -746,5 +745,43 @@ public class DockerClientTest {
 		assertEquals("", response.getWarning());
 		String id = response.getId();
 		docker.deleteNetwork(id);
+	}
+
+	@Test
+	public void testConnectToNetwork() throws DockerException {
+		LOGGER.log(Level.INFO, "");
+		ContainerCreateResponse creation = docker.createContainer(config);
+		NetworkConfig config = NetworkConfig.builder().name("test").build();
+		NetworkCreateResponse response = docker.createNetwork(config);
+		String id = response.getId();
+		String containerId = creation.getId();
+		docker.startContainer(containerId);
+		docker.connectToNetwork(id, containerId);
+		docker.stopContainer(containerId);
+		docker.deleteNetwork(id);
+	}
+
+	@Test
+	public void testDisconnectFromNetwork() throws DockerException {
+		LOGGER.log(Level.INFO, "");
+		ContainerCreateResponse creation = docker.createContainer(config);
+		NetworkConfig config = NetworkConfig.builder().name("test").build();
+		NetworkCreateResponse response = docker.createNetwork(config);
+		String id = response.getId();
+		String containerId = creation.getId();
+		docker.startContainer(containerId);
+		docker.connectToNetwork(id, containerId);
+		docker.disconnectFromNetwork(id, containerId, true);
+		docker.stopContainer(containerId);
+		docker.deleteNetwork(id);
+	}
+
+	@Test
+	public void testPruneNetworks() throws DockerException {
+		LOGGER.log(Level.INFO, "");
+		NetworkConfig config = NetworkConfig.builder().name("test").build();
+		NetworkCreateResponse createResponse = docker.createNetwork(config);
+		NetworkPruneResponse pruneResponse = docker.pruneNetworks();
+		assertEquals("test", pruneResponse.getNetworksDeleted().get(0));
 	}
 }

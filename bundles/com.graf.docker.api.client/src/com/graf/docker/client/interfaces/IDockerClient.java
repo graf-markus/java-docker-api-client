@@ -9,6 +9,7 @@ import com.graf.docker.client.models.ContainerChangeResponseItem;
 import com.graf.docker.client.models.ContainerConfig;
 import com.graf.docker.client.models.ContainerCreateResponse;
 import com.graf.docker.client.models.ContainerWaitResponse;
+import com.graf.docker.client.models.EndpointSettings;
 import com.graf.docker.client.models.ContainerFileInfo;
 import com.graf.docker.client.models.ContainerInspectResponse;
 import com.graf.docker.client.models.ContainerLog;
@@ -27,6 +28,7 @@ import com.graf.docker.client.models.ImageSearchResponseItem;
 import com.graf.docker.client.models.KillSignal;
 import com.graf.docker.client.models.Network;
 import com.graf.docker.client.models.NetworkConfig;
+import com.graf.docker.client.models.NetworkPruneResponse;
 import com.graf.docker.client.models.ContainerTopResponse;
 import com.graf.docker.client.params.ClearCacheParam;
 import com.graf.docker.client.params.CommitImageParam;
@@ -508,6 +510,39 @@ public interface IDockerClient {
 	 * @throws DockerException
 	 */
 	NetworkCreateResponse createNetwork(NetworkConfig config) throws DockerException;
+
+	/**
+	 * Connects a Container to a Network
+	 * 
+	 * @param id
+	 * @param container
+	 * @throws DockerException
+	 */
+	void connectToNetwork(String id, String container) throws DockerException;
+
+	/**
+	 * Connects a Container to a Network
+	 * 
+	 * @param id
+	 * @param container
+	 * @param endpoint
+	 * @throws DockerException
+	 */
+	void connectToNetwork(String id, String container, EndpointSettings endpoint) throws DockerException;
+
+	/**
+	 * 
+	 * @param id
+	 * @param container
+	 * @throws DockerException
+	 */
+	void disconnectFromNetwork(String id, String container, boolean force) throws DockerException;
+
+	/**
+	 * 
+	 * @throws DockerException
+	 */
+	NetworkPruneResponse pruneNetworks() throws DockerException;
 
 	// Additionally Methods
 	// ===================================================================================
