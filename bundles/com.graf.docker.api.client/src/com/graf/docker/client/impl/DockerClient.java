@@ -657,6 +657,9 @@ public class DockerClient implements IDockerClient {
 		RequestBuilder builder = RequestBuilder.post().setUrl(url).addPaths("exec", id, "start");
 		if (config != null) {
 			builder.setBody(config);
+		} else {
+			ExecStartConfig defaultConfig = ExecStartConfig.builder().detach(false).tty(false).build();
+			builder.setBody(defaultConfig);
 		}
 		HttpPost request = (HttpPost) builder.build();
 		execute(request, 200);

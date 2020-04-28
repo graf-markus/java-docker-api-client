@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -28,6 +27,7 @@ import com.graf.docker.client.models.ContainerCreateResponse;
 import com.graf.docker.client.models.ContainerWaitResponse;
 import com.graf.docker.client.models.ExecConfig;
 import com.graf.docker.client.models.ExecInspectResponse;
+import com.graf.docker.client.models.ExecStartConfig;
 import com.graf.docker.client.models.ContainerFileInfo;
 import com.graf.docker.client.models.ContainerInspectResponse;
 import com.graf.docker.client.models.ContainerLog;
@@ -63,7 +63,7 @@ import com.graf.docker.client.params.RemoveContainersParam;
 public class DockerClientTest {
 
 	private static final Logger LOGGER = Logger.getLogger(DockerClientBuilder.class.getName());
-	private IDockerClient docker = DockerClientBuilder.builder().setUrl("http://localhost:2375").build();
+	private IDockerClient docker = DockerClientBuilder.builder().setUrl("http://192.168.1.1:2375").build();
 	private ContainerConfig config = ContainerConfig.builder().image("ubuntu")
 			.cmd("sh", "-c", "while :; do sleep 1; done").build();
 
@@ -817,7 +817,7 @@ public class DockerClientTest {
 		NetworkPruneParam param = NetworkPruneParam.label("test");
 		System.out.println(param);
 		NetworkConfig config = NetworkConfig.builder().name("test").build();
-		NetworkCreateResponse createResponse = docker.createNetwork(config);
+		docker.createNetwork(config);
 		NetworkPruneResponse pruneResponse = docker.pruneNetworks();
 		assertEquals("test", pruneResponse.getNetworksDeleted().get(0));
 	}
@@ -842,11 +842,12 @@ public class DockerClientTest {
 	@Test
 	public void testExec() throws DockerException {
 		ExecConfig execconfig = ExecConfig.builder().cmd("ls -h").build();
+		ExecStartConfig startConfig = ExecStartConfig.builder().detach(false).tty(false).build();
 		ContainerCreateResponse creation = docker.createContainer(config);
 		String containerId = creation.getId();
 		docker.startContainer(containerId);
 		IdResponse id = docker.createExec(containerId, execconfig);
-		docker.startContainer(id.getId());
+		docker.startExec(id.getId());
 		ExecInspectResponse response = docker.inspectExec(id.getId());
 	}
 }

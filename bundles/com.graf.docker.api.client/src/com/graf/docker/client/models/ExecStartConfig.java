@@ -21,6 +21,10 @@ public class ExecStartConfig {
 		this.tty = builder.tty;
 	}
 
+	public static Builder builder() {
+		return new Builder();
+	}
+
 	@Override
 	public String toString() {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
