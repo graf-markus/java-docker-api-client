@@ -33,6 +33,7 @@ import com.graf.docker.client.models.NetworkPruneResponse;
 import com.graf.docker.client.models.Volume;
 import com.graf.docker.client.models.VolumeConfig;
 import com.graf.docker.client.models.VolumeListResponse;
+import com.graf.docker.client.models.VolumePruneResponse;
 import com.graf.docker.client.models.ContainerTopResponse;
 import com.graf.docker.client.params.ClearCacheParam;
 import com.graf.docker.client.params.CommitImageParam;
@@ -46,6 +47,7 @@ import com.graf.docker.client.params.ListVolumesParam;
 import com.graf.docker.client.params.LogsParam;
 import com.graf.docker.client.params.NetworkPruneParam;
 import com.graf.docker.client.params.RemoveContainersParam;
+import com.graf.docker.client.params.RemoveVolumesParam;
 
 public interface IDockerClient {
 
@@ -537,6 +539,7 @@ public interface IDockerClient {
 	void connectToNetwork(String id, String container, EndpointSettings endpoint) throws DockerException;
 
 	/**
+	 * Disconnects a Cotnainer from a Netwrok
 	 * 
 	 * @param id
 	 * @param container
@@ -545,6 +548,7 @@ public interface IDockerClient {
 	void disconnectFromNetwork(String id, String container, boolean force) throws DockerException;
 
 	/**
+	 * Delete all unused Networks
 	 * 
 	 * @throws DockerException
 	 */
@@ -563,11 +567,38 @@ public interface IDockerClient {
 
 	/**
 	 * Create a Volume.
+	 * 
 	 * @param config
 	 * @return
 	 * @throws DockerException
 	 */
 	Volume createVolume(VolumeConfig config) throws DockerException;
+
+	/**
+	 * Inspect a Volume.
+	 * 
+	 * @param name
+	 * @return
+	 * @throws DockerException
+	 */
+	Volume inspectVolume(String name) throws DockerException;
+
+	/**
+	 * 
+	 * @param name
+	 * @param force
+	 * @throws DockerException
+	 */
+	void removeVolume(String name, boolean force) throws DockerException;
+
+	/**
+	 * Delete unused Volumes.
+	 * 
+	 * @param param
+	 * @return
+	 * @throws DockerException
+	 */
+	VolumePruneResponse pruneVolume(RemoveVolumesParam... param) throws DockerException;
 
 	// Additionally Methods
 	// ===================================================================================

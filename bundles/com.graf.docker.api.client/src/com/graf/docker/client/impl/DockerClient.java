@@ -73,6 +73,7 @@ import com.graf.docker.client.models.NetworkPruneResponse;
 import com.graf.docker.client.models.Volume;
 import com.graf.docker.client.models.VolumeConfig;
 import com.graf.docker.client.models.VolumeListResponse;
+import com.graf.docker.client.models.VolumePruneResponse;
 import com.graf.docker.client.models.ContainerTopResponse;
 import com.graf.docker.client.params.ClearCacheParam;
 import com.graf.docker.client.params.CommitImageParam;
@@ -87,6 +88,7 @@ import com.graf.docker.client.params.LogsParam;
 import com.graf.docker.client.params.NetworkPruneParam;
 import com.graf.docker.client.params.Param;
 import com.graf.docker.client.params.RemoveContainersParam;
+import com.graf.docker.client.params.RemoveVolumesParam;
 
 public class DockerClient implements IDockerClient {
 
@@ -610,6 +612,26 @@ public class DockerClient implements IDockerClient {
 		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("volumes", "create").setBody(config)
 				.build();
 		return execute(request, 201, Volume.class);
+	}
+
+	@Override
+	public Volume inspectVolume(String name) throws DockerException {
+		HttpGet request = (HttpGet) RequestBuilder.get().setUrl(url).addPaths("volumes", name).build();
+		return execute(request, 200, Volume.class);
+	}
+
+	@Override
+	public void removeVolume(String name, boolean force) throws DockerException {
+		HttpDelete request = (HttpDelete) RequestBuilder.delete().setUrl(url).addPaths("volumes", name)
+				.addParameter("forece", String.valueOf(force)).build();
+		execute(request, 204);
+	}
+
+	@Override
+	public VolumePruneResponse pruneVolume(RemoveVolumesParam... param) throws DockerException {
+		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("volumes", "prune")
+				.addParameters(param).build();
+		return execute(request, 200, VolumePruneResponse.class);
 	}
 
 	// ==================================================

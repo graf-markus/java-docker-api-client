@@ -820,12 +820,19 @@ public class DockerClientTest {
 	}
 
 	@Test
-	public void testCreateVolumeAndListVolumes() throws DockerException {
+	public void testVolumesAPI() throws DockerException {
 		LOGGER.log(Level.INFO, "");
 		Volume vol = docker.createVolume(VolumeConfig.builder().name("test").build());
 		assertEquals("test", vol.getName());
 
 		VolumeListResponse response = docker.listVolumes();
 		assertEquals("test", response.getVolumes().get(0).getName());
+
+		Volume volume = docker.inspectVolume("test");
+		assertEquals("test", volume.getName());
+
+		docker.removeVolume("test", false);
+
+		docker.pruneVolume();
 	}
 }
