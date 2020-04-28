@@ -26,6 +26,8 @@ import com.graf.docker.client.models.ContainerChangeResponseItem;
 import com.graf.docker.client.models.ContainerConfig;
 import com.graf.docker.client.models.ContainerCreateResponse;
 import com.graf.docker.client.models.ContainerWaitResponse;
+import com.graf.docker.client.models.ExecConfig;
+import com.graf.docker.client.models.ExecInspectResponse;
 import com.graf.docker.client.models.ContainerFileInfo;
 import com.graf.docker.client.models.ContainerInspectResponse;
 import com.graf.docker.client.models.ContainerLog;
@@ -33,6 +35,7 @@ import com.graf.docker.client.models.ContainerStats;
 import com.graf.docker.client.models.ContainerUpdateResponse;
 import com.graf.docker.client.models.ContainerPruneResponse;
 import com.graf.docker.client.models.HostConfig;
+import com.graf.docker.client.models.IdResponse;
 import com.graf.docker.client.models.ImageSummary;
 import com.graf.docker.client.models.BuildPruneResponse;
 import com.graf.docker.client.models.ImageDeleteResponseItem;
@@ -834,5 +837,16 @@ public class DockerClientTest {
 		docker.removeVolume("test", false);
 
 		docker.pruneVolume();
+	}
+
+	@Test
+	public void testExec() throws DockerException {
+		ExecConfig execconfig = ExecConfig.builder().cmd("ls -h").build();
+		ContainerCreateResponse creation = docker.createContainer(config);
+		String containerId = creation.getId();
+		docker.startContainer(containerId);
+		IdResponse id = docker.createExec(containerId, execconfig);
+		docker.startContainer(id.getId());
+		ExecInspectResponse response = docker.inspectExec(id.getId());
 	}
 }

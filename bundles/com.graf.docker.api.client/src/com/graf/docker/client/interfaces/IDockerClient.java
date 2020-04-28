@@ -10,6 +10,9 @@ import com.graf.docker.client.models.ContainerConfig;
 import com.graf.docker.client.models.ContainerCreateResponse;
 import com.graf.docker.client.models.ContainerWaitResponse;
 import com.graf.docker.client.models.EndpointSettings;
+import com.graf.docker.client.models.ExecConfig;
+import com.graf.docker.client.models.ExecInspectResponse;
+import com.graf.docker.client.models.ExecStartConfig;
 import com.graf.docker.client.models.ContainerFileInfo;
 import com.graf.docker.client.models.ContainerInspectResponse;
 import com.graf.docker.client.models.ContainerLog;
@@ -599,6 +602,39 @@ public interface IDockerClient {
 	 * @throws DockerException
 	 */
 	VolumePruneResponse pruneVolume(RemoveVolumesParam... param) throws DockerException;
+
+	// ===============================================================================
+
+	// Exec API
+	/**
+	 * Create a new Command.
+	 * 
+	 * @param container
+	 * @param config
+	 * @return
+	 * @throws DockerException
+	 */
+	IdResponse createExec(String container, ExecConfig config) throws DockerException;
+
+	/**
+	 * 
+	 * @param id
+	 * @throws DockerException
+	 */
+	void startExec(String id) throws DockerException;
+
+	void startExec(String id, ExecStartConfig config) throws DockerException;
+
+	/**
+	 * Return low-level information about an exec instance.
+	 * 
+	 * @param id
+	 * @return
+	 * @throws DockerException
+	 */
+	ExecInspectResponse inspectExec(String id) throws DockerException;
+
+	// ====================================================================================
 
 	// Additionally Methods
 	// ===================================================================================

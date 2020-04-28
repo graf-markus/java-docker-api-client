@@ -48,6 +48,9 @@ import com.graf.docker.client.models.ContainerConfig;
 import com.graf.docker.client.models.ContainerCreateResponse;
 import com.graf.docker.client.models.ContainerWaitResponse;
 import com.graf.docker.client.models.EndpointSettings;
+import com.graf.docker.client.models.ExecConfig;
+import com.graf.docker.client.models.ExecInspectResponse;
+import com.graf.docker.client.models.ExecStartConfig;
 import com.graf.docker.client.models.ContainerFileInfo;
 import com.graf.docker.client.models.ContainerInspectResponse;
 import com.graf.docker.client.models.ContainerLog;
@@ -634,6 +637,36 @@ public class DockerClient implements IDockerClient {
 		return execute(request, 200, VolumePruneResponse.class);
 	}
 
+	// ==================================================
+	// Exec API
+
+	@Override
+	public IdResponse createExec(String container, ExecConfig config) throws DockerException {
+		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("containers", container, "exec")
+				.setBody(config).build();
+		return execute(request, 201, IdResponse.class);
+	}
+
+	@Override
+	public void startExec(String id) throws DockerException {
+		startExec(id, null);
+	}
+
+	@Override
+	public void startExec(String id, ExecStartConfig config) throws DockerException {
+		RequestBuilder builder = RequestBuilder.post().setUrl(url).addPaths("exec", id, "start");
+		if (config != null) {
+			builder.setBody(config);
+		}
+		HttpPost request = (HttpPost) builder.build();
+		execute(request, 200);
+	}
+
+	@Override
+	public ExecInspectResponse inspectExec(String id) throws DockerException {
+		HttpGet request = (HttpGet) RequestBuilder.get().setUrl(url).addPaths("exec", id, "json").build();
+		return execute(request, 200, ExecInspectResponse.class);
+	}
 	// ==================================================
 
 	@Override
