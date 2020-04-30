@@ -48,6 +48,9 @@ import com.graf.docker.client.models.Network;
 import com.graf.docker.client.models.NetworkConfig;
 import com.graf.docker.client.models.NetworkCreateResponse;
 import com.graf.docker.client.models.NetworkPruneResponse;
+import com.graf.docker.client.models.SystemDataUsageResponse;
+import com.graf.docker.client.models.SystemInfo;
+import com.graf.docker.client.models.SystemVersionResponse;
 import com.graf.docker.client.models.Volume;
 import com.graf.docker.client.models.VolumeConfig;
 import com.graf.docker.client.models.VolumeListResponse;
@@ -720,7 +723,6 @@ public class DockerClientTest {
 		LOGGER.log(Level.INFO, "");
 		docker.createImage(CreateImageParam.fromImage("hello-world"));
 		ImagePruneResponse info = docker.deleteUnusedImages();
-		System.out.println(info);
 	}
 
 	@Test
@@ -815,7 +817,6 @@ public class DockerClientTest {
 	public void testPruneNetworks() throws DockerException {
 		LOGGER.log(Level.INFO, "");
 		NetworkPruneParam param = NetworkPruneParam.label("test");
-		System.out.println(param);
 		NetworkConfig config = NetworkConfig.builder().name("test").build();
 		docker.createNetwork(config);
 		NetworkPruneResponse pruneResponse = docker.pruneNetworks();
@@ -849,5 +850,28 @@ public class DockerClientTest {
 		IdResponse id = docker.createExec(containerId, execconfig);
 		docker.startExec(id.getId());
 		ExecInspectResponse response = docker.inspectExec(id.getId());
+	}
+
+	@Test
+	public void testSystemInfo() throws DockerException {
+		SystemInfo response = docker.systemInfo();
+		System.out.println(response);
+	}
+
+	@Test
+	public void testVersionInfo() throws DockerException {
+		SystemVersionResponse response = docker.versionInfo();
+		assertEquals("1.40", response.getApiVersion());
+	}
+
+	@Test
+	public void testPing() throws DockerException {
+		String message = docker.ping();
+		assertEquals("OK", message);
+	}
+
+	@Test
+	public void testDataUsage() throws DockerException {
+		SystemDataUsageResponse response = docker.dataUsage();
 	}
 }

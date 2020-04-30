@@ -22,6 +22,7 @@ import com.graf.docker.client.models.ContainerPruneResponse;
 import com.graf.docker.client.models.HostConfig;
 import com.graf.docker.client.models.IdResponse;
 import com.graf.docker.client.models.ImageSummary;
+import com.graf.docker.client.models.AuthConfig;
 import com.graf.docker.client.models.BuildPruneResponse;
 import com.graf.docker.client.models.ImageDeleteResponseItem;
 import com.graf.docker.client.models.HistoryResponseItem;
@@ -33,6 +34,10 @@ import com.graf.docker.client.models.Network;
 import com.graf.docker.client.models.NetworkConfig;
 import com.graf.docker.client.models.NetworkCreateResponse;
 import com.graf.docker.client.models.NetworkPruneResponse;
+import com.graf.docker.client.models.SystemAuthResponse;
+import com.graf.docker.client.models.SystemDataUsageResponse;
+import com.graf.docker.client.models.SystemInfo;
+import com.graf.docker.client.models.SystemVersionResponse;
 import com.graf.docker.client.models.Volume;
 import com.graf.docker.client.models.VolumeConfig;
 import com.graf.docker.client.models.VolumeListResponse;
@@ -635,9 +640,53 @@ public interface IDockerClient {
 	ExecInspectResponse inspectExec(String id) throws DockerException;
 
 	// ====================================================================================
+	// System API
+	/**
+	 * Validate credentials for a registry and, if available, get an identity token
+	 * for accessing the registry without password.
+	 * 
+	 * @param authConfig
+	 * @return
+	 * @throws DockerException
+	 */
+	SystemAuthResponse authenticate(AuthConfig authConfig) throws DockerException;
 
+	/**
+	 * Returns the version of Docker that is running and various information about
+	 * the system that Docker is running on.
+	 * 
+	 * @return
+	 * @throws DockerException
+	 */
+	SystemVersionResponse versionInfo() throws DockerException;
+
+	/**
+	 * This is a dummy endpoint you can use to test if the server is accessible.
+	 * 
+	 * @return
+	 * @throws DockerException
+	 */
+	String ping() throws DockerException;
+
+	/**
+	 * Get data usage information.
+	 * 
+	 * @return
+	 * @throws DockerException
+	 */
+	SystemDataUsageResponse dataUsage() throws DockerException;
+
+	/**
+	 * Get system information.
+	 * 
+	 * @return
+	 * @throws DockerException
+	 */
+	SystemInfo systemInfo() throws DockerException;
+
+	// ====================================================================================
 	// Additionally Methods
-	// ===================================================================================
+	// ====================================================================================
 
 	/**
 	 * Creates a new Container and then starts the newly created Container.<br>

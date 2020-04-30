@@ -60,6 +60,7 @@ import com.graf.docker.client.models.ContainerPruneResponse;
 import com.graf.docker.client.models.HostConfig;
 import com.graf.docker.client.models.IdResponse;
 import com.graf.docker.client.models.ImageSummary;
+import com.graf.docker.client.models.AuthConfig;
 import com.graf.docker.client.models.BuildPruneResponse;
 import com.graf.docker.client.models.ImageDeleteResponseItem;
 import com.graf.docker.client.models.HistoryResponseItem;
@@ -73,6 +74,10 @@ import com.graf.docker.client.models.NetworkConnect;
 import com.graf.docker.client.models.NetworkCreateResponse;
 import com.graf.docker.client.models.NetworkDisconnect;
 import com.graf.docker.client.models.NetworkPruneResponse;
+import com.graf.docker.client.models.SystemAuthResponse;
+import com.graf.docker.client.models.SystemDataUsageResponse;
+import com.graf.docker.client.models.SystemInfo;
+import com.graf.docker.client.models.SystemVersionResponse;
 import com.graf.docker.client.models.Volume;
 import com.graf.docker.client.models.VolumeConfig;
 import com.graf.docker.client.models.VolumeListResponse;
@@ -494,7 +499,6 @@ public class DockerClient implements IDockerClient {
 			builder.addParameter("names", s);
 		}
 		HttpGet request = (HttpGet) builder.setUrl(url).addPaths("images", "get").build();
-		System.out.println(request);
 		int statusCode = 0;
 		try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
 			statusCode = response.getStatusLine().getStatusCode();
@@ -670,6 +674,40 @@ public class DockerClient implements IDockerClient {
 		HttpGet request = (HttpGet) RequestBuilder.get().setUrl(url).addPaths("exec", id, "json").build();
 		return execute(request, 200, ExecInspectResponse.class);
 	}
+	// ==================================================
+
+	// System API
+
+	@Override
+	public SystemAuthResponse authenticate(AuthConfig authConfig) throws DockerException {
+		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("auth").setBody(authConfig).build();
+		return execute(request, 200, SystemAuthResponse.class);
+	}
+
+	@Override
+	public SystemVersionResponse versionInfo() throws DockerException {
+		HttpGet request = (HttpGet) RequestBuilder.get().setUrl(url).addPaths("version").build();
+		return execute(request, 200, SystemVersionResponse.class);
+	}
+
+	@Override
+	public String ping() throws DockerException {
+		HttpGet request = (HttpGet) RequestBuilder.get().setUrl(url).addPaths("_ping").build();
+		return execute(request, 200, String.class);
+	}
+
+	@Override
+	public SystemDataUsageResponse dataUsage() throws DockerException {
+		HttpGet request = (HttpGet) RequestBuilder.get().setUrl(url).addPaths("system", "df").build();
+		return execute(request, 200, SystemDataUsageResponse.class);
+	}
+
+	@Override
+	public SystemInfo systemInfo() throws DockerException {
+		HttpGet request = (HttpGet) RequestBuilder.get().setUrl(url).addPaths("info").build();
+		return execute(request, 200, SystemInfo.class);
+	}
+
 	// ==================================================
 
 	@Override
