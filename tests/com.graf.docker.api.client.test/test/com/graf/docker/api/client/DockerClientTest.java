@@ -855,13 +855,11 @@ public class DockerClientTest {
 	@Test
 	public void testSystemInfo() throws DockerException {
 		SystemInfo response = docker.systemInfo();
-		System.out.println(response);
 	}
 
 	@Test
 	public void testVersionInfo() throws DockerException {
 		SystemVersionResponse response = docker.versionInfo();
-		assertEquals("1.40", response.getApiVersion());
 	}
 
 	@Test
