@@ -20,6 +20,7 @@ import com.graf.docker.client.builder.DockerClientBuilder;
 import com.graf.docker.client.exceptions.DockerException;
 import com.graf.docker.client.interfaces.IContainerStatsListener;
 import com.graf.docker.client.interfaces.IDockerClient;
+import com.graf.docker.client.interfaces.IExecResponseListener;
 import com.graf.docker.client.models.ContainerSummary;
 import com.graf.docker.client.models.ContainerChangeResponseItem;
 import com.graf.docker.client.models.ContainerConfig;
@@ -27,6 +28,7 @@ import com.graf.docker.client.models.ContainerCreateResponse;
 import com.graf.docker.client.models.ContainerWaitResponse;
 import com.graf.docker.client.models.ExecConfig;
 import com.graf.docker.client.models.ExecInspectResponse;
+import com.graf.docker.client.models.ExecResponse;
 import com.graf.docker.client.models.ExecStartConfig;
 import com.graf.docker.client.models.ContainerFileInfo;
 import com.graf.docker.client.models.ContainerInspectResponse;
@@ -602,7 +604,7 @@ public class DockerClientTest {
 
 		assertTrue(containsContainer(docker.listContainers(ListContainersParam.all()), containerId));
 
-		ContainerPruneResponse deletedInfo = docker.deleteContainers();
+		ContainerPruneResponse deletedInfo = docker.pruneContainers();
 
 		assertFalse(containsContainer(docker.listContainers(ListContainersParam.all()), containerId));
 		assertTrue(deletedInfo.getContainersDeleted().size() > 0);
@@ -704,7 +706,7 @@ public class DockerClientTest {
 	public void testDeleteImage() throws DockerException {
 		LOGGER.log(Level.INFO, "");
 		docker.createImage(CreateImageParam.fromImage("hello-world"));
-		List<ImageDeleteResponseItem> infos = docker.deleteImage("hello-world");
+		List<ImageDeleteResponseItem> infos = docker.removeImage("hello-world");
 
 		assertEquals("hello-world:latest", infos.get(0).getUntagged());
 	}
@@ -722,7 +724,7 @@ public class DockerClientTest {
 	public void testImagePrune() throws DockerException {
 		LOGGER.log(Level.INFO, "");
 		docker.createImage(CreateImageParam.fromImage("hello-world"));
-		ImagePruneResponse info = docker.deleteUnusedImages();
+		ImagePruneResponse info = docker.pruneImages();
 	}
 
 	@Test
@@ -781,7 +783,7 @@ public class DockerClientTest {
 		NetworkCreateResponse response = docker.createNetwork(config);
 		assertEquals("", response.getWarning());
 		String id = response.getId();
-		docker.deleteNetwork(id);
+		docker.removeNetwork(id);
 	}
 
 	@Test
@@ -795,7 +797,7 @@ public class DockerClientTest {
 		docker.startContainer(containerId);
 		docker.connectToNetwork(id, containerId);
 		docker.stopContainer(containerId);
-		docker.deleteNetwork(id);
+		docker.removeNetwork(id);
 	}
 
 	@Test
@@ -810,7 +812,7 @@ public class DockerClientTest {
 		docker.connectToNetwork(id, containerId);
 		docker.disconnectFromNetwork(id, containerId, true);
 		docker.stopContainer(containerId);
-		docker.deleteNetwork(id);
+		docker.removeNetwork(id);
 	}
 
 	@Test
@@ -842,14 +844,40 @@ public class DockerClientTest {
 
 	@Test
 	public void testExec() throws DockerException {
-		ExecConfig execconfig = ExecConfig.builder().cmd("ls -h").build();
-		ExecStartConfig startConfig = ExecStartConfig.builder().detach(false).tty(false).build();
+		ExecConfig execconfig = ExecConfig.builder().cmd("sh", "-c", "while :; do echo test; sleep 1; done").build();
 		ContainerCreateResponse creation = docker.createContainer(config);
 		String containerId = creation.getId();
 		docker.startContainer(containerId);
 		IdResponse id = docker.createExec(containerId, execconfig);
-		docker.startExec(id.getId());
+		docker.startExec(id.getId(), new IExecResponseListener() {
+			@Override
+			public void onMessage(ExecResponse response) {
+				System.out.println(response.getMessage());
+			}
+
+			@Override
+			public void onClosed(int statusCode, String message) {
+				System.out.println(statusCode);
+				System.out.println(message);
+			}
+		});
 		ExecInspectResponse response = docker.inspectExec(id.getId());
+
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		docker.stopExec(id.getId());
+	}
+
+	@Test
+	public void testRunExec() throws DockerException {
+		ExecConfig execconfig = ExecConfig.builder().cmd("ls -h").build();
+		ContainerCreateResponse creation = docker.createContainer(config);
+		String containerId = creation.getId();
+		docker.startContainer(containerId);
+		docker.runExec(containerId, execconfig);
 	}
 
 	@Test

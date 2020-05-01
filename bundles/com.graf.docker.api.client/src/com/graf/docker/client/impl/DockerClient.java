@@ -42,6 +42,7 @@ import com.graf.docker.client.exceptions.ExceptionMessage;
 import com.graf.docker.client.interfaces.FilterParam;
 import com.graf.docker.client.interfaces.IContainerStatsListener;
 import com.graf.docker.client.interfaces.IDockerClient;
+import com.graf.docker.client.interfaces.IExecResponseListener;
 import com.graf.docker.client.models.ContainerSummary;
 import com.graf.docker.client.models.ContainerChangeResponseItem;
 import com.graf.docker.client.models.ContainerConfig;
@@ -50,6 +51,7 @@ import com.graf.docker.client.models.ContainerWaitResponse;
 import com.graf.docker.client.models.EndpointSettings;
 import com.graf.docker.client.models.ExecConfig;
 import com.graf.docker.client.models.ExecInspectResponse;
+import com.graf.docker.client.models.ExecResponse;
 import com.graf.docker.client.models.ExecStartConfig;
 import com.graf.docker.client.models.ContainerFileInfo;
 import com.graf.docker.client.models.ContainerInspectResponse;
@@ -104,6 +106,7 @@ public class DockerClient implements IDockerClient {
 	private String url;
 	private Gson gson;
 	private Map<String, Thread> statsThreads;
+	private Map<String, ExecResponseThread> execThreads;
 
 	public DockerClient(String url) {
 		this.url = url;
@@ -395,13 +398,13 @@ public class DockerClient implements IDockerClient {
 	}
 
 	@Override
-	public ContainerPruneResponse deleteContainers() throws DockerException {
+	public ContainerPruneResponse pruneContainers() throws DockerException {
 		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("containers", "prune").build();
 		return execute(request, 200, ContainerPruneResponse.class);
 	}
 
-	// Image API
 	// ==================================================
+	// Image API
 
 	@Override
 	public List<ImageSummary> listImages(ListImagesParam... param) throws DockerException {
@@ -446,7 +449,7 @@ public class DockerClient implements IDockerClient {
 	}
 
 	@Override
-	public List<ImageDeleteResponseItem> deleteImage(String imageName, ImageDeleteParam... param)
+	public List<ImageDeleteResponseItem> removeImage(String imageName, ImageDeleteParam... param)
 			throws DockerException {
 		HttpDelete request = (HttpDelete) RequestBuilder.delete().setUrl(url).addPaths("images", imageName)
 				.addParameters(param).build();
@@ -463,7 +466,7 @@ public class DockerClient implements IDockerClient {
 	}
 
 	@Override
-	public ImagePruneResponse deleteUnusedImages() throws DockerException {
+	public ImagePruneResponse pruneImages() throws DockerException {
 		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("images", "prune").build();
 		return execute(request, 200, ImagePruneResponse.class);
 	}
@@ -527,8 +530,9 @@ public class DockerClient implements IDockerClient {
 		execute(request, 200);
 	}
 
-	// Network API
 	// ==============================================================
+	// Network API
+
 	@Override
 	public List<Network> listNetworks() throws DockerException {
 		HttpGet rquest = (HttpGet) RequestBuilder.get().setUrl(url).addPath("networks").build();
@@ -559,7 +563,7 @@ public class DockerClient implements IDockerClient {
 	}
 
 	@Override
-	public void deleteNetwork(String id) throws DockerException {
+	public void removeNetwork(String id) throws DockerException {
 		HttpDelete request = (HttpDelete) RequestBuilder.delete().setUrl(url).addPaths("networks", id).build();
 		execute(request, 204);
 	}
@@ -605,7 +609,6 @@ public class DockerClient implements IDockerClient {
 	}
 
 	// ==================================================
-
 	// Volume API
 
 	@Override
@@ -652,21 +655,34 @@ public class DockerClient implements IDockerClient {
 	}
 
 	@Override
-	public void startExec(String id) throws DockerException {
-		startExec(id, null);
+	public void startExec(String id, IExecResponseListener listener) throws DockerException {
+		RequestBuilder builder = RequestBuilder.post().setUrl(url).addPaths("exec", id, "start");
+		ExecStartConfig defaultConfig = ExecStartConfig.builder().detach(false).tty(false).build();
+		builder.setBody(defaultConfig);
+
+		HttpPost request = (HttpPost) builder.build();
+		ExecResponseThread t = new ExecResponseThread(request, listener);
+		getExecThreadsMap().put(id, t);
+		t.start();
 	}
 
 	@Override
-	public void startExec(String id, ExecStartConfig config) throws DockerException {
-		RequestBuilder builder = RequestBuilder.post().setUrl(url).addPaths("exec", id, "start");
-		if (config != null) {
-			builder.setBody(config);
-		} else {
-			ExecStartConfig defaultConfig = ExecStartConfig.builder().detach(false).tty(false).build();
-			builder.setBody(defaultConfig);
+	public void stopExec(String id) throws DockerException {
+		Thread t = getExecThreadsMap().get(id);
+		if (t != null) {
+			t.interrupt();
+			getExecThreadsMap().remove(id);
 		}
-		HttpPost request = (HttpPost) builder.build();
-		execute(request, 200);
+	}
+
+	@Override
+	public void addExecResponseListener(String id, IExecResponseListener listener) {
+		getExecThreadsMap().get(id).addExecResponseListener(listener);
+	}
+
+	@Override
+	public void removeExecResponseLsitener(String id, IExecResponseListener listener) {
+		getExecThreadsMap().get(id).removeExecResponseListener(listener);
 	}
 
 	@Override
@@ -675,7 +691,6 @@ public class DockerClient implements IDockerClient {
 		return execute(request, 200, ExecInspectResponse.class);
 	}
 	// ==================================================
-
 	// System API
 
 	@Override
@@ -718,7 +733,7 @@ public class DockerClient implements IDockerClient {
 	@Override
 	public ContainerCreateResponse runContainer(ContainerConfig config, String containerName) throws DockerException {
 		ContainerCreateResponse creation = this.createContainer(config, containerName);
-		this.startContainer(creation.getId());
+		this.startContainer(containerName);
 		return creation;
 	}
 
@@ -735,6 +750,12 @@ public class DockerClient implements IDockerClient {
 	public void stopAndRemoveContainer(String containerId) throws DockerException {
 		this.stopContainer(containerId);
 		this.removeContainer(containerId);
+	}
+
+	@Override
+	public void runExec(String container, ExecConfig config) throws DockerException {
+		IdResponse id = this.createExec(container, config);
+		// this.startExec(id.getId());
 	}
 
 	// ==================================================
@@ -781,6 +802,13 @@ public class DockerClient implements IDockerClient {
 			statsThreads = new ConcurrentHashMap<>();
 		}
 		return statsThreads;
+	}
+
+	private Map<String, ExecResponseThread> getExecThreadsMap() {
+		if (execThreads == null) {
+			execThreads = new ConcurrentHashMap<>();
+		}
+		return execThreads;
 	}
 
 	public static int byteArrayToInt(byte[] b) {
@@ -989,6 +1017,55 @@ public class DockerClient implements IDockerClient {
 				message = e.getMessage();
 			} finally {
 				listener.onClosed(statusCode, message);
+			}
+		}
+	}
+
+	class ExecResponseThread extends Thread {
+
+		private List<IExecResponseListener> listeners = new ArrayList<>();
+		private String id;
+		private HttpPost request;
+		private int statusCode = 0;
+		private String message = "Exec Response closed";
+
+		public ExecResponseThread(HttpPost request, IExecResponseListener listener) {
+			this.request = request;
+			listeners.add(listener);
+		}
+
+		public synchronized void addExecResponseListener(IExecResponseListener listener) {
+			this.listeners.add(listener);
+		}
+
+		public synchronized void removeExecResponseListener(IExecResponseListener listener) {
+			this.listeners.remove(listener);
+		}
+
+		@Override
+		public void run() {
+			try (CloseableHttpResponse response = (CloseableHttpResponse) client.execute(request)) {
+				statusCode = response.getStatusLine().getStatusCode();
+				if (statusCode == 200) {
+					InputStreamReader reader = new InputStreamReader(response.getEntity().getContent());
+					int len = 0;
+					StringBuilder builder = new StringBuilder();
+					CharBuffer buffer = CharBuffer.allocate(4096);
+					while (((len = reader.read(buffer)) != -1) && !Thread.currentThread().isInterrupted()) {
+						builder.append(buffer.flip().toString());
+						if (len < 4096) {
+							ExecResponse res = ExecResponse.builder().id(id).message(builder.toString().trim()).build();
+							listeners.stream().forEach(l -> l.onMessage(res));
+							builder.setLength(0);
+						}
+						buffer.clear();
+					}
+				}
+			} catch (IOException e) {
+				Thread.currentThread().interrupt();
+				message = e.getMessage();
+			} finally {
+				listeners.stream().forEach(l -> l.onClosed(statusCode, message));
 			}
 		}
 	}

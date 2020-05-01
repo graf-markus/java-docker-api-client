@@ -329,7 +329,7 @@ public interface IDockerClient {
 	 * @return ContainersDeletedInfo
 	 * @throws DockerException
 	 */
-	ContainerPruneResponse deleteContainers() throws DockerException;
+	ContainerPruneResponse pruneContainers() throws DockerException;
 
 	// Image API
 	// ===================================================================================
@@ -399,7 +399,7 @@ public interface IDockerClient {
 	 * @return
 	 * @throws DockerException
 	 */
-	List<ImageDeleteResponseItem> deleteImage(String imageName, ImageDeleteParam... param) throws DockerException;
+	List<ImageDeleteResponseItem> removeImage(String imageName, ImageDeleteParam... param) throws DockerException;
 
 	/**
 	 * Search for an image on Docker Hub.
@@ -417,7 +417,7 @@ public interface IDockerClient {
 	 * @return
 	 * @throws DockerException
 	 */
-	ImagePruneResponse deleteUnusedImages() throws DockerException;
+	ImagePruneResponse pruneImages() throws DockerException;
 
 	/**
 	 * Create a new image from a container.
@@ -487,8 +487,8 @@ public interface IDockerClient {
 	 */
 	void loadImage(String pathToTarball) throws DockerException;
 
-	// Network API
 	// ============================================================
+	// Network API
 	/**
 	 * Returns a list of networks
 	 * 
@@ -516,7 +516,7 @@ public interface IDockerClient {
 	 * @param id
 	 * @throws DockerException
 	 */
-	void deleteNetwork(String id) throws DockerException;
+	void removeNetwork(String id) throws DockerException;
 
 	/**
 	 * Create a new Network
@@ -562,6 +562,7 @@ public interface IDockerClient {
 	 */
 	NetworkPruneResponse pruneNetworks(NetworkPruneParam... params) throws DockerException;
 
+	// ============================================================
 	// Volume API
 
 	/**
@@ -626,9 +627,13 @@ public interface IDockerClient {
 	 * @param id
 	 * @throws DockerException
 	 */
-	void startExec(String id) throws DockerException;
+	void startExec(String id, IExecResponseListener listener) throws DockerException;
 
-	void startExec(String id, ExecStartConfig config) throws DockerException;
+	void stopExec(String id) throws DockerException;
+
+	void addExecResponseListener(String id, IExecResponseListener listener);
+
+	void removeExecResponseLsitener(String id, IExecResponseListener listener);
 
 	/**
 	 * Return low-level information about an exec instance.
@@ -689,13 +694,14 @@ public interface IDockerClient {
 	// ====================================================================================
 
 	/**
-	 * Creates a new Container and then starts the newly created Container.<br>
+	 * Creates a new Container and then starts the new created Container.<br>
 	 * <b>Attention!</b> if the Container already exists this Method throws an
 	 * error.<br>
 	 * Use the autoRemove option in ContainerConfig to delete the Container after
 	 * termination.
 	 * 
 	 * @param config
+	 * @return ContainerCreateResponse or null if Container allready exists.
 	 * @throws DockerException
 	 */
 	ContainerCreateResponse runContainer(ContainerConfig config) throws DockerException;
@@ -708,7 +714,7 @@ public interface IDockerClient {
 	 * termination.
 	 * 
 	 * @param config
-	 * @param containerName
+	 * @return ContainerCreateResponse or null if Container allready exists.
 	 * @throws DockerException
 	 */
 	ContainerCreateResponse runContainer(ContainerConfig config, String containerName) throws DockerException;
@@ -728,4 +734,13 @@ public interface IDockerClient {
 	 * @throws DockerException
 	 */
 	void stopAndRemoveContainer(String containerId) throws DockerException;
+
+	/**
+	 * Create a new Exec and immediately starts the new created Exec.
+	 * 
+	 * @param container
+	 * @param config
+	 * @throws DockerException
+	 */
+	void runExec(String container, ExecConfig config) throws DockerException;
 }

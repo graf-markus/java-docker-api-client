@@ -11,7 +11,7 @@ public class ExecConfig {
 
 	private boolean attachStdin;
 	private boolean attachStdout;
-	private boolean attachstderr;
+	private boolean attachStderr;
 	private String detachKeys;
 	private boolean tty;
 	private List<String> env;
@@ -23,7 +23,7 @@ public class ExecConfig {
 	private ExecConfig(Builder builder) {
 		this.attachStdin = builder.attachStdin;
 		this.attachStdout = builder.attachStdout;
-		this.attachstderr = builder.attachstderr;
+		this.attachStderr = builder.attachStderr;
 		this.detachKeys = builder.detachKeys;
 		this.tty = builder.tty;
 		this.env = builder.env;
@@ -41,8 +41,8 @@ public class ExecConfig {
 		return attachStdout;
 	}
 
-	public boolean isAttachstderr() {
-		return attachstderr;
+	public boolean isAttachStderr() {
+		return attachStderr;
 	}
 
 	public String getDetachKeys() {
@@ -86,8 +86,8 @@ public class ExecConfig {
 	public static class Builder {
 
 		private boolean attachStdin;
-		private boolean attachStdout;
-		private boolean attachstderr;
+		private boolean attachStdout = true;
+		private boolean attachStderr;
 		private String detachKeys;
 		private boolean tty;
 		private List<String> env = new ArrayList<String>();
@@ -109,8 +109,8 @@ public class ExecConfig {
 			return Builder.this;
 		}
 
-		public Builder attachstderr(boolean attachstderr) {
-			this.attachstderr = attachstderr;
+		public Builder attachStderr(boolean attachstderr) {
+			this.attachStderr = attachstderr;
 			return Builder.this;
 		}
 
