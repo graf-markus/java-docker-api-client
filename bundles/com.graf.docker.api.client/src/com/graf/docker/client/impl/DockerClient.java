@@ -732,13 +732,8 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public ContainerCreateResponse runContainer(ContainerConfig config, String containerName) throws DockerException {
-		ContainerCreateResponse creation;
-		if (containerName != null) {
-			creation = this.createContainer(config, containerName);
-		} else {
-			creation = this.createContainer(config);
-		}
-		this.startContainer(containerName);
+		ContainerCreateResponse creation = this.createContainer(config, containerName);
+		this.startContainer(creation.getId());
 		return creation;
 	}
 
