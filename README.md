@@ -1,13 +1,21 @@
 # Java Docker API Client
 [![Build Status](https://travis-ci.org/graf-markus/java-docker-api-client.svg?branch=master)](https://travis-ci.org/graf-markus/java-docker-api-client)
 [![Coverage Status](https://coveralls.io/repos/github/graf-markus/java-docker-api-client/badge.svg?branch=master)](https://coveralls.io/github/graf-markus/java-docker-api-client?branch=master)
-## Status: Work in Progress
 
 A Docker Engine API implementation written in Java as a OSGi Component.
 
 This Docker Client helps to interact with the Docker Engine API in Java and is inspired by the [Spotify Docker Client](https://github.com/spotify/docker-client), but it isn't forked from it.
 
 **Currently this client only works over Http. The unix-socket is not yet supported.**
+
+## Supported APIs
+
+- [x] Container API
+- [x] Image API
+- [x] Network API
+- [x] Volume API
+- [x] Exec API
+- [x] System API
 
 ## Usage
 
