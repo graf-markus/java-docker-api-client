@@ -872,7 +872,7 @@ public class DockerClientTest {
 
 	@Test
 	public void testRunExec() throws DockerException {
-		ExecConfig execconfig = ExecConfig.builder().cmd("ls -h").build();
+		ExecConfig execconfig = ExecConfig.builder().cmd("ls", "-h").build();
 		ContainerCreateResponse creation = docker.createContainer(config);
 		String containerId = creation.getId();
 		docker.startContainer(containerId);
@@ -887,6 +887,12 @@ public class DockerClientTest {
 				// TODO Auto-generated method stub
 			}
 		});
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Test

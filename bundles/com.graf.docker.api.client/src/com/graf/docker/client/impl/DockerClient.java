@@ -676,7 +676,7 @@ public class DockerClient implements IDockerClient {
 		builder.setBody(defaultConfig);
 
 		HttpPost request = (HttpPost) builder.build();
-		ExecResponseThread t = new ExecResponseThread(request, listener);
+		ExecResponseThread t = new ExecResponseThread(id, request, listener);
 		getExecThreadsMap().put(id, t);
 		t.start();
 	}
@@ -686,8 +686,8 @@ public class DockerClient implements IDockerClient {
 		Thread t = getExecThreadsMap().get(id);
 		if (t != null) {
 			t.interrupt();
-			getExecThreadsMap().remove(id);
 		}
+		getExecThreadsMap().remove(id);
 	}
 
 	@Override
@@ -761,8 +761,8 @@ public class DockerClient implements IDockerClient {
 		Thread t = getStatsThreadsMap().get(containerId);
 		if (t != null) {
 			t.interrupt();
-			getStatsThreadsMap().remove(containerId);
 		}
+		getStatsThreadsMap().remove(containerId);
 	}
 
 	@Override
@@ -1059,7 +1059,8 @@ public class DockerClient implements IDockerClient {
 		private int statusCode = 0;
 		private String message = "Exec Response closed";
 
-		public ExecResponseThread(HttpPost request, IExecResponseListener listener) {
+		public ExecResponseThread(String id, HttpPost request, IExecResponseListener listener) {
+			this.id = id;
 			this.request = request;
 			listeners.add(listener);
 		}
