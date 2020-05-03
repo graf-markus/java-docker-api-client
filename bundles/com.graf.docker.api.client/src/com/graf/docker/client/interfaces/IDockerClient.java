@@ -161,6 +161,20 @@ public interface IDockerClient {
 	void statContainerStream(String containerId, IContainerStatsListener listener) throws DockerException;
 
 	/**
+	 * 
+	 * @param listener
+	 * @throws DockerException
+	 */
+	void addContainerStatListener(String containerId, IContainerStatsListener listener) throws DockerException;
+
+	/**
+	 * 
+	 * @param listener
+	 * @throws DockerException
+	 */
+	void removeContainerStatListener(String containerId, IContainerStatsListener listener) throws DockerException;
+
+	/**
 	 * Resize the TTY for a Container.
 	 * 
 	 * @param containerId
@@ -742,5 +756,5 @@ public interface IDockerClient {
 	 * @param config
 	 * @throws DockerException
 	 */
-	void runExec(String container, ExecConfig config) throws DockerException;
+	void runExec(String container, ExecConfig config, IExecResponseListener listener) throws DockerException;
 }

@@ -6,5 +6,5 @@ public interface IExecResponseListener {
 
 	void onMessage(ExecResponse response);
 
-	void onClosed(int statusCode, String message);
+	void onClosed(int statusCode, ExecResponse response);
 }

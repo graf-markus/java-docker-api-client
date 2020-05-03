@@ -105,7 +105,7 @@ public class DockerClient implements IDockerClient {
 	private CloseableHttpClient client;
 	private String url;
 	private Gson gson;
-	private Map<String, Thread> statsThreads;
+	private Map<String, ContainerStatsThread> statsThreads;
 	private Map<String, ExecResponseThread> execThreads;
 
 	public DockerClient(String url) {
@@ -234,9 +234,24 @@ public class DockerClient implements IDockerClient {
 	public void statContainerStream(String containerId, IContainerStatsListener listener) throws DockerException {
 		HttpGet request = (HttpGet) RequestBuilder.get().setUrl(url).addPaths("containers", containerId, "stats")
 				.build();
-		Thread t = new Thread(new ContainerStatsRunnable(request, listener));
+		ContainerStatsThread t = new ContainerStatsThread(containerId, request, listener);
 		t.start();
 		getStatsThreadsMap().put(containerId, t);
+	}
+
+	@Override
+	public void addContainerStatListener(String containerId, IContainerStatsListener listener) throws DockerException {
+		if (getStatsThreadsMap().get(containerId) != null) {
+			getStatsThreadsMap().get(containerId).addContainerStatListener(listener);
+		}
+	}
+
+	@Override
+	public void removeContainerStatListener(String containerId, IContainerStatsListener listener)
+			throws DockerException {
+		if (getStatsThreadsMap().get(containerId) != null) {
+			getStatsThreadsMap().get(containerId).removeContainerStatListener(listener);
+		}
 	}
 
 	@Override
@@ -677,12 +692,16 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public void addExecResponseListener(String id, IExecResponseListener listener) {
-		getExecThreadsMap().get(id).addExecResponseListener(listener);
+		if (getExecThreadsMap().get(id) != null) {
+			getExecThreadsMap().get(id).addExecResponseListener(listener);
+		}
 	}
 
 	@Override
 	public void removeExecResponseLsitener(String id, IExecResponseListener listener) {
-		getExecThreadsMap().get(id).removeExecResponseListener(listener);
+		if (getExecThreadsMap().get(id) != null) {
+			getExecThreadsMap().get(id).removeExecResponseListener(listener);
+		}
 	}
 
 	@Override
@@ -753,9 +772,9 @@ public class DockerClient implements IDockerClient {
 	}
 
 	@Override
-	public void runExec(String container, ExecConfig config) throws DockerException {
+	public void runExec(String container, ExecConfig config, IExecResponseListener listener) throws DockerException {
 		IdResponse id = this.createExec(container, config);
-		// this.startExec(id.getId());
+		this.startExec(id.getId(), listener);
 	}
 
 	// ==================================================
@@ -797,7 +816,7 @@ public class DockerClient implements IDockerClient {
 		return value == null || value.isEmpty();
 	}
 
-	private Map<String, Thread> getStatsThreadsMap() {
+	private Map<String, ContainerStatsThread> getStatsThreadsMap() {
 		if (statsThreads == null) {
 			statsThreads = new ConcurrentHashMap<>();
 		}
@@ -979,18 +998,28 @@ public class DockerClient implements IDockerClient {
 		}
 	}
 
-	class ContainerStatsRunnable implements Runnable {
+	class ContainerStatsThread extends Thread {
 
-		private IContainerStatsListener listener;
+		private List<IContainerStatsListener> listeners = new ArrayList<>();
+		private String id;
 		private HttpGet request;
 		private Gson gson;
 		private int statusCode = 0;
 		private String message = "Container Stats closed";
 
-		public ContainerStatsRunnable(HttpGet request, IContainerStatsListener listener) {
-			this.listener = listener;
+		public ContainerStatsThread(String containerId, HttpGet request, IContainerStatsListener listener) {
+			this.listeners.add(listener);
+			this.id = containerId;
 			this.request = request;
 			this.gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE).create();
+		}
+
+		public synchronized void addContainerStatListener(IContainerStatsListener listener) {
+			this.listeners.add(listener);
+		}
+
+		public synchronized void removeContainerStatListener(IContainerStatsListener listener) {
+			this.listeners.remove(listener);
 		}
 
 		@Override
@@ -1006,7 +1035,7 @@ public class DockerClient implements IDockerClient {
 						builder.append(buffer.flip().toString());
 						if (len < 4096) {
 							ContainerStats stats = gson.fromJson(builder.toString(), ContainerStats.class);
-							listener.onContainerStatsReceived(stats);
+							listeners.stream().forEach(l -> l.onContainerStatsReceived(id, stats));
 							builder.setLength(0);
 						}
 						buffer.clear();
@@ -1016,7 +1045,8 @@ public class DockerClient implements IDockerClient {
 				Thread.currentThread().interrupt();
 				message = e.getMessage();
 			} finally {
-				listener.onClosed(statusCode, message);
+				listeners.stream().forEach(l -> l.onClosed(statusCode, message));
+				getStatsThreadsMap().remove(id);
 			}
 		}
 	}
@@ -1065,7 +1095,9 @@ public class DockerClient implements IDockerClient {
 				Thread.currentThread().interrupt();
 				message = e.getMessage();
 			} finally {
-				listeners.stream().forEach(l -> l.onClosed(statusCode, message));
+				ExecResponse res = ExecResponse.builder().id(id).message(message).build();
+				listeners.stream().forEach(l -> l.onClosed(statusCode, res));
+				getExecThreadsMap().remove(id);
 			}
 		}
 	}

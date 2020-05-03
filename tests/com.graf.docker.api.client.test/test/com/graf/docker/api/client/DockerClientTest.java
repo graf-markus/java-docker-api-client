@@ -29,7 +29,6 @@ import com.graf.docker.client.models.ContainerWaitResponse;
 import com.graf.docker.client.models.ExecConfig;
 import com.graf.docker.client.models.ExecInspectResponse;
 import com.graf.docker.client.models.ExecResponse;
-import com.graf.docker.client.models.ExecStartConfig;
 import com.graf.docker.client.models.ContainerFileInfo;
 import com.graf.docker.client.models.ContainerInspectResponse;
 import com.graf.docker.client.models.ContainerLog;
@@ -68,7 +67,7 @@ import com.graf.docker.client.params.RemoveContainersParam;
 public class DockerClientTest {
 
 	private static final Logger LOGGER = Logger.getLogger(DockerClientBuilder.class.getName());
-	private IDockerClient docker = DockerClientBuilder.builder().setUrl("http://localhost:2375").build();
+	private IDockerClient docker = DockerClientBuilder.builder().setUrl("http://192.168.1.1:2375").build();
 	private ContainerConfig config = ContainerConfig.builder().image("ubuntu")
 			.cmd("sh", "-c", "while :; do sleep 1; done").build();
 
@@ -245,7 +244,7 @@ public class DockerClientTest {
 		docker.statContainerStream(containerId, new IContainerStatsListener() {
 
 			@Override
-			public void onContainerStatsReceived(ContainerStats stats) {
+			public void onContainerStatsReceived(String id, ContainerStats stats) {
 				assertNotNull(stats);
 			}
 
@@ -856,9 +855,9 @@ public class DockerClientTest {
 			}
 
 			@Override
-			public void onClosed(int statusCode, String message) {
+			public void onClosed(int statusCode, ExecResponse response) {
 				System.out.println(statusCode);
-				System.out.println(message);
+				System.out.println(response.getMessage());
 			}
 		});
 		ExecInspectResponse response = docker.inspectExec(id.getId());
@@ -877,7 +876,17 @@ public class DockerClientTest {
 		ContainerCreateResponse creation = docker.createContainer(config);
 		String containerId = creation.getId();
 		docker.startContainer(containerId);
-		docker.runExec(containerId, execconfig);
+		docker.runExec(containerId, execconfig, new IExecResponseListener() {
+			@Override
+			public void onMessage(ExecResponse response) {
+				System.out.println(response.getMessage());
+			}
+
+			@Override
+			public void onClosed(int statusCode, ExecResponse response) {
+				// TODO Auto-generated method stub
+			}
+		});
 	}
 
 	@Test

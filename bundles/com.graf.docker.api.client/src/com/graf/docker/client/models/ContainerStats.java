@@ -23,7 +23,7 @@ public class ContainerStats {
 	private CpuStats cpuStats;
 	@SerializedName("precpu_stats")
 	private CpuStats precpuStats;
-
+	
 	public Date getRead() {
 		return read;
 	}
@@ -51,7 +51,7 @@ public class ContainerStats {
 	public CpuStats getPrecpuStats() {
 		return precpuStats;
 	}
-
+	
 	@Override
 	public String toString() {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();

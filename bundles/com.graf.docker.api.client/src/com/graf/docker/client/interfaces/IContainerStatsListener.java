@@ -4,6 +4,7 @@ import com.graf.docker.client.models.ContainerStats;
 
 public interface IContainerStatsListener {
 
-	void onContainerStatsReceived(ContainerStats stats);
+	void onContainerStatsReceived(String id, ContainerStats stats);
+
 	void onClosed(int statusCode, String message);
 }
