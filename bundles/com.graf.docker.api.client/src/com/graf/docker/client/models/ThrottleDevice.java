@@ -50,7 +50,6 @@ public class ThrottleDevice {
 		}
 
 		public ThrottleDevice build() {
-
 			return new ThrottleDevice(this);
 		}
 	}

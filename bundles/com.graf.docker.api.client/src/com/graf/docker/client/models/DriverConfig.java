@@ -24,6 +24,10 @@ public class DriverConfig {
 		return options;
 	}
 
+	public static Builder builder() {
+		return new Builder();
+	}
+
 	@Override
 	public String toString() {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -33,7 +37,7 @@ public class DriverConfig {
 	public static class Builder {
 
 		private String name;
-		private Map<String, String> options = new HashMap<>();
+		private Map<String, String> options;
 
 		public Builder() {
 		}
@@ -44,11 +48,17 @@ public class DriverConfig {
 		}
 
 		public Builder options(Map<String, String> options) {
+			if (this.options == null) {
+				this.options = new HashMap<>();
+			}
 			this.options.putAll(options);
 			return Builder.this;
 		}
 
 		public Builder option(String key, String value) {
+			if (this.options == null) {
+				this.options = new HashMap<>();
+			}
 			this.options.put(key, value);
 			return Builder.this;
 		}

@@ -89,21 +89,4 @@ public class ContainerSummary {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		return gson.toJson(this);
 	}
-
-	class HostConfig {
-
-		private String networkMode;
-
-		public String getNetworkMode() {
-			return networkMode;
-		}
-	}
-
-	class NetworkSettings {
-		private Map<String, EndpointSettings> networks;
-
-		public Map<String, EndpointSettings> getNetworks() {
-			return networks;
-		}
-	}
 }

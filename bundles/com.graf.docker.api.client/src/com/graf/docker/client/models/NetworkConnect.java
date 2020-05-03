@@ -5,12 +5,43 @@ public class NetworkConnect {
 	private String container;
 	private EndpointSettings endpointConfig;
 
-	public NetworkConnect(String container) {
-		this.container = container;
+	private NetworkConnect(Builder builder) {
+		this.container = builder.container;
+		this.endpointConfig = builder.endpointConfig;
 	}
 
-	public NetworkConnect(String container, EndpointSettings endpoint) {
-		this.container = container;
-		this.endpointConfig = endpoint;
+	public String getContainer() {
+		return container;
+	}
+
+	public EndpointSettings getEndpointConfig() {
+		return endpointConfig;
+	}
+
+	public static Builder builder() {
+		return new Builder();
+	}
+
+	public static class Builder {
+
+		private String container;
+		private EndpointSettings endpointConfig;
+
+		public Builder() {
+		}
+
+		public Builder container(String container) {
+			this.container = container;
+			return Builder.this;
+		}
+
+		public Builder endpointConfig(EndpointSettings endpointConfig) {
+			this.endpointConfig = endpointConfig;
+			return Builder.this;
+		}
+
+		public NetworkConnect build() {
+			return new NetworkConnect(this);
+		}
 	}
 }

@@ -8,6 +8,11 @@ public class PortBinding {
 	private String hostIp;
 	private String hostPort;
 
+	private PortBinding(Builder builder) {
+		this.hostIp = builder.hostIp;
+		this.hostPort = builder.hostPort;
+	}
+
 	public String getHostIp() {
 		return hostIp;
 	}
@@ -45,13 +50,7 @@ public class PortBinding {
 		}
 
 		public PortBinding build() {
-
 			return new PortBinding(this);
 		}
-	}
-
-	private PortBinding(Builder builder) {
-		this.hostIp = builder.hostIp;
-		this.hostPort = builder.hostPort;
 	}
 }

@@ -35,7 +35,7 @@ public class IPAM {
 	public static Builder builder() {
 		return new Builder();
 	}
-	
+
 	@Override
 	public String toString() {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -46,8 +46,8 @@ public class IPAM {
 
 		private String driver;
 
-		private List<Map<String, String>> config = new ArrayList<>();
-		private Map<String, String> options = new HashMap<>();
+		private List<Map<String, String>> config;
+		private Map<String, String> options;
 
 		public Builder() {
 		}
@@ -58,21 +58,33 @@ public class IPAM {
 		}
 
 		public Builder config(List<Map<String, String>> config) {
+			if (this.config == null) {
+				this.config = new ArrayList<>();
+			}
 			this.config.addAll(config);
 			return Builder.this;
 		}
 
 		public Builder config(Map<String, String> config) {
+			if (this.config == null) {
+				this.config = new ArrayList<>();
+			}
 			this.config.add(config);
 			return Builder.this;
 		}
 
 		public Builder options(Map<String, String> options) {
+			if (this.options == null) {
+				this.options = new HashMap<>();
+			}
 			this.options.putAll(options);
 			return Builder.this;
 		}
 
 		public Builder option(String key, String value) {
+			if (this.options == null) {
+				this.options = new HashMap<>();
+			}
 			this.options.put(key, value);
 			return Builder.this;
 		}

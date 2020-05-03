@@ -90,8 +90,8 @@ public class ExecConfig {
 		private boolean attachStderr;
 		private String detachKeys;
 		private boolean tty;
-		private List<String> env = new ArrayList<String>();
-		private List<String> cmd = new ArrayList<String>();
+		private List<String> env;
+		private List<String> cmd;
 		private boolean privileged;
 		private String user;
 		private String workingDir;
@@ -125,21 +125,33 @@ public class ExecConfig {
 		}
 
 		public Builder env(List<String> env) {
+			if (this.env == null) {
+				this.env = new ArrayList<>();
+			}
 			this.env = env;
 			return Builder.this;
 		}
 
 		public Builder env(String... env) {
+			if (this.env == null) {
+				this.env = new ArrayList<>();
+			}
 			this.env.addAll(Arrays.asList(env));
 			return Builder.this;
 		}
 
 		public Builder cmd(List<String> cmd) {
+			if (this.cmd == null) {
+				this.cmd = new ArrayList<>();
+			}
 			this.cmd = cmd;
 			return Builder.this;
 		}
 
 		public Builder cmd(String... cmd) {
+			if (this.cmd == null) {
+				this.cmd = new ArrayList<>();
+			}
 			this.cmd.addAll(Arrays.asList(cmd));
 			return Builder.this;
 		}

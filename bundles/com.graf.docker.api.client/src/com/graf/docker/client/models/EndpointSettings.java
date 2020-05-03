@@ -115,8 +115,8 @@ public class EndpointSettings {
 	public static class Builder {
 
 		private EndpointIPAMConfig ipamConfig;
-		private List<String> links = new ArrayList<String>();
-		private List<String> aliases = new ArrayList<String>();
+		private List<String> links;
+		private List<String> aliases;
 		private String networkId;
 		private String endpointId;
 		private String gateway;
@@ -126,7 +126,7 @@ public class EndpointSettings {
 		private String globalIPv6Address;
 		private long globalIPv6PrefixLen;
 		private String macAddress;
-		private Map<String, String> driverOpts = new HashMap<>();
+		private Map<String, String> driverOpts;
 
 		public Builder() {
 		}
@@ -137,31 +137,33 @@ public class EndpointSettings {
 		}
 
 		public Builder links(List<String> links) {
+			if (this.links == null) {
+				this.links = new ArrayList<>();
+			}
 			this.links.addAll(links);
 			return Builder.this;
 		}
 
-		public Builder links(String links) {
-			this.links.add(links);
-			return Builder.this;
-		}
-
 		public Builder links(String... links) {
+			if (this.links == null) {
+				this.links = new ArrayList<>();
+			}
 			this.links.addAll(Arrays.asList(links));
 			return Builder.this;
 		}
 
 		public Builder aliases(List<String> aliases) {
+			if (this.aliases == null) {
+				this.aliases = new ArrayList<>();
+			}
 			this.aliases.addAll(aliases);
 			return Builder.this;
 		}
 
-		public Builder aliases(String aliases) {
-			this.aliases.add(aliases);
-			return Builder.this;
-		}
-
 		public Builder aliases(String... aliases) {
+			if (this.aliases == null) {
+				this.aliases = new ArrayList<>();
+			}
 			this.aliases.addAll(Arrays.asList(aliases));
 			return Builder.this;
 		}
@@ -212,11 +214,17 @@ public class EndpointSettings {
 		}
 
 		public Builder driverOpts(Map<String, String> driverOpts) {
+			if (this.driverOpts == null) {
+				this.driverOpts = new HashMap<>();
+			}
 			this.driverOpts.putAll(driverOpts);
 			return Builder.this;
 		}
 
 		public Builder driverOpt(String key, String value) {
+			if (this.driverOpts == null) {
+				this.driverOpts = new HashMap<>();
+			}
 			this.driverOpts.put(key, value);
 			return Builder.this;
 		}

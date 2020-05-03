@@ -37,7 +37,7 @@ public class LogConfig {
 	public static class Builder {
 
 		private String type;
-		private Map<String, String> logOptions = new HashMap<>();
+		private Map<String, String> logOptions;
 
 		public Builder() {
 		}
@@ -48,11 +48,17 @@ public class LogConfig {
 		}
 
 		public Builder logOptions(Map<String, String> logOptions) {
+			if (this.logOptions == null) {
+				this.logOptions = new HashMap<>();
+			}
 			this.logOptions.putAll(logOptions);
 			return Builder.this;
 		}
 
 		public Builder logOption(String key, String value) {
+			if (this.logOptions == null) {
+				this.logOptions = new HashMap<>();
+			}
 			this.logOptions.put(key, value);
 			return Builder.this;
 		}

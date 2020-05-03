@@ -45,7 +45,7 @@ public class EndpointIPAMConfig {
 
 		private String ipv4Address;
 		private String ipv6Address;
-		private List<String> linkLocalIPs = new ArrayList<String>();
+		private List<String> linkLocalIPs;
 
 		public Builder() {
 		}
@@ -61,16 +61,17 @@ public class EndpointIPAMConfig {
 		}
 
 		public Builder linkLocalIPs(List<String> linkLocalIPs) {
+			if (this.linkLocalIPs == null) {
+				this.linkLocalIPs = new ArrayList<>();
+			}
 			this.linkLocalIPs.addAll(linkLocalIPs);
 			return Builder.this;
 		}
 
-		public Builder linkLocalIPs(String linkLocalIPs) {
-			this.linkLocalIPs.add(linkLocalIPs);
-			return Builder.this;
-		}
-
 		public Builder linkLocalIPs(String... linkLocalIPs) {
+			if (this.linkLocalIPs == null) {
+				this.linkLocalIPs = new ArrayList<>();
+			}
 			this.linkLocalIPs.addAll(Arrays.asList(linkLocalIPs));
 			return Builder.this;
 		}

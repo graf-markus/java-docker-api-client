@@ -37,8 +37,8 @@ public class ContainerLog {
 
 	public static class Builder {
 
-		private List<String> stdout = new ArrayList<String>();
-		private List<String> stderr = new ArrayList<String>();
+		private List<String> stdout = new ArrayList<>();
+		private List<String> stderr = new ArrayList<>();
 
 		public Builder() {
 		}
@@ -49,31 +49,33 @@ public class ContainerLog {
 		}
 
 		public Builder stdout(List<String> stdout) {
+			if (this.stdout == null) {
+				this.stdout = new ArrayList<>();
+			}
 			this.stdout.addAll(stdout);
 			return Builder.this;
 		}
 
-		public Builder stdout(String stdout) {
-			this.stdout.add(stdout);
-			return Builder.this;
-		}
-
 		public Builder stdout(String... stdout) {
+			if (this.stdout == null) {
+				this.stdout = new ArrayList<>();
+			}
 			this.stdout.addAll(Arrays.asList(stdout));
 			return Builder.this;
 		}
 
 		public Builder stderr(List<String> stderr) {
+			if (this.stderr == null) {
+				this.stderr = new ArrayList<>();
+			}
 			this.stderr.addAll(stderr);
 			return Builder.this;
 		}
 
-		public Builder stderr(String stderr) {
-			this.stderr.add(stderr);
-			return Builder.this;
-		}
-
 		public Builder stderr(String... stderr) {
+			if (this.stderr == null) {
+				this.stderr = new ArrayList<>();
+			}
 			this.stderr.addAll(Arrays.asList(stderr));
 			return Builder.this;
 		}

@@ -98,7 +98,6 @@ public class DockerClientTest {
 
 		assertFalse(containers.isEmpty());
 		docker.removeContainer(containerId);
-
 	}
 
 	@Test

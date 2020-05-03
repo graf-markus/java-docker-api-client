@@ -21,6 +21,10 @@ public class TmpfsOptions {
 		return mode;
 	}
 
+	public static Builder builder() {
+		return new Builder();
+	}
+
 	@Override
 	public String toString() {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();

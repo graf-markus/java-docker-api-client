@@ -3,10 +3,8 @@ package com.graf.docker.client.models;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -197,25 +195,25 @@ public class ContainerConfig {
 		private boolean attachStdin;
 		private boolean attachStdout;
 		private boolean attachStderr;
-		private Map<String, Object> exposedPorts = new HashMap<>();
+		private Map<String, Object> exposedPorts;
 		private boolean tty;
 		private boolean openStdin;
 		private boolean stdinOnce;
-		private List<String> env = new ArrayList<String>();
-		private List<String> cmd = new ArrayList<String>();
+		private List<String> env;
+		private List<String> cmd;
 		private HealthConfig healthcheck;
 		private boolean argsEscaped;
 		private String image;
-		private Map<String, Object> volumes = new HashMap<>();
+		private Map<String, Object> volumes;
 		private String workingDir;
-		private List<String> entrypoint = new ArrayList<String>();
+		private List<String> entrypoint;
 		private boolean networkDisabled;
 		private String macAddress;
-		private List<String> onBuild = new ArrayList<String>();
-		private Map<String, String> labels = new HashMap<>();
+		private List<String> onBuild;
+		private Map<String, String> labels;
 		private String stopSignal;
 		private int stopTimeout;
-		private List<String> shell = new ArrayList<String>();
+		private List<String> shell;
 		private HostConfig hostConfig;
 		private NetworkingConfig networkingConfig;
 
@@ -253,18 +251,19 @@ public class ContainerConfig {
 		}
 
 		public Builder exposedPorts(List<String> ports) {
+			if (exposedPorts == null) {
+				this.exposedPorts = new HashMap<>();
+			}
 			for (String p : ports) {
 				exposedPorts.put(p, new Object());
 			}
 			return Builder.this;
 		}
 
-		public Builder exposedPorts(String port) {
-			this.exposedPorts.put(port, new Object());
-			return Builder.this;
-		}
-
 		public Builder exposedPorts(String... ports) {
+			if (exposedPorts == null) {
+				this.exposedPorts = new HashMap<>();
+			}
 			for (String p : ports) {
 				this.exposedPorts.put(p, new Object());
 			}
@@ -287,32 +286,34 @@ public class ContainerConfig {
 		}
 
 		public Builder env(List<String> env) {
+			if (this.env == null) {
+				this.env = new ArrayList<>();
+			}
 			this.env.addAll(env);
 			return Builder.this;
 		}
 
-		public Builder env(String env) {
-			this.env.add(env);
-			return Builder.this;
-		}
-
 		public Builder env(String... env) {
+			if (this.env == null) {
+				this.env = new ArrayList<>();
+			}
 			this.env.addAll(Arrays.asList(env));
 			return Builder.this;
 		}
 
 		public Builder cmd(List<String> cmd) {
+			if (this.cmd == null) {
+				this.cmd = new ArrayList<>();
+			}
 			this.cmd.addAll(cmd);
 			return Builder.this;
 		}
 
 		public Builder cmd(String... cmd) {
+			if (this.cmd == null) {
+				this.cmd = new ArrayList<>();
+			}
 			this.cmd.addAll(Arrays.asList(cmd));
-			return Builder.this;
-		}
-
-		public Builder cmd(String cmd) {
-			this.cmd.add(cmd);
 			return Builder.this;
 		}
 
@@ -332,18 +333,19 @@ public class ContainerConfig {
 		}
 
 		public Builder volumes(List<String> volume) {
+			if (this.volumes == null) {
+				this.volumes = new HashMap<>();
+			}
 			for (String v : volume) {
 				volumes.put(v, new Object());
 			}
 			return Builder.this;
 		}
 
-		public Builder volumes(String volume) {
-			this.volumes.put(volume, new Object());
-			return Builder.this;
-		}
-
 		public Builder volumes(String... volumes) {
+			if (this.volumes == null) {
+				this.volumes = new HashMap<>();
+			}
 			for (String v : volumes) {
 				this.volumes.put(v, new Object());
 			}
@@ -356,16 +358,17 @@ public class ContainerConfig {
 		}
 
 		public Builder entrypoint(List<String> entrypoint) {
+			if (this.entrypoint == null) {
+				this.entrypoint = new ArrayList<>();
+			}
 			this.entrypoint.addAll(entrypoint);
 			return Builder.this;
 		}
 
-		public Builder entrypoint(String entrypoint) {
-			this.entrypoint.add(entrypoint);
-			return Builder.this;
-		}
-
 		public Builder entrypoint(String... entrypoint) {
+			if (this.entrypoint == null) {
+				this.entrypoint = new ArrayList<>();
+			}
 			this.entrypoint.addAll(Arrays.asList(entrypoint));
 			return Builder.this;
 		}
@@ -381,26 +384,33 @@ public class ContainerConfig {
 		}
 
 		public Builder onBuild(List<String> onBuild) {
+			if (this.onBuild == null) {
+				this.onBuild = new ArrayList<>();
+			}
 			this.onBuild.addAll(onBuild);
 			return Builder.this;
 		}
 
-		public Builder onBuild(String onBuild) {
-			this.onBuild.add(onBuild);
-			return Builder.this;
-		}
-
 		public Builder onBuild(String... onBuild) {
+			if (this.onBuild == null) {
+				this.onBuild = new ArrayList<>();
+			}
 			this.onBuild.addAll(Arrays.asList(onBuild));
 			return Builder.this;
 		}
 
 		public Builder labels(Map<String, String> labels) {
+			if (this.labels == null) {
+				this.labels = new HashMap<>();
+			}
 			this.labels.putAll(labels);
 			return Builder.this;
 		}
-		
+
 		public Builder labels(String key, String value) {
+			if (this.labels == null) {
+				this.labels = new HashMap<>();
+			}
 			this.labels.put(key, value);
 			return Builder.this;
 		}
@@ -416,16 +426,17 @@ public class ContainerConfig {
 		}
 
 		public Builder shell(List<String> shell) {
+			if (this.shell == null) {
+				this.shell = new ArrayList<>();
+			}
 			this.shell.addAll(shell);
 			return Builder.this;
 		}
 
-		public Builder shell(String shell) {
-			this.shell.add(shell);
-			return Builder.this;
-		}
-
 		public Builder shell(String... shell) {
+			if (this.shell == null) {
+				this.shell = new ArrayList<>();
+			}
 			this.shell.addAll(Arrays.asList(shell));
 			return Builder.this;
 		}

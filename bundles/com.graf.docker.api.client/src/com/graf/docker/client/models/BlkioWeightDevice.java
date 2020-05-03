@@ -39,11 +39,6 @@ public class BlkioWeightDevice {
 		public Builder() {
 		}
 
-		Builder(String path, int weight) {
-			this.path = path;
-			this.weight = weight;
-		}
-
 		public Builder path(String path) {
 			this.path = path;
 			return Builder.this;
@@ -55,7 +50,6 @@ public class BlkioWeightDevice {
 		}
 
 		public BlkioWeightDevice build() {
-
 			return new BlkioWeightDevice(this);
 		}
 	}

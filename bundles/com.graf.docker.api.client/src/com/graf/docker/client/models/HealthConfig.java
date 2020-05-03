@@ -55,7 +55,7 @@ public class HealthConfig {
 
 	public static class Builder {
 
-		private List<String> test = new ArrayList<String>();
+		private List<String> test;
 		private int interval;
 		private int timeout;
 		private int retries;
@@ -65,16 +65,17 @@ public class HealthConfig {
 		}
 
 		public Builder test(List<String> test) {
+			if (this.test == null) {
+				this.test = new ArrayList<>();
+			}
 			this.test.addAll(test);
 			return Builder.this;
 		}
 
-		public Builder test(String test) {
-			this.test.add(test);
-			return Builder.this;
-		}
-
 		public Builder test(String... test) {
+			if (this.test == null) {
+				this.test = new ArrayList<>();
+			}
 			this.test.addAll(Arrays.asList(test));
 			return Builder.this;
 		}
@@ -100,7 +101,6 @@ public class HealthConfig {
 		}
 
 		public HealthConfig build() {
-
 			return new HealthConfig(this);
 		}
 	}

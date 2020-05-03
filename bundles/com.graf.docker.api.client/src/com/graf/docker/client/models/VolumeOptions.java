@@ -30,6 +30,10 @@ public class VolumeOptions {
 		return driverConfig;
 	}
 
+	public static Builder builder() {
+		return new Builder();
+	}
+
 	@Override
 	public String toString() {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -39,7 +43,7 @@ public class VolumeOptions {
 	public static class Builder {
 
 		private boolean noCopy;
-		private Map<String, String> labels = new HashMap<>();
+		private Map<String, String> labels;
 		private DriverConfig driverConfig;
 
 		public Builder() {
@@ -51,11 +55,17 @@ public class VolumeOptions {
 		}
 
 		public Builder labels(Map<String, String> labels) {
+			if (this.labels == null) {
+				this.labels = new HashMap<>();
+			}
 			this.labels.putAll(labels);
 			return Builder.this;
 		}
 
 		public Builder labels(String key, String value) {
+			if (this.labels == null) {
+				this.labels = new HashMap<>();
+			}
 			this.labels.put(key, value);
 			return Builder.this;
 		}

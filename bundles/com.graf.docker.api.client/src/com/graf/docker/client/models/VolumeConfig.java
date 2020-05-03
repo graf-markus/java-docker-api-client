@@ -50,8 +50,8 @@ public class VolumeConfig {
 
 		private String name;
 		private String driver;
-		private Map<String, String> driverOpts = new HashMap<>();
-		private Map<String, String> labels = new HashMap<>();
+		private Map<String, String> driverOpts;
+		private Map<String, String> labels;
 
 		public Builder() {
 		}
@@ -67,21 +67,33 @@ public class VolumeConfig {
 		}
 
 		public Builder driverOpts(Map<String, String> driverOpts) {
+			if (this.driverOpts == null) {
+				this.driverOpts = new HashMap<>();
+			}
 			this.driverOpts.putAll(driverOpts);
 			return Builder.this;
 		}
 
 		public Builder driverOpts(String key, String value) {
+			if (this.driverOpts == null) {
+				this.driverOpts = new HashMap<>();
+			}
 			this.driverOpts.put(key, value);
 			return Builder.this;
 		}
 
 		public Builder labels(Map<String, String> labels) {
+			if (this.labels == null) {
+				this.labels = new HashMap<>();
+			}
 			this.labels.putAll(labels);
 			return Builder.this;
 		}
 
 		public Builder labels(String key, String value) {
+			if (this.labels == null) {
+				this.labels = new HashMap<>();
+			}
 			this.labels.put(key, value);
 			return Builder.this;
 		}

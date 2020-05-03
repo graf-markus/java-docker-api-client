@@ -594,9 +594,9 @@ public class DockerClient implements IDockerClient {
 	public void connectToNetwork(String id, String container, EndpointSettings endpoint) throws DockerException {
 		NetworkConnect connect;
 		if (endpoint != null) {
-			connect = new NetworkConnect(container, endpoint);
+			connect = NetworkConnect.builder().container(container).endpointConfig(endpoint).build();
 		} else {
-			connect = new NetworkConnect(container);
+			connect = NetworkConnect.builder().container(container).build();
 		}
 		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("networks", id, "connect")
 				.setBody(connect).build();
@@ -610,7 +610,7 @@ public class DockerClient implements IDockerClient {
 
 	@Override
 	public void disconnectFromNetwork(String id, String container, boolean force) throws DockerException {
-		NetworkDisconnect disconnect = new NetworkDisconnect(container, force);
+		NetworkDisconnect disconnect = NetworkDisconnect.builder().container(container).force(force).build();
 		HttpPost request = (HttpPost) RequestBuilder.post().setUrl(url).addPaths("networks", id, "disconnect")
 				.setBody(disconnect).build();
 		execute(request, 200);

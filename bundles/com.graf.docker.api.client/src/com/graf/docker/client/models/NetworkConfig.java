@@ -95,8 +95,8 @@ public class NetworkConfig {
 		private boolean ingress;
 		private IPAM ipam;
 		private boolean enableIpv6;
-		private Map<String, String> options = new HashMap<>();
-		private Map<String, String> labels = new HashMap<>();
+		private Map<String, String> options;
+		private Map<String, String> labels;
 
 		public Builder() {
 		}
@@ -142,27 +142,38 @@ public class NetworkConfig {
 		}
 
 		public Builder options(Map<String, String> options) {
+			if (this.options == null) {
+				this.options = new HashMap<>();
+			}
 			this.options.putAll(options);
 			return Builder.this;
 		}
 
 		public Builder options(String key, String value) {
+			if (this.options == null) {
+				this.options = new HashMap<>();
+			}
 			this.options.put(key, value);
 			return Builder.this;
 		}
 
 		public Builder labels(Map<String, String> labels) {
+			if (this.labels == null) {
+				this.labels = new HashMap<>();
+			}
 			this.labels.putAll(labels);
 			return Builder.this;
 		}
 
 		public Builder labels(String key, String value) {
+			if (this.labels == null) {
+				this.labels = new HashMap<>();
+			}
 			labels.put(key, value);
 			return Builder.this;
 		}
 
 		public NetworkConfig build() {
-
 			return new NetworkConfig(this);
 		}
 	}

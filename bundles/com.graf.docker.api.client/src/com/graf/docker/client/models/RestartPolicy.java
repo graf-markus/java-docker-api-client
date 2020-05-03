@@ -52,7 +52,6 @@ public class RestartPolicy {
 		}
 
 		public RestartPolicy build() {
-
 			return new RestartPolicy(this);
 		}
 	}
